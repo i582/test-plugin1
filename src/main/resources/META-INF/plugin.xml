@@ -23,6 +23,7 @@
         <lang.commenter language="tact" implementationClass="org.ton.tact.lang.TactCommenter"/>
         <lang.braceMatcher language="tact" implementationClass="org.ton.tact.lang.TactBraceMatcher"/>
         <lang.quoteHandler language="tact" implementationClass="org.ton.tact.lang.TactQuoteHandler"/>
+        <lang.foldingBuilder language="tact" implementationClass="org.ton.tact.lang.folding.TactFoldingBuilder"/>
         <!-- endregion Language general -->
 
         <!-- region Indexes -->

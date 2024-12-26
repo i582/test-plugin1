@@ -125,13 +125,11 @@
 // [TopLevelDeclarations]
 File ::= ImportList? TopLevelDeclaration*
 
-// General rule for explicit and implicit ';'
-private semi ::= '<NL>' | ';' | <<eof>>
-private list_separator ::= semi | ','
+private list_separator ::= ','
 
 // import "@stdlib/deploy"
 // import "other"
-ImportList ::= (ImportDeclaration)+
+ImportList ::= ImportDeclaration+
 
 // import <spec>
 ImportDeclaration ::= import StringLiteral ';' {
