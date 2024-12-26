@@ -1,6 +1,5 @@
 package org.ton.tact.lang.psi.types
 
-import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiElement

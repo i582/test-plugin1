@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
-import org.ton.tact.lang.psi.TactFunctionDeclaration
 import org.ton.tact.lang.psi.TactNamedElement
 
 enum class AssignableKind {

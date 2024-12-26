@@ -19,9 +19,5 @@ enum class TactPrimitiveTypes(val value: String, val size: Int, val numeric: Boo
         fun isPrimitiveType(name: String): Boolean {
             return entries.any { it.value == name }
         }
-
-        fun isNumeric(name: String): Boolean {
-            return entries.any { it.value == name && it.numeric }
-        }
     }
 }

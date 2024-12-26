@@ -2,13 +2,9 @@ package org.ton.tact.ide.codeInsight
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.elementType
-import com.intellij.psi.util.parentOfType
-import org.ton.tact.lang.TactTypes
 import org.ton.tact.lang.psi.*
-import org.ton.tact.lang.psi.types.*
 import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.toEx
+import org.ton.tact.lang.psi.types.TactTypeEx
 import org.ton.tact.utils.parentNth
 import org.ton.tact.utils.parentOfTypeWithStop
 
@@ -17,18 +13,6 @@ object TactCodeInsightUtil {
     const val BUILTIN_MODULE = "builtin"
     const val STUBS_MODULE = "stubs"
     private const val ERR_VARIABLE = "err"
-
-    fun isErrVariable(element: PsiElement): Boolean {
-        return element.elementType == TactTypes.IDENTIFIER && element.textMatches(ERR_VARIABLE)
-    }
-
-    fun getLiteralValueExpr(element: PsiElement): TactLiteralValueExpression? {
-        val parentValue = element.parentOfTypeWithStop<TactValue>(TactBlock::class)
-        if (parentValue != null) {
-            return parentValue.parentNth(2)
-        }
-        return element.parentOfTypeWithStop(TactBlock::class)
-    }
 
     fun getCallExpr(element: PsiElement): TactCallExpr? {
         if (element.parent is TactFieldName) {
@@ -105,10 +89,6 @@ object TactCodeInsightUtil {
         return parts.subList(parts.size - 2, parts.size).joinToString(".")
     }
 
-    fun isDirectlyAccessible(containingFile: PsiFile, file: PsiFile): Boolean {
-        return sameModule(containingFile, file)
-    }
-
     fun sameModule(firstFile: PsiFile, secondFile: PsiFile): Boolean {
         if (firstFile == secondFile) return true
 
@@ -135,18 +115,4 @@ object TactCodeInsightUtil {
 //        return firstModule == secondModule
 //    }
 
-    fun getReturnType(resolved: PsiElement): TactTypeEx? {
-        if (resolved is TactSignatureOwner) {
-            return resolved.getSignature()?.result?.type?.toEx() ?: TactVoidTypeEx.INSTANCE
-        }
-
-        if (resolved is TactTypeOwner) {
-            val type = resolved.getType(null)
-            if (type is TactFunctionTypeEx) {
-                return type.result
-            }
-        }
-
-        return null
-    }
 }

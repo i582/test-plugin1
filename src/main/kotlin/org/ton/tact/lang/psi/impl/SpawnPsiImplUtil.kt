@@ -3,7 +3,6 @@
 package org.ton.tact.lang.psi.impl
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.util.Key
@@ -17,12 +16,10 @@ import com.jetbrains.rd.util.forEachReversed
 import org.ton.tact.lang.TactTypes.*
 import org.ton.tact.lang.psi.*
 import org.ton.tact.lang.psi.impl.TactReferenceBase.Companion.LOCAL_RESOLVE
-import org.ton.tact.lang.psi.impl.TactReferenceBase.Companion.NOT_PROCESS_EMBEDDED_DEFINITION
 import org.ton.tact.lang.psi.impl.TactTypeInferer.getVarType
 import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.toEx
 import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.unwrapAlias
 import org.ton.tact.lang.psi.types.TactFunctionTypeEx
-import org.ton.tact.lang.psi.types.TactStructTypeEx
 import org.ton.tact.lang.psi.types.TactTypeEx
 import org.ton.tact.utils.stubOrPsiParentOfType
 
@@ -276,19 +273,6 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun isMutable(o: TactFieldDefinition): Boolean {
-        return true
-    }
-
-    @JvmStatic
-    fun makeMutable(o: TactFieldDefinition) {
-    }
-
-    @JvmStatic
-    fun makeImmutable(o: TactFieldDefinition) {
-    }
-
-    @JvmStatic
     fun isPublic(o: TactFieldDefinition): Boolean {
         return true // TODO: for now
     }
@@ -474,21 +458,6 @@ object TactPsiImplUtil {
     fun prevDot(e: PsiElement?): Boolean {
         val prev = if (e == null) null else PsiTreeUtil.prevVisibleLeaf(e)
         return prev is LeafElement && (prev as LeafElement).elementType === DOT
-    }
-
-    fun prevLeftBracket(e: PsiElement?): Boolean {
-        val prev = if (e == null) null else PsiTreeUtil.prevVisibleLeaf(e)
-        return prev is LeafElement && (prev as LeafElement).elementType === LBRACK
-    }
-
-    fun prevComma(e: PsiElement?): Boolean {
-        val prev = if (e == null) null else PsiTreeUtil.prevVisibleLeaf(e)
-        return prev is LeafElement && (prev as LeafElement).elementType === COMMA
-    }
-
-    fun prevWhenKeyword(e: PsiElement?): Boolean {
-        val prev = if (e == null) null else PsiTreeUtil.prevVisibleLeaf(e)
-        return prev is LeafElement && (prev as LeafElement).textMatches("when")
     }
 
     @JvmStatic

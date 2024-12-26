@@ -3,7 +3,6 @@ package org.ton.tact.lang.psi.types
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.ton.tact.ide.codeInsight.TactCodeInsightUtil
-import org.ton.tact.lang.psi.TactFieldDefinition
 import org.ton.tact.lang.psi.TactStructDeclaration
 import org.ton.tact.lang.stubs.index.TactStructIndex
 

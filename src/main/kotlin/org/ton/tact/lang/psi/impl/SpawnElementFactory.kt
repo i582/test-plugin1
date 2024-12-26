@@ -5,9 +5,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiParserFacade
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.childrenOfType
 import org.ton.tact.lang.TactLanguage
-import org.ton.tact.lang.doc.psi.TactDocComment
 import org.ton.tact.lang.psi.*
 
 object TactElementFactory {
@@ -70,11 +68,6 @@ object TactElementFactory {
         return PsiTreeUtil.findChildOfType(file, TactResult::class.java)!!
     }
 
-    fun createElseBranch(project: Project, text: String = "else {\n\t\n}"): TactElseBranch {
-        val file = createFileFromText(project, "fn main() { if true {} $text")
-        return PsiTreeUtil.findChildOfType(file, TactElseBranch::class.java)!!
-    }
-
     fun createStringLiteral(project: Project, text: String): TactStringLiteral {
         return PsiTreeUtil.findChildOfType(
             createFileFromText(project, "fn main() { $text }"),
@@ -82,31 +75,8 @@ object TactElementFactory {
         )!!
     }
 
-    fun createReference(project: Project, text: String): TactReferenceExpression {
-        val children = PsiTreeUtil.findChildrenOfType(
-            createFileFromText(project, text),
-            TactReferenceExpression::class.java
-        )
-        return children.last()
-    }
-
-    fun createDocComment(project: Project, text: String): TactDocComment {
-        return PsiTreeUtil.findChildOfType(
-            createFileFromText(project, text),
-            TactDocComment::class.java
-        )!!
-    }
-
     fun createNewLine(project: Project): PsiElement {
         return PsiParserFacade.getInstance(project).createWhiteSpaceFromText("\n")
-    }
-
-    fun createSpace(project: Project): PsiElement {
-        return PsiParserFacade.getInstance(project).createWhiteSpaceFromText(" ")
-    }
-
-    fun createTab(project: Project): PsiElement {
-        return PsiParserFacade.getInstance(project).createWhiteSpaceFromText("\t")
     }
 
     fun createDoubleNewLine(project: Project): PsiElement {
@@ -124,59 +94,9 @@ object TactElementFactory {
             ?: error("Impossible situation! Parser is broken.")
     }
 
-    fun createMethodCall(project: Project, expr: PsiElement, methodName: String, vararg args: PsiElement): TactCallExpr {
-        val text = buildString {
-            append("fn main() {\n")
-            append(expr.text)
-            append(".")
-            append(methodName)
-            append("(")
-            append(args.joinToString(", ") { it.text })
-            append(")")
-            append("\n}")
-        }
-        val file = createFileFromText(project, text)
-        return PsiTreeUtil.findChildOfType(file, TactCallExpr::class.java)!!
-    }
-
-    fun createCallWithGenericParameters(project: Project, called: String, generics: List<String>, args: String): TactCallExpr {
-        val text = buildString {
-            append("$called[")
-            append(generics.joinToString(", "))
-            append("]$args")
-        }
-        val file = createFileFromText(project, text)
-        return PsiTreeUtil.findChildOfType(file, TactCallExpr::class.java)!!
-    }
-
     fun createNone(project: Project): TactLiteral {
         val file = createFileFromText(project, "fn main() { a := none }")
         return PsiTreeUtil.findChildOfType(file, TactLiteral::class.java)!!
     }
 
-    fun createNil(project: Project): TactLiteral {
-        val file = createFileFromText(project, "fn main() { a := nil }")
-        return PsiTreeUtil.findChildOfType(file, TactLiteral::class.java)!!
-    }
-
-    fun createTrue(project: Project): TactLiteral {
-        val file = createFileFromText(project, "fn main() { a := true }")
-        return PsiTreeUtil.findChildOfType(file, TactLiteral::class.java)!!
-    }
-
-    fun createSignature(project: Project, signature: TactSignature, newReturnType: TactType): TactSignature {
-        val text = buildString {
-            append("fn")
-            append(signature.text)
-            append(" -> ")
-            append(newReturnType.text)
-            append(" {}")
-        }
-        val file = createFileFromText(project, text)
-        return PsiTreeUtil.findChildOfType(file, TactSignature::class.java)!!
-    }
-
-    fun createTypeCodeFragment(project: Project, text: String, context: TactCompositeElement): TactTypeCodeFragment {
-        return TactTypeCodeFragment(project, text, context)
-    }
 }

@@ -2,14 +2,12 @@ package org.ton.tact.lang.psi.impl
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.ASTNode
-import com.intellij.openapi.application.runReadAction
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubBase
 import org.ton.tact.lang.psi.TactCompositeElement
-import org.ton.tact.lang.psi.TactFile
 import org.ton.tact.lang.stubs.TextHolder
 
 abstract class TactStubbedElementImpl<T : StubBase<*>> : StubBasedPsiElementBase<T>, TactCompositeElement {

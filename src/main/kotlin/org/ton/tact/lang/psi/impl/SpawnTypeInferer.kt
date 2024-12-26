@@ -251,17 +251,6 @@ object TactTypeInferer {
         return null
     }
 
-    private fun getTypeInVarSpec(
-        o: TactVarDefinition,
-        decl: TactVarDeclaration,
-        context: ResolveState?,
-        needUnwrap: Boolean,
-    ): TactTypeEx? {
-        return decl.expression?.getType(context).chainIf(needUnwrap) {
-            unwrapOptionOrResultType(this)
-        }
-    }
-
     private fun unwrapOptionOrResultTypeIf(type: TactTypeEx?, condition: Boolean): TactTypeEx? {
         if (!condition) return type
         return unwrapOptionOrResultType(type)

@@ -45,27 +45,6 @@ class TactModulesIndex : StringStubIndexExtension<TactFile>() {
             return StubIndex.getElements(KEY, name, project, scope, idFilter, TactFile::class.java)
         }
 
-        fun getSubmodules(project: Project, module: String): List<TactFile> {
-            val result = mutableListOf<TactFile>()
-            val keys = StubIndex.getInstance().getAllKeys(KEY, project)
-            for (key in keys) {
-                val prefix = key.substringBeforeLast('.', "")
-                if (prefix != module) continue
-
-                val els = StubIndex.getElements(
-                    KEY,
-                    key,
-                    project,
-                    GlobalSearchScope.allScope(project),
-                    IdFilter.getProjectIdFilter(project, true),
-                    TactFile::class.java
-                )
-                result.addAll(els)
-            }
-
-            return result.toSet().toList()
-        }
-
         fun getSubmodulesOfAnyDepth(project: Project, module: String): List<TactFile> {
             val result = mutableListOf<TactFile>()
             val keys = StubIndex.getInstance().getAllKeys(KEY, project)

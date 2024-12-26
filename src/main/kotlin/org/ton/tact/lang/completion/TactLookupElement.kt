@@ -40,18 +40,10 @@ data class TactLookupElementProperties(
         // Top Priority
         FIELD,
         METHOD,
-        STATIC_METHOD,
         FUNCTION,
         STRUCT,
-        INTERFACE,
-        ENUM,
         MODULE_VAR,
         CONSTANT,
-        TYPE_ALIAS,
-        UNION,
-        INTERFACE_METHOD,
-        ENUM_FIELD,
-        IMPORT_ALIAS,
         OTHER,
         // Least priority
     }

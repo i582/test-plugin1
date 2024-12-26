@@ -30,10 +30,6 @@ object TactLangUtil {
         return parent
     }
 
-    fun getBreakStatementOwner(o: PsiElement): PsiElement? {
-        return getContinueStatementOwner(o)
-    }
-
     private fun getStubFile(name: String, stubDir: VirtualFile, psiManager: PsiManager): TactFile? {
         val stubFile = stubDir.findChild(name) ?: return null
         return psiManager.findFile(stubFile) as? TactFile ?: return null

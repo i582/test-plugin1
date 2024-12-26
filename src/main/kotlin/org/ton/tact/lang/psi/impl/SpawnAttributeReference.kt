@@ -17,10 +17,4 @@ class TactAttributeReference(element: TactAttributeIdentifier) : TactCachedRefer
         }
         return false
     }
-
-    companion object {
-        fun convertPascalCaseToSnakeCase(name: String): String {
-            return name.replace("([A-Z])".toRegex()) { "_${it.value}" }.trim('_').lowercase()
-        }
-    }
 }

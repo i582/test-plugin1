@@ -6,13 +6,9 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
-import com.intellij.psi.util.parentOfType
 import org.ton.tact.ide.colors.TactColor
 import org.ton.tact.lang.TactTypes
 import org.ton.tact.lang.psi.*
-import org.ton.tact.lang.psi.impl.TactModule
-import org.ton.tact.lang.psi.impl.TactReference
-import org.ton.tact.lang.psi.types.TactPrimitiveTypes
 import org.ton.tact.utils.inside
 
 class TactDumbAwareAnnotator : Annotator, DumbAware {

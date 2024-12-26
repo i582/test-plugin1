@@ -6,7 +6,6 @@ import com.intellij.psi.stubs.StubIndexKey
 import org.ton.tact.lang.psi.TactNamedElement
 import org.ton.tact.lang.psi.TactPsiTreeUtil.parentStubOfType
 import org.ton.tact.lang.stubs.TactFileStub
-import org.ton.tact.lang.stubs.TactFunctionDeclarationStub
 import org.ton.tact.lang.stubs.TactNamedStub
 import org.ton.tact.lang.stubs.index.TactNamesIndex
 

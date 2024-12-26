@@ -9,7 +9,6 @@ import com.intellij.util.Processor
 import com.intellij.util.indexing.IdFilter
 import org.ton.tact.lang.TactFileElementType
 import org.ton.tact.lang.psi.TactNamedElement
-import org.ton.tact.lang.psi.TactSignatureOwner
 
 class TactMethodIndex : StringStubIndexExtension<TactNamedElement>() {
     companion object {

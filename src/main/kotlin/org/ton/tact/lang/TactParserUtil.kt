@@ -33,22 +33,6 @@ object TactParserUtil : GeneratedParserUtilBase() {
     }
 
     @JvmStatic
-    fun withOn(builder: PsiBuilder, level: Int, mode: String, parser: Parser): Boolean {
-        val nowStack = getParsingModesStack(builder)
-        val prevStack = Stack<String>()
-        prevStack.addAll(nowStack)
-
-        enterMode(builder, level, mode)
-        val result = parser.parse(builder, level)
-        exitMode(builder, level, mode)
-
-        nowStack.clear()
-        nowStack.addAll(prevStack)
-
-        return result
-    }
-
-    @JvmStatic
     fun isLastIs(builder: PsiBuilder, mode: String?): Boolean {
         return getParsingModesStack(builder).peek() == mode
     }
@@ -189,9 +173,4 @@ object TactParserUtil : GeneratedParserUtilBase() {
         return type == MAP_TYPE || type == STRUCT_TYPE
     }
 
-    @JvmStatic
-    @Suppress("UNUSED_PARAMETER")
-    fun prevIsNotType(builder: PsiBuilder, level: Int): Boolean {
-        return !prevIsType(builder)
-    }
 }

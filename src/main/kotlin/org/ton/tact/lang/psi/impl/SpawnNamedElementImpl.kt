@@ -15,13 +15,11 @@ import com.intellij.util.PlatformIcons
 import org.ton.tact.ide.ui.Icons
 import org.ton.tact.lang.doc.psi.TactDocComment
 import org.ton.tact.lang.psi.*
-import org.ton.tact.lang.psi.TactPsiTreeUtil.getChildOfType
 import org.ton.tact.lang.psi.TactPsiTreeUtil.parentStubOfType
 import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.toEx
 import org.ton.tact.lang.psi.types.TactTypeEx
 import org.ton.tact.lang.stubs.TactFileStub
 import org.ton.tact.lang.stubs.TactNamedStub
-import org.ton.tact.utils.childOfType
 import javax.swing.Icon
 
 abstract class TactNamedElementImpl<T : TactNamedStub<*>> :

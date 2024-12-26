@@ -45,10 +45,10 @@ object ReferenceCompletionProvider : CompletionProvider<CompletionParameters>() 
             fillStructFieldNameVariants(parameters, set, variants, refExpression)
 
             if (variants != TactStructLiteralCompletion.Variants.FIELD_NAME_ONLY) {
-                ref.processResolveVariants(MyScopeProcessor(parameters, set, file, ref.forTypes))
+                ref.processResolveVariants(MyScopeProcessor(parameters, set, ref.forTypes))
             }
         } else if (ref is TactCachedReference<*>) {
-            ref.processResolveVariants(MyScopeProcessor(parameters, set, file, false))
+            ref.processResolveVariants(MyScopeProcessor(parameters, set, false))
         }
     }
 
@@ -77,7 +77,7 @@ object ReferenceCompletionProvider : CompletionProvider<CompletionParameters>() 
             val params = resolved?.getSignature()?.parameters?.paramDefinitionList
 
             if (params != null) {
-                val processor = MyScopeProcessor(parameters, result, file, false)
+                val processor = MyScopeProcessor(parameters, result, false)
                 for (param in params) {
                     val name = param.name
                     if (name != null && !alreadyAssignedFields.contains(name)) {
@@ -96,7 +96,7 @@ object ReferenceCompletionProvider : CompletionProvider<CompletionParameters>() 
 
         val alreadyAssignedFields = TactStructLiteralCompletion.alreadyAssignedFields(elementList)
 
-        TactFieldNameReference(refExpression).processResolveVariants(object : MyScopeProcessor(parameters, result, file, false) {
+        TactFieldNameReference(refExpression).processResolveVariants(object : MyScopeProcessor(parameters, result, false) {
             override fun execute(element: PsiElement, state: ResolveState): Boolean {
                 val structFieldName =
                     when (element) {
@@ -178,7 +178,6 @@ object ReferenceCompletionProvider : CompletionProvider<CompletionParameters>() 
     open class MyScopeProcessor(
         private val parameters: CompletionParameters,
         private val result: CompletionResultSet,
-        private val file: TactFile,
         private val forTypes: Boolean,
     ) : TactScopeProcessor() {
 

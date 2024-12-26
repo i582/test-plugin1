@@ -1,7 +1,6 @@
 package org.ton.tact.lang.psi.types
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiAnchor
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -15,10 +14,6 @@ class TactPrimitiveTypeEx(val name: TactPrimitiveTypes, anchor: PsiElement? = nu
     override fun qualifiedName(): String = name.value
 
     override fun readableName(context: PsiElement, detailed: Boolean): String = name.value
-
-    fun isNumeric(): Boolean {
-        return name.numeric
-    }
 
     override fun isAssignableFrom(project: Project, rhs: TactTypeEx, kind: AssignableKind): Boolean {
         return when (rhs) {

@@ -4,11 +4,7 @@ import com.intellij.lang.ImportOptimizer
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.elementType
 import org.ton.tact.ide.codeInsight.TactCodeInsightUtil
-import org.ton.tact.lang.TactTypes
 import org.ton.tact.lang.psi.*
 
 class TactImportOptimizer : ImportOptimizer {
