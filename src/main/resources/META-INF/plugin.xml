@@ -1,7 +1,8 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<!--suppress PluginXmlValidity -->
 <idea-plugin>
-    <id>com.github.i582.testplugin1</id>
-    <name>test-plugin1</name>
+    <id>org.ton.tact</id>
+    <name>Tact</name>
     <vendor>i582</vendor>
 
     <depends>com.intellij.modules.platform</depends>
@@ -9,10 +10,62 @@
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.i582.testplugin1.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-    </extensions>
+        <!-- Tact Language -->
+        <fileType name="Tact"
+                  implementationClass="org.ton.tact.lang.TactFileType"
+                  fieldName="INSTANCE"
+                  language="tact"
+                  extensions="tact"/>
 
-    <applicationListeners>
-        <listener class="com.github.i582.testplugin1.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
+        <!-- region Language general -->
+        <lang.parserDefinition language="tact" implementationClass="org.ton.tact.lang.TactParserDefinition"/>
+        <lang.syntaxHighlighter language="tact" implementationClass="org.ton.tact.lang.TactSyntaxHighlighter"/>
+        <lang.commenter language="tact" implementationClass="org.ton.tact.lang.TactCommenter"/>
+        <lang.braceMatcher language="tact" implementationClass="org.ton.tact.lang.TactBraceMatcher"/>
+        <lang.quoteHandler language="tact" implementationClass="org.ton.tact.lang.TactQuoteHandler"/>
+        <!-- endregion Language general -->
+
+        <!-- region Indexes -->
+        <stubIndex implementation="org.ton.tact.lang.stubs.index.TactModulesIndex"/>
+        <stubIndex implementation="org.ton.tact.lang.stubs.index.TactModulesFingerprintIndex"/>
+        <stubIndex implementation="org.ton.tact.lang.stubs.index.TactMethodIndex"/>
+        <stubIndex implementation="org.ton.tact.lang.stubs.index.TactFieldFingerprintIndex"/>
+        <stubIndex implementation="org.ton.tact.lang.stubs.index.TactMethodFingerprintIndex"/>
+        <stubIndex implementation="org.ton.tact.lang.stubs.index.TactNamesIndex"/>
+        <stubIndex implementation="org.ton.tact.lang.stubs.index.TactClassLikeIndex"/>
+        <stubIndex implementation="org.ton.tact.lang.stubs.index.TactStructIndex"/>
+        <stubElementTypeHolder class="org.ton.tact.lang.TactTypes" externalIdPrefix="tact."/>
+        <!-- endregion Indexes -->
+
+        <!-- region Annotator -->
+        <annotator language="tact" order="first" implementationClass="org.ton.tact.lang.annotator.TactDumbAwareAnnotator"/>
+        <annotator language="tact" implementationClass="org.ton.tact.lang.annotator.TactAnnotator"/>
+        <!-- endregion Annotator -->
+
+        <!-- region CodeVision & Hints -->
+        <!-- Hints -->
+        <codeInsight.declarativeInlayProvider language="tact"
+                                              bundle="messages.MyBundle"
+                                              nameKey="tact.inlay.hints.variables"
+                                              group="VALUES_GROUP"
+                                              implementationClass="org.ton.tact.ide.hints.TactVariableTypeHintsProvider"
+                                              isEnabledByDefault="true"
+                                              providerId="tact.inlay.hints.variables"/>
+
+        <!-- Code vision -->
+
+        <!-- endregion CodeVision & Hints -->
+
+        <!-- region Color Settings & Schemes -->
+        <colorSettingsPage implementation="org.ton.tact.ide.colors.TactColorsSettingsPage"/>
+
+        <additionalTextAttributes scheme="Default" file="colorSchemes/TactAddonsDefault.xml"/>
+        <additionalTextAttributes scheme="Darcula" file="colorSchemes/TactAddonsDarcula.xml"/>
+        <additionalTextAttributes scheme="New Dark" file="colorSchemes/TactAddonsNewDark.xml"/>
+        <!-- endregion Color Schemes -->
+
+        <!-- region Editor -->
+        <psi.treeChangePreprocessor implementation="org.ton.tact.lang.psi.TactPsiTreeChangeProcessor"/>
+        <!-- endregion Editor -->
+    </extensions>
 </idea-plugin>

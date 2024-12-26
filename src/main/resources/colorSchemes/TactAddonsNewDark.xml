@@ -1,0 +1,71 @@
+<?xml version='1.0'?>
+<list>
+    <option name="org.ton.tact.CONSTANT" baseAttributes="DEFAULT_CONSTANT"/>
+    <option name="org.ton.tact.PUBLIC_CONSTANT" baseAttributes="DEFAULT_CONSTANT"/>
+    <option name="org.ton.tact.ENUM" baseAttributes="DEFAULT_CLASS_NAME"/>
+    <option name="org.ton.tact.ENUM_FIELD" baseAttributes="DEFAULT_INSTANCE_FIELD"/>
+    <option name="org.ton.tact.INTERFACE" baseAttributes="DEFAULT_INTERFACE_NAME"/>
+    <option name="org.ton.tact.MUTABLE_PARAMETER">
+        <value>
+            <option name="FOREGROUND" value="b189f5"/>
+            <option name="EFFECT_COLOR" value="bca5c4"/>
+            <option name="EFFECT_TYPE" value="1"/>
+        </value>
+    </option>
+    <option name="org.ton.tact.PUBLIC_ENUM" baseAttributes="DEFAULT_CLASS_NAME"/>
+    <option name="org.ton.tact.PUBLIC_FIELD" baseAttributes="DEFAULT_IDENTIFIER"/>
+    <option name="org.ton.tact.PUBLIC_INTERFACE" baseAttributes="DEFAULT_CLASS_NAME"/>
+    <option name="org.ton.tact.PUBLIC_STRUCT" baseAttributes="DEFAULT_CLASS_NAME"/>
+    <option name="org.ton.tact.PUBLIC_TYPE_ALIAS" baseAttributes="DEFAULT_IDENTIFIER"/>
+    <option name="org.ton.tact.PUBLIC_UNION" baseAttributes="DEFAULT_IDENTIFIER"/>
+    <option name="org.ton.tact.PUBLIC_FUNCTION">
+        <value>
+            <option name="FOREGROUND" value="ffc66d"/>
+            <option name="FONT_TYPE" value="2"/>
+        </value>
+    </option>
+    <option name="org.ton.tact.STRUCT" baseAttributes="DEFAULT_CLASS_NAME"/>
+    <option name="org.ton.tact.TYPE_ALIAS" baseAttributes="DEFAULT_IDENTIFIER"/>
+    <option name="org.ton.tact.UNION" baseAttributes="DEFAULT_IDENTIFIER"/>
+    <option name="org.ton.tact.MODULE">
+        <value>
+            <option name="FOREGROUND" value="afbf7e"/>
+        </value>
+    </option>
+    <option name="org.ton.tact.COMMENT_REFERENCE">
+        <value>
+            <option name="FOREGROUND" value="A1A1A1"/>
+        </value>
+    </option>
+    <option name="org.ton.tact.TYPE_PARAMETER">
+        <value>
+            <option name="FOREGROUND" value="B189F5"/>
+        </value>
+    </option>
+    <option name="org.ton.tact.UNSAFE_CODE">
+        <value>
+            <option name="BACKGROUND" value="4D3E3E" />
+        </value>
+    </option>
+    <option name="org.ton.tact.SMARTCAST">
+        <value>
+            <option name="BACKGROUND" value="2A3D2A" />
+        </value>
+    </option>
+    <option name="org.ton.tact.OVERLOADED_OPERATOR">
+        <value>
+            <option name="FOREGROUND" value="5F8C8A" />
+        </value>
+    </option>
+    <option name="org.ton.tact.CFG_DISABLED_CODE">
+        <value>
+            <option name="FOREGROUND" value="686A4E"/>
+        </value>
+    </option>
+    <option name="org.ton.tact.ARRAY_LITERAL_SUFFIX">
+        <value>
+            <option name="EFFECT_COLOR" value="bca5c4"/>
+            <option name="EFFECT_TYPE" value="1"/>
+        </value>
+    </option>
+</list>

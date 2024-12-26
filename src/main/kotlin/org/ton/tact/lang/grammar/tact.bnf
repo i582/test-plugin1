@@ -1,0 +1,640 @@
+{
+  parserClass='org.ton.tact.lang.TactParser'
+
+  implements='org.ton.tact.lang.psi.TactCompositeElement'
+  extends='org.ton.tact.lang.psi.impl.TactCompositeElementImpl'
+
+  elementTypeHolderClass='org.ton.tact.lang.TactTypes'
+  elementTypeClass='org.ton.tact.lang.psi.TactCompositeElementType'
+  tokenTypeClass='org.ton.tact.lang.psi.TactTokenType'
+  psiTreeUtilClass='org.ton.tact.lang.psi.TactPsiTreeUtil'
+
+  psiClassPrefix='Tact'
+  psiImplClassSuffix='Impl'
+  psiPackage='org.ton.tact.lang.psi'
+  psiImplPackage='org.ton.tact.lang.psi.impl'
+  psiImplUtilClass="org.ton.tact.lang.psi.impl.TactPsiImplUtil"
+  parserUtilClass="org.ton.tact.lang.TactParserUtil"
+
+  tokens=[
+    LBRACE               =  '{'
+    RBRACE               =  '}'
+    LBRACK               =  '['
+    HASH_LBRACK          =  '#['
+    RBRACK               =  ']'
+    RBRACK_EXP           =  ']!'
+    LPAREN               =  '('
+    RPAREN               =  ')'
+    COLON                =  ':'
+    SEMICOLON            =  ';'
+    COMMA                =  ','
+    EQ                   =  '=='
+    ASSIGN               =  '='
+    NOT_EQ               =  '!='
+    NOT                  =  '!'
+    QUESTION             =  '?'
+    PLUS_PLUS            =  '++'
+    PLUS_ASSIGN          =  '+='
+    PLUS                 =  '+'
+    MINUS_MINUS          =  '--'
+    MINUS_ASSIGN         =  '-='
+    MINUS                =  '-'
+    COND_OR              =  '||'
+    BIT_OR_ASSIGN        =  '|='
+    BIT_CLEAR_ASSIGN     =  '&^='
+    BIT_CLEAR            =  '&^'
+    COND_AND             =  '&&'
+    BIT_AND_ASSIGN       =  '&='
+    BIT_AND              =  '&'
+    BIT_OR               =  '|'
+    SHIFT_LEFT_ASSIGN    =  '<<='
+    SHIFT_LEFT           =  '<<'
+    SEND_CHANNEL         =  '<-'
+    LESS_OR_EQUAL        =  '<='
+    LESS                 =  '<'
+    BIT_XOR_ASSIGN       =  '^='
+    BIT_XOR              =  '^'
+    MUL_ASSIGN           =  '*='
+    MUL                  =  '*'
+    QUOTIENT_ASSIGN      =  '/='
+    QUOTIENT             =  '/'
+    REMAINDER_ASSIGN     =  '%='
+    REMAINDER            =  '%'
+    AT                   =  '@'
+    SHIFT_RIGHT_ASSIGN   =  '>>='
+    UNSIGNED_SHIFT_RIGHT_ASSIGN   =  '>>>='
+    SHIFT_RIGHT          =  '>>'
+    UNSIGNED_SHIFT_RIGHT =  '>>>'
+    GREATER_OR_EQUAL     =  '>='
+    GREATER              =  '>'
+    VAR_ASSIGN           =  ':='
+    TRIPLE_DOT           =  '...'
+    DOTDOTEQUAL          =  '..='
+    DOT                  =  '.'
+    ASSERT_OP            =  '!!'
+    RANGE                =  '..'
+    TILDA                =  '~'
+    SINGLE_QUOTE         =  "'"
+    DOUBLE_QUOTE         =  '"'
+    BACKTICK             =  '`'
+    ARROW                =  '->'
+    FAT_ARROW            =  '=>'
+    DOLLAR               =  '$'
+    NOT_IN               =  '!in'
+    NOT_IS               =  '!is'
+    IF_COMPILE_TIME      =  '$if'
+    ELSE_COMPILE_TIME    =  '$else'
+    FOR_COMPILE_TIME     =  '$for'
+    SEMICOLON_SYNTHETIC  = '<NL>'
+    INIT_OF              = 'initOf'
+    TYPE_                = 'type'
+    C_STRING             = 'c_string'
+    raw_string           = 'raw_string'
+    char                 = 'char'
+  ]
+
+  extends("(Or|And|Add|Conversion|Mul|Selector|Conditional|OrBlock)Expr|(In|NotIn|Is|NotIs)Expression")=BinaryExpr
+  extends(".*(Expr|Literal|Lit|OperandName)|CompileTimeIfExpression|IfExpression|ArrayCreation|InExpression|NotInExpression|MatchExpression|EnumFetch|MutExpression|DotExpression|IsExpression|NotIsExpression|AsExpression|UnpackingExpression|ConstexprIdentifierExpression|IncDecExpression|LiteralValueExpression|TactExpression")=Expression
+
+  implements("ModuleClause|(Var|Param|Field|Label|Var|Const|EnumField|InterfaceMethod|ModuleVar)Definition|(Struct|TypeAlias|Union)Declaration|Receiver|StaticReceiver|Import(Alias|Name)|PlainGenericParameter|ConstantGenericParameter|LambdaParameter|EmbeddedDefinition|ComptimeTypeStatement")="org.ton.tact.lang.psi.TactNamedElement"
+  implements("FunctionLiteral|(Function)Declaration")="org.ton.tact.lang.psi.TactSignatureOwner"
+  implements("(Function)Declaration")="org.ton.tact.lang.psi.TactFunctionOrMethodDeclaration"
+  implements(".*ReferenceExpression|FieldName|EnumFetch")="org.ton.tact.lang.psi.TactReferenceExpressionBase"
+
+  implements("(Struct|Function|Const|ModuleVar)Declaration|ModuleClause")="org.ton.tact.lang.psi.TactAttributeOwner"
+
+  implements("(Function)Declaration")="org.ton.tact.lang.psi.TactScopeHolder"
+  implements("(Struct)Declaration")="org.ton.tact.lang.psi.TactTopLevelTypeDeclaration"
+
+  extends("(Function)Declaration")="org.ton.tact.lang.psi.impl.TactFunctionOrMethodDeclarationImpl<?>"
+  extends("Type|Signature|Result|Parameters|TypeUnionList|EmbeddedInterfaceDefinition|TypeReferenceExpression|Attributes|Attribute|PlainAttribute|AttributeExpression|AttributeValue|AttributeKey|ExternList|FieldDeclaration|GenericArguments|Block|ImportDeclaration")="org.ton.tact.lang.psi.impl.TactStubbedElementImpl<?>"
+  extends("LambdaParameter|ModuleClause|(Struct)Declaration|(Var|Label|Param|Field|Const|EnumField|InterfaceMethod|ModuleVar)Definition|Receiver|StaticReceiver|Import(Alias|Name)|PlainGenericParameter|ConstantGenericParameter|EmbeddedDefinition|ComptimeTypeStatement")="org.ton.tact.lang.psi.impl.TactNamedElementImpl<?>"
+
+  elementTypeFactory("ModuleClause|(Function|Struct|Field)Declaration|.*Type|(Var|Label|Field|Param|Const|ModuleVar)Definition|LambdaParameter|Import(Alias|Name)|PlainGenericParameter|ConstantGenericParameter|GenericParameters|Parameters|Result|Signature|TypeReferenceExpression|Attributes|Attribute|PlainAttribute|AttributeExpression|AttributeValue|AttributeKey|EmbeddedDefinition|ExternList|GenericArguments|Block|ComptimeTypeStatement|ImportDeclaration")='org.ton.tact.lang.stubs.TactElementTypeFactory.stubFactory'
+
+  extends(".*Statement")=Statement
+  extends(".*Type|TypeList")=Type
+
+  pin('.*List(?:_\d.*)?')=1
+
+  generateTokenAccessors=true
+}
+
+// [imports]
+//
+// [TopLevelDeclarations]
+File ::= ImportList? TopLevelDeclaration*
+
+// General rule for explicit and implicit ';'
+private semi ::= '<NL>' | ';' | <<eof>>
+private list_separator ::= semi | ','
+
+// import "@stdlib/deploy"
+// import "other"
+ImportList ::= (ImportDeclaration)+
+
+// import <spec>
+ImportDeclaration ::= import StringLiteral ';' {
+  stubClass="org.ton.tact.lang.stubs.TactImportDeclarationStub"
+  pin=1
+  methods=[getPath]
+}
+
+////////// TOP LEVEL DECLARATIONS //////////
+
+private TopLevelDeclaration ::= !<<eof>> TopDeclaration {pin=1 recoverWhile=TopLevelDeclarationRecover}
+private TopDeclaration ::=
+    ConstDeclaration
+  | ModuleVarDeclaration
+  | FunctionDeclaration
+  | StructDeclaration
+  | Statement // for single files without entry point
+
+private TopLevelDeclarationRecover ::= !('type' | enum | import | '$for' | '$if' | '#[' | '[' | '!' | '?' | '&' | '@' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | break | test | comptime | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | interface | oct | return | select | 'raw_string' | OPEN_QUOTE | char | struct | union | var | assert | match | asm | true | false | none | '$else' | null | extern)
+
+////////// TOP LEVEL DECLARATIONS END //////////
+
+
+////////// STATEMENTS //////////
+
+// Block { }
+Block ::= '{' Statements '}' {
+    pin=1
+    implements="org.ton.tact.lang.psi.TactLazyBlock"
+    extends="org.ton.tact.lang.psi.impl.TactLazyBlockImpl"
+    generateTokenAccessors=false
+}
+BlockNoPin ::= '{' Statements '}' {elementType=Block}
+// end of block rule
+
+private Statements ::= Statement*
+
+Statement ::=
+    BlockNoPin
+  | IfStatement
+  | WhileStatement
+  | RepeatStatement
+  | UntilStatement
+  | ForEachStatement
+  | TryStatement
+  | ReturnStatement
+  | BreakStatement
+  | ContinueStatement
+  | SimpleStatement { methods=[processDeclarations] recoverWhile=StatementRecover }
+
+private StatementRecover ::= !('!' | '?' | '&' | '#['| '[' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | type | break | test | let | while | until | do | repeat | foreach | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | interface | oct | return | select | 'raw_string' | OPEN_QUOTE | char | struct | union | var | assert | match | true | false | none | '$for' | '$if' | '$else' | null | extern)
+
+// attributes start
+// #[attr1]
+// #[attr2]
+Attributes ::= Attribute Attribute* {
+  pin=1
+  stubClass="org.ton.tact.lang.stubs.TactAttributesStub"
+}
+// #[<exprs>]
+Attribute ::= '@' AttributeExpression {
+  pin=1
+  stubClass="org.ton.tact.lang.stubs.TactAttributeStub"
+}
+
+AttributeExpression ::= PlainAttribute {
+  stubClass="org.ton.tact.lang.stubs.TactAttributeExpressionStub"
+}
+
+PlainAttribute ::= AttributeKey AttributeArgs? {
+  stubClass="org.ton.tact.lang.stubs.TactPlainAttributeStub"
+}
+AttributeKey ::= AttributeIdentifier | Literal {
+  stubClass="org.ton.tact.lang.stubs.TactAttributeKeyStub"
+}
+
+private AttributeArgs ::= '(' ExpressionList? ')' {pin=1}
+
+AttributeIdentifier ::= AttributeIdentifierPrefix? identifier {
+  methods=[getReference]
+}
+AttributeIdentifierPrefix ::= (identifier) '.'
+// end of attributes
+
+// simple statements
+SimpleStatement ::=
+    VarDeclaration
+  | AssignStatement
+  | ListExpression ';'
+
+private AssignStatement ::= ListExpression AssignmentStatement ';' { pin=2 }
+
+// let <var> <type-hint>? = <expr>;
+VarDeclaration ::= let VarDefinition TypeHint? '=' Expression ';' {
+  pin=1
+}
+
+TypeHint ::= ':' Type
+
+// = <list>
+left AssignmentStatement ::= AssignOp ExpressionList {
+  pin=1
+  methods=[getLeftExpressions getRightExpressions]
+}
+AssignOp ::= '=' | '+=' | '-=' | '|=' | '^=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '>>>=' | '&=' | '&^='
+
+// end of simple statements
+
+// return <expr>;
+ReturnStatement ::= return Expression? ';' {pin=1}
+
+// break;
+BreakStatement ::= break ';'
+
+// continue;
+ContinueStatement ::= continue ';'
+
+////// DECLARATIONS //////
+
+// struct or union
+StructDeclaration ::= Attributes? StructType {
+  stubClass="org.ton.tact.lang.stubs.TactStructDeclarationStub"
+  methods=[getIdentifier getName getTypeInner isUnion getKindName isAttribute addField]
+}
+
+StructType ::= struct identifier '{' FieldDeclaration* '}' {
+  pin=1
+  implements="org.ton.tact.lang.psi.TactFieldListOwner"
+  methods=[getFieldList getOwnFieldList getEmbeddedStructs getEmbeddedStructList isUnion]
+}
+
+FieldDeclaration ::= Attributes? (PlainFieldDeclaration | EmbeddedDefinition) ';' {
+  stubClass="org.ton.tact.lang.stubs.TactFieldDeclarationStub"
+}
+private PlainFieldDeclaration ::= FieldDefinition ':' Type DefaultFieldValue?
+DefaultFieldValue ::= '=' Expression {pin=1}
+FieldDefinition ::= identifier {
+  methods=[getQualifier getQualifiedName getTypeInner getOwner]
+  stubClass="org.ton.tact.lang.stubs.TactFieldDefinitionStub"
+}
+
+EmbeddedDefinition ::= Type {
+  stubClass="org.ton.tact.lang.stubs.TactEmbeddedDefinitionStub"
+  methods=[getName getIdentifier getType]
+}
+
+// const declarations
+// [<visibility>] const <name> = <value>
+// [<visibility>] const (<list>)
+ConstDeclaration ::= Attributes? const ( ConstDefinition | '(' ConstDefinitions? ')' ) {
+  pin=5
+  methods=[isMultiline]
+}
+// <spec> [<spec2>]
+private ConstDefinitions ::= ConstDefinition (';' ConstDefinition)* ';' {pin=1}
+// <list> = <list>
+ConstDefinition ::= identifier '=' Expression {
+  pin=1
+  stubClass="org.ton.tact.lang.stubs.TactConstDefinitionStub"
+  methods=[getTypeInner getName getExpressionText getExpressionType getSymbolVisibility]
+}
+// end of consts
+
+// module var declarations
+// [<visibility>] var <name> = <value>
+// [<visibility>] var (<list>)
+ModuleVarDeclaration ::= Attributes? var ( ModuleVarDefinition | '(' ModuleVarDefinitions? ')' ) {
+  pin=4
+  methods=[isMultiline]
+}
+// <spec> [<spec2>]
+private ModuleVarDefinitions ::= ModuleVarDefinition (';' ModuleVarDefinition)* ';'? {pin=1}
+// <list> = <list>
+ModuleVarDefinition ::= identifier '=' Expression {
+  pin=1
+  stubClass="org.ton.tact.lang.stubs.TactModuleVarDefinitionStub"
+  methods=[getTypeInner getName getExpressionText getExpressionType getSymbolVisibility isMutable makeMutable makeImmutable]
+}
+// end of module vars
+
+FunctionDeclaration ::= Attributes? fun identifier Signature Block? {
+  pin=5
+  stubClass="org.ton.tact.lang.stubs.TactFunctionDeclarationStub"
+  methods=[getName getTypeInner isDefinition]
+  mixin="org.ton.tact.lang.psi.impl.TactFunctionDeclarationWithScopeHolder"
+}
+
+////// DECLARATIONS END //////
+
+
+////////// STATEMENTS END //////////
+
+
+////////// EXPRESSIONS //////////
+
+Expression ::=
+    OrExpr
+  | TernaryExpr
+  | AndExpr
+  | ConditionalExpr
+  | AddExpr
+  | MulExpr
+  | UnaryExpr
+  | InitOfExpr
+  | MaxGroup
+  | ParenthesesExpr {methods=[getType] implements="org.ton.tact.lang.psi.TactTypeOwner"}
+// end of expression rule
+
+// <type> {...}
+LiteralValueExpression ::= <<braceRuleMarker>> Type <<prevIsNotFunType>> '{' ElementList? '}'
+private CommaElementList ::= ElementInner (',' ElementInner?)*
+private ElementList ::= ElementInner (',' ElementInner?)*
+private ElementInner ::= Element | (!() Element) // {recoverWhile=ElementInnerRecover}
+//private ElementInnerRecover ::= !('}' | ',' | semi | ')')
+Element ::= First [':' Value]  {pin(".*")=1}
+private First ::= Key | <<keyOrValueExpression>>
+Key ::= (FieldName &':') | !() Expression // nullability hack for key without reference inside
+FieldName ::= ReferenceExpression { methods=[getIdentifier getQualifier resolve getIdentifierBounds] }
+Value ::= Expression
+
+// end of type init
+
+private MaxGroup ::=
+    DotExpression
+  | Literal
+  | FunctionLiteral
+
+TupleLiteral ::= '(' Expression ',' ListExpression ')' {
+  pin=3
+  methods=[getType]
+}
+
+// fun [<generics>] (...) {...}
+FunctionLiteral ::= fun Signature Block {
+  pin=1
+  methods=[processDeclarations]
+}
+
+////// TYPES //////
+
+Type ::= TypeLit | TypeName {
+  stubClass="org.ton.tact.lang.stubs.TactTypeStub"
+  methods=[getIdentifier resolveType getModuleName]
+}
+
+private TypeName ::= TypeReferenceExpression QualifiedTypeReferenceExpression*
+
+left QualifiedTypeReferenceExpression ::= '.' identifier {elementType=TypeReferenceExpression}
+TypeReferenceExpression ::= identifier {
+  stubClass="org.ton.tact.lang.stubs.TactTypeReferenceExpressionStub"
+  methods=[getReference getQualifier resolve getType getIdentifierBounds]
+}
+
+private TypeLit ::=
+    MapType
+  | TupleType
+  | OptionType
+  | FunctionType
+
+// (<type>, <type>, ...)
+TupleType ::= '(' TypeListNoPin? ')' {pin=3}
+
+// ?<type>
+OptionType ::= '?' Type {pin=1} // TODO
+// fun (...) -> <type>
+// fun (...) -> (<type1>, <type2>, ...)
+FunctionType ::= fun Signature {
+  pin=1
+  implements="org.ton.tact.lang.psi.TactSignatureOwner"
+}
+
+// signature
+// (...) -> ...
+Signature ::= Parameters Result? {
+  pin=1
+  stubClass="org.ton.tact.lang.stubs.TactSignatureStub"
+  methods=[resultCount]
+}
+Result ::= ':'? Type {
+  pin=2
+  stubClass="org.ton.tact.lang.stubs.TactResultStub"
+  implements="org.ton.tact.lang.psi.TactTypeOwner"
+  methods=[isVoid getType]
+}
+Parameters ::= '(' ParameterList? ','? ')' {
+  pin=1
+  stubClass="org.ton.tact.lang.stubs.TactParametersStub"
+}
+
+private ParameterList ::= ParamDefinition (',' (ParamDefinition | &')'))* list_separator? {pin(".*")=1}
+
+ParamDefinition ::= ParamWithName | ParamWithoutName {
+  pin=4
+  stubClass="org.ton.tact.lang.stubs.TactParamDefinitionStub"
+  methods = [isVariadic getName]
+}
+private ParamWithName ::= identifier '...'? ':' Type
+private ParamWithoutName ::= '...'? ':' Type
+
+TypeListNoPin ::= Type (',' Type)* ','?
+// end of signature
+
+MapType ::= map '<' Type ',' Type '>' {
+  pin=1
+  methods = [
+    keyType="Type[0]"
+    valueType="Type[1]"
+  ]
+}
+
+////// TYPES END //////
+
+ListExpression ::= ExpressionList {
+  implements=Expression
+  methods=[getType]
+}
+
+private ExpressionList ::= ExpressionWithRecover (',' (ExpressionWithRecover | &')'))* {pin=3}
+private ExpressionWithRecover ::= Expression !':' {recoverWhile=ExpressionListRecover}
+private ExpressionListRecover ::= !('!' | '?' | '->' | '=>' | '!=' | '%' | '%=' | '&&' | '&' | '&=' | '&^' | '&^=' | '(' | ')' | '*' | '*=' | '+'  | '++' | '+=' | ',' | '-' | '--' | '-=' | '...' | '..=' | '/' | '/=' | ':' | ';' | '<' | '<-' | '<<' | '<<=' | '<=' | '<NL>' | '=' | '==' | '>' | '>=' | '>>' | '>>=' | '>>>=' | '#[' | '[' | ']' | '^' | '^=' | '{' | '|' | '|=' | '||' | '}' | 'type' | break | test | comptime | const | continue | defer | else | float | for | fun | go | spawn | goto | hex | identifier | if | int | interface | oct | return | select | 'raw_string' | OPEN_QUOTE | char | struct | enum | union | var | assert | match | true | false | none | null )
+
+VarDefinition ::= identifier {
+  pin=2
+  methods=[getTypeInner getName getReference getInitializer]
+  stubClass="org.ton.tact.lang.stubs.TactVarDefinitionStub"
+}
+
+// <ident>[.<ident>]*
+DotExpression ::= DotPrimaryExpr RightHandExprs {extends=Expression}
+
+private DotPrimaryExpr ::=
+    LiteralValueExpression
+  | ReferenceExpression
+  | TupleLiteral
+  | ParenthesesExpr
+  | CompileTimeExpression
+  | FunctionLiteral
+  | Literal
+
+// just <ident> with reference
+ReferenceExpression ::= identifier { methods=[getReference getQualifier resolve getReadWriteAccess getIdentifierBounds] extends=Expression}
+left QualifiedReferenceExpression ::= '.' identifier <<checkNoColonIfMap>> {elementType=ReferenceExpression}
+
+private RightHandExprs ::= RightHandExpr*
+
+private RightHandExpr ::=
+    CallExpr
+  | QualifiedReferenceExpression
+  | AssertNotNullExpression
+
+left CallExpr ::= ArgumentList {
+  methods=[getParameters getIdentifier getQualifier resolve paramIndexOf resolveSignature]
+}
+
+// math and logical expressions
+OrExpr ::= Expression '||' Expression
+AndExpr ::= Expression '&&' Expression
+UnaryExpr ::= UnaryOp Expression {methods=[getOperator]}
+ConditionalExpr ::= Expression RelOp Expression {methods=[isNone]}
+AddExpr ::= Expression AddOp Expression
+MulExpr ::= Expression MulOp Expression
+
+private RelOp ::= '==' | '!=' | '<' | '<=' | '>' !'>' | '>='
+private AddOp ::= '+' | '-' | '|' | '^'
+private MulOp ::= '*' | '/' | '%' | '<<' | '>>' | '&' | '&^'
+private UnaryOp ::= '+' | '-' | '!' | '^' | '~' | '*' | '<-'
+
+fake BinaryExpr ::= Expression+ {
+  methods=[left="Expression[0]" right="Expression[1]" getOperator]
+  mixin = "org.ton.tact.lang.psi.impl.TactBinaryOpImplMixin"
+}
+// end of math and logical expressions
+
+ParenthesesExpr ::= '(' Expression ')' {pin=3}
+
+WhileStatement ::= while Condition Block {pin=1}
+RepeatStatement ::= repeat Condition Block {pin=1}
+UntilStatement ::= do Block until Condition ';' {pin=1}
+ForEachStatement ::= foreach '(' VarDefinition ',' VarDefinition in Expression ')' Block {
+  pin=1
+  methods=[
+    key="/VarDefinition[0]"
+    value="/VarDefinition[1]"
+  ]
+}
+
+TryStatement ::= try Block CatchClause? {pin=1}
+CatchClause ::= catch '(' ReferenceExpression ')' Block {pin=1}
+
+// <expr>!!
+AssertNotNullExpression ::= '!!' {pin=1}
+
+InitOfExpr ::= 'initOf' ReferenceExpression '(' ExpressionList ')' {pin = 1}
+
+// ([<arg1>, <arg2>[...], ...])
+ArgumentList ::= '(' CommaElementList? '...'? ','? ')' {pin=1}
+
+external BeforeBlockExpressionInner ::= beforeBlockExpression;
+private BeforeBlockExpression ::= BeforeBlockExpressionInner | !() Expression;
+
+// <expr> ? <expr> : <expr>
+TernaryExpr ::= Expression '?' Expression ':' Expression {
+  pin=2
+  methods=[
+    condition="/Expression[0]"
+    thenBranch="/Expression[1]"
+    elseBranch="/Expression[2]"
+  ]
+}
+
+// comptime <expr>
+CompileTimeExpression ::= comptime Expression {pin=1}
+
+// if <condition> { ... }
+//
+// Несмотря на то что правило для `if` можно написать проще, оно написано таким образом,
+// чтобы любое, даже сложное `if` выражение парсилось как линейный список условий.
+// ```
+// if <condition1> { ... }
+// else if <condition2> { ... }
+// else if <condition3> { ... }
+// else { ... }
+// ```
+// В наивном подходе, дерево будет выглядеть так:
+// ```
+// IfStatement
+//   cond: 1
+//   else: IfStatement
+//     cond: 2
+//     else: IfStatement
+//       cond: 3
+//       else: Block
+// ```
+// Что неудобно для обработки, так как требует обхода дерева для получения всех веток.
+//
+// Подход ниже строит линейное дерево:
+// ```
+// IfStatement
+//   cond: 1
+//   body: Block
+//   elseIfs:
+//     IfStatement
+//       cond: 2
+//       body: Block
+//     IfStatement
+//       cond: 3
+//       body: Block
+//   else: Block
+// ```
+// Где все `else if` ветви доступны в массиве, а `else` не находится в самой глубине
+// дерева, а находится на одном уровне с `if` и `else if`.
+
+IfStatement ::= if Condition Block ElseIfBranch* ElseBranch? {
+  pin=1
+  methods=[isGuard]
+}
+
+// else if { ... }
+ElseIfBranch ::= else IfStatementWithoutElse {pin=2}
+
+// if <condition> { ... } only
+IfStatementWithoutElse ::= if Condition Block {pin=1 elementType=IfStatement}
+
+// else { ... }
+ElseBranch ::= else Block {pin=1}
+
+private Condition ::= BeforeBlockExpression
+
+////////// EXPRESSIONS END //////////
+
+
+////// LITERALS //////
+
+// literals like 0 or 10.5 and other
+Literal ::=
+    int
+  | float
+  | hex
+  | oct
+  | bin
+  | true
+  | false
+  | StringLiteral
+  | char
+  | null {
+  methods=[isNumeric isBoolean intValue]
+}
+
+// just different strings
+StringLiteral ::= 'raw_string' | StringTemplate {
+  implements = "com.intellij.psi.PsiLanguageInjectionHost"
+  methods = [isValidHost updateText createLiteralTextEscaper getDecodedText getReferences getContents isC]
+}
+
+StringTemplate ::= OPEN_QUOTE StringTemplatePart* CLOSING_QUOTE {pin=1}
+
+private StringTemplatePart ::=
+    LITERAL_STRING_TEMPLATE_ENTRY
+  | LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY
+  | LongStringTemplateEntry
+  | StringTemplateEntry
+
+LongStringTemplateEntry ::= LONG_TEMPLATE_ENTRY_START Expression TEMPLATE_ENTRY_END {pin=1}
+StringTemplateEntry ::= TEMPLATE_ENTRY_START Expression TEMPLATE_ENTRY_END {pin=1}
+
+////// LITERALS END //////
