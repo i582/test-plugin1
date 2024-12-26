@@ -74,6 +74,6 @@ class TactFileElementType : IStubFileElementType<TactFileStub>("TACT_FILE", Tact
 
     companion object {
         val INSTANCE = TactFileElementType()
-        const val VERSION = 2
+        const val VERSION = 3
     }
 }

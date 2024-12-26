@@ -74,7 +74,7 @@ object TactLangUtil {
     /**
      * Use TactTypeEx.methodsList(project, visited)
      */
-    fun getMethodList(project: Project, type: TactTypeEx): List<TactFunctionDeclaration> {
+    fun getMethodList(project: Project, type: TactTypeEx): List<TactNamedElement> {
         return CachedValuesManager.getManager(project).getCachedValue(type) {
             CachedValueProvider.Result.create(
                 calcMethods(project, type), PsiModificationTracker.MODIFICATION_COUNT
@@ -82,7 +82,7 @@ object TactLangUtil {
         }
     }
 
-    private fun calcMethods(project: Project, type: TactTypeEx): List<TactFunctionDeclaration> {
+    private fun calcMethods(project: Project, type: TactTypeEx): List<TactNamedElement> {
         val typeName = getTypeName(type)
         val moduleName = if (typeName == "Array" || typeName == "Map") "builtin" else type.module()
         if (moduleName.isEmpty() || typeName.isEmpty()) return emptyList()
@@ -104,7 +104,7 @@ object TactLangUtil {
         return declarations.toList()
     }
 
-    fun getMethodListNative(project: Project, type: TactType): List<TactFunctionDeclaration> {
+    fun getMethodListNative(project: Project, type: TactType): List<TactNamedElement> {
         val spec = CompletionUtil.getOriginalOrSelf(type)
         return CachedValuesManager.getCachedValue(spec) {
             CachedValueProvider.Result.create(
@@ -113,7 +113,7 @@ object TactLangUtil {
         }
     }
 
-    private fun calcMethodsNative(project: Project, type: TactType): List<TactFunctionDeclaration> {
+    private fun calcMethodsNative(project: Project, type: TactType): List<TactNamedElement> {
         val typeName = getTypeNameNative(type)
 
         val typeFile = type.containingFile as TactFile

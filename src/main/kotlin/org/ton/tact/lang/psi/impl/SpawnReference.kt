@@ -170,7 +170,7 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
             val newState = state
                 .put(NEED_QUALIFIER_NAME, false)
 
-            if (!processDirectory(mods.first().directory, null, processor, newState, false)) {
+            if (!processDirectory(mods.first().directory, processor, newState, false)) {
                 return false
             }
         }
@@ -181,7 +181,7 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
         val newState = state
             .put(MODULE_NAME, moduleFile.getModuleQualifiedName())
             .put(NEED_QUALIFIER_NAME, false)
-        return !processDirectory(moduleDir, null, processor, newState, false)
+        return !processDirectory(moduleDir, processor, newState, false)
     }
 
     private fun processType(type: TactTypeEx, processor: TactScopeProcessor, state: ResolveState): Boolean {
@@ -254,10 +254,6 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
             return processor.execute(myElement, state)
         }
 
-        if (identText[0] == '$') {
-            return processStubFile("comptime.sp", processor, state.put(SEARCH_NAME, identText.substring(1)))
-        }
-
         when (myElement.parent) {
             is TactFieldName -> {
                 if (!processNamedParams(processor, state)) return false
@@ -272,7 +268,7 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
         if (!processImportedModulesForCompletion(file, processor, state)) return false
         if (!processImportedModules(file, processor, state, myElement)) return false
         if (!processFileEntities(file, processor, state, true)) return false
-        if (!processDirectory(file.originalFile.parent, file, processor, state, true)) return false
+        if (!processDirectory(file.originalFile.parent, processor, state, true)) return false
         if (!processModulesEntities(file, processor, state)) return false
 
         return true
@@ -280,7 +276,6 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
 
     private fun processDirectory(
         dir: PsiDirectory?,
-        file: TactFile?,
         processor: TactScopeProcessor,
         state: ResolveState,
         localProcessing: Boolean,
@@ -289,17 +284,11 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
             return true
         }
 
-        val moduleName = file?.getModuleQualifiedName()
-        val filePath = getPath(file)
-
         for (f in dir.files) {
-            if (f !is TactFile || getPath(f) == filePath) {
+            if (f !is TactFile) {
                 continue
             }
 
-            if (moduleName != null && moduleName != f.getModuleQualifiedName()) {
-                continue
-            }
             if (!processFileEntities(f, processor, state, localProcessing)) {
                 return false
             }
@@ -453,6 +442,26 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
                 processor,
                 state,
                 file.getFunctions(),
+                Conditions.alwaysTrue(),
+                localProcessing,
+                false
+            )
+        ) return false
+
+        if (!processNamedElements(
+                processor,
+                state,
+                file.getAsmFunctions(),
+                Conditions.alwaysTrue(),
+                localProcessing,
+                false
+            )
+        ) return false
+
+        if (!processNamedElements(
+                processor,
+                state,
+                file.getNativeFunctions(),
                 Conditions.alwaysTrue(),
                 localProcessing,
                 false

@@ -48,6 +48,8 @@ class TactAnnotator : Annotator {
         return when (resolved) {
             is TactPrimitiveDeclaration           -> TactColor.PRIMITIVE
             is TactFunctionDeclaration            -> TactColor.PUBLIC_FUNCTION
+            is TactAsmFunctionDeclaration         -> TactColor.PUBLIC_FUNCTION
+            is TactNativeFunctionDeclaration      -> TactColor.PUBLIC_FUNCTION
             is TactStructDeclaration              -> TactColor.PUBLIC_STRUCT
             is TactTraitDeclaration               -> TactColor.PUBLIC_TRAIT
             is TactMessageDeclaration             -> TactColor.PUBLIC_TRAIT

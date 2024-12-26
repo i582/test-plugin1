@@ -17,10 +17,7 @@ import org.ton.tact.lang.TactLanguage
 import org.ton.tact.lang.TactTypes
 import org.ton.tact.lang.psi.impl.ResolveUtil
 import org.ton.tact.lang.psi.impl.TactElementFactory
-import org.ton.tact.lang.stubs.TactContractDeclarationStub
-import org.ton.tact.lang.stubs.TactMessageDeclarationStub
-import org.ton.tact.lang.stubs.TactPrimitiveDeclarationStub
-import org.ton.tact.lang.stubs.TactTraitDeclarationStub
+import org.ton.tact.lang.stubs.*
 import org.ton.tact.lang.stubs.types.*
 
 open class TactFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, TactLanguage) {
@@ -97,6 +94,12 @@ open class TactFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, 
 
     fun getFunctions(): List<TactFunctionDeclaration> =
         getNamedElements(TactTypes.FUNCTION_DECLARATION, TactFunctionDeclarationStubElementType.ARRAY_FACTORY)
+
+    fun getAsmFunctions(): List<TactAsmFunctionDeclaration> =
+        getNamedElements(TactTypes.ASM_FUNCTION_DECLARATION, TactAsmFunctionDeclarationStub.Type.ARRAY_FACTORY)
+
+    fun getNativeFunctions(): List<TactNativeFunctionDeclaration> =
+        getNamedElements(TactTypes.NATIVE_FUNCTION_DECLARATION, TactNativeFunctionDeclarationStub.Type.ARRAY_FACTORY)
 
     fun getStructs(): List<TactStructDeclaration> =
         getNamedElements(TactTypes.STRUCT_DECLARATION, TactStructDeclarationStubElementType.ARRAY_FACTORY)

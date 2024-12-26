@@ -227,7 +227,7 @@ object TactPsiImplUtil {
 
     @JvmStatic
     fun getIdentifier(o: TactType): PsiElement? {
-        return o.typeReferenceExpression?.getIdentifier()
+        return o.typeReferenceExpressionList.firstOrNull()
     }
 
     @JvmStatic
@@ -315,7 +315,7 @@ object TactPsiImplUtil {
             return type
         }
 
-        val resolved = type.typeReferenceExpression?.resolve() ?: return type
+        val resolved = type.typeReferenceExpressionList.firstOrNull()?.resolve() ?: return type
         return elementToType(resolved) ?: type
     }
 

@@ -5,6 +5,7 @@ import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import org.ton.tact.lang.psi.TactFunctionDeclaration
+import org.ton.tact.lang.psi.TactNamedElement
 
 enum class AssignableKind {
     ASSIGNMENT,
@@ -23,8 +24,8 @@ interface TactTypeEx : UserDataHolder {
     fun isEqual(rhs: TactTypeEx): Boolean
     fun isBuiltin(): Boolean
     fun substituteGenerics(nameMap: Map<String, TactTypeEx>): TactTypeEx
-    fun ownMethodsList(project: Project): List<TactFunctionDeclaration>
-    fun methodsList(project: Project, visited: MutableSet<TactTypeEx> = LinkedHashSet(5)): List<TactFunctionDeclaration>
-    fun findMethod(project: Project, name: String): TactFunctionDeclaration?
+    fun ownMethodsList(project: Project): List<TactNamedElement>
+    fun methodsList(project: Project, visited: MutableSet<TactTypeEx> = LinkedHashSet(5)): List<TactNamedElement>
+    fun findMethod(project: Project, name: String): TactNamedElement?
     fun containingModule(project: Project): PsiDirectory?
 }

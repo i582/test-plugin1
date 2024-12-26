@@ -78,7 +78,6 @@ object TactTokenTypes {
         CONTRACT,
         TRAIT,
         WITH,
-        INIT,
         RECEIVE,
         EXTERNAL,
         VIRTUAL,
@@ -86,6 +85,10 @@ object TactTokenTypes {
         ABSTRACT,
         MESSAGE,
         PRIMITIVE,
+        EXTENDS,
+        NATIVE,
+        MUTATES,
+        INLINE,
     )
 
     val OPERATORS = TokenSet.create(
@@ -125,7 +128,6 @@ object TactTokenTypes {
         GREATER_OR_EQUAL,
         GREATER,
         VAR_ASSIGN,
-        TILDA,
     )
 
     val STRING_INTERPOLATION = TokenSet.create(

@@ -35,6 +35,8 @@ object TactElementTypeFactory {
         "PRIMITIVE_DECLARATION"        -> TactPrimitiveDeclarationStub.Type(name)
         "MESSAGE_FUNCTION_DECLARATION" -> TactMessageFunctionDeclarationStub.Type(name)
         "CONTRACT_INIT_DECLARATION"    -> TactContractInitDeclarationStub.Type(name)
+        "ASM_FUNCTION_DECLARATION"     -> TactAsmFunctionDeclarationStub.Type(name)
+        "NATIVE_FUNCTION_DECLARATION"  -> TactNativeFunctionDeclarationStub.Type(name)
         "IMPORT_DECLARATION"           -> TactImportDeclarationStubElementType(name)
         "PARAM_DEFINITION"             -> TactParamDefinitionStubElementType(name)
         "CONST_DEFINITION"             -> TactConstDefinitionStubElementType(name)

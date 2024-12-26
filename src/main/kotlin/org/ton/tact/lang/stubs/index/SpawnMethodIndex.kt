@@ -8,17 +8,18 @@ import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.util.Processor
 import com.intellij.util.indexing.IdFilter
 import org.ton.tact.lang.TactFileElementType
-import org.ton.tact.lang.psi.TactFunctionDeclaration
+import org.ton.tact.lang.psi.TactNamedElement
+import org.ton.tact.lang.psi.TactSignatureOwner
 
-class TactMethodIndex : StringStubIndexExtension<TactFunctionDeclaration>() {
+class TactMethodIndex : StringStubIndexExtension<TactNamedElement>() {
     companion object {
-        val KEY = StubIndexKey.createIndexKey<String, TactFunctionDeclaration>("tact.method")
+        val KEY = StubIndexKey.createIndexKey<String, TactNamedElement>("tact.method")
         
         fun find(
             name: String, project: Project,
-            scope: GlobalSearchScope?
-        ): Collection<TactFunctionDeclaration> {
-            return StubIndex.getElements(KEY, name, project, scope, TactFunctionDeclaration::class.java)
+            scope: GlobalSearchScope?,
+        ): Collection<TactNamedElement> {
+            return StubIndex.getElements(KEY, name, project, scope, TactNamedElement::class.java)
         }
 
         fun process(
@@ -26,11 +27,11 @@ class TactMethodIndex : StringStubIndexExtension<TactFunctionDeclaration>() {
             project: Project,
             scope: GlobalSearchScope?,
             idFilter: IdFilter?,
-            processor: Processor<TactFunctionDeclaration>
+            processor: Processor<TactNamedElement>,
         ): Boolean {
             return StubIndex.getInstance().processElements(
                 KEY, name, project, scope, idFilter,
-                TactFunctionDeclaration::class.java, processor
+                TactNamedElement::class.java, processor
             )
         }
     }

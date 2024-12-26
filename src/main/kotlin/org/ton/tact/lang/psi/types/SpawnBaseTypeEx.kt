@@ -75,7 +75,7 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
         return priorityMap[maxPriority]
     }
 
-    override fun ownMethodsList(project: Project): List<TactFunctionDeclaration> {
+    override fun ownMethodsList(project: Project): List<TactNamedElement> {
         val anchor = anchor
         if (anchor is TactType) {
             return TactLangUtil.getMethodListNative(project, anchor)
@@ -88,7 +88,7 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
         return TactLangUtil.getMethodList(project, this)
     }
 
-    override fun methodsList(project: Project, visited: MutableSet<TactTypeEx>): List<TactFunctionDeclaration> {
+    override fun methodsList(project: Project, visited: MutableSet<TactTypeEx>): List<TactNamedElement> {
         if (this in visited) return emptyList()
         val ownMethods = this.ownMethodsList(project)
         val unwrapped = unwrapReference().unwrapAlias()
@@ -98,7 +98,7 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
         return ownMethods + inheritedMethods
     }
 
-    override fun findMethod(project: Project, name: String): TactFunctionDeclaration? {
+    override fun findMethod(project: Project, name: String): TactNamedElement? {
         return methodsList(project).find { it.name == name }
     }
 

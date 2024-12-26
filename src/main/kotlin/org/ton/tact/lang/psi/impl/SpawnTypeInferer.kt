@@ -95,8 +95,6 @@ object TactTypeInferer {
                 return exprType
             }
 
-            // when `foo()?.bar()` we need to wrap result to Option
-
             val signature = unwrapped.signature
             val owner = signature.parent as TactSignatureOwner
 

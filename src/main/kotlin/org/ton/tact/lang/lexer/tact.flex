@@ -259,7 +259,7 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 ".."                                      { return RANGE; }
 "."                                       { return DOT; }
 "!!"                                      { return ASSERT_OP; }
-"~"                                       { return TILDA; }
+"~"                                       { return BIT_NOT; }
 "|"                                       { return BIT_OR; }
 "{"                                       { return LBRACE; }
 
@@ -332,6 +332,7 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 "=>"                                      { return FAT_ARROW; }
 
 // top level declarations
+"as"                                      { return AS ; }
 "import"                                  { return IMPORT ; }
 "struct"                                  { return STRUCT; }
 "const"                                   { return CONST; }
@@ -340,13 +341,17 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 "trait"                                   { return TRAIT; }
 "message"                                 { return MESSAGE; }
 "with"                                    { return WITH; }
-"init"                                    { return INIT; }
 "receive"                                 { return RECEIVE; }
 "external"                                { return EXTERNAL; }
 "virtual"                                 { return VIRTUAL; }
 "override"                                { return OVERRIDE; }
 "abstract"                                { return ABSTRACT; }
 "primitive"                               { return PRIMITIVE; }
+"native"                                  { return NATIVE; }
+"extends"                                 { return EXTENDS; }
+"mutates"                                 { return MUTATES; }
+"inline"                                  { return INLINE; }
+"type"                                    { return TYPE; }
 
 "return"                                  { return RETURN; }
 "let"                                     { return LET; }

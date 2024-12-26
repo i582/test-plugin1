@@ -73,7 +73,6 @@
     DOT                  =  '.'
     ASSERT_OP            =  '!!'
     RANGE                =  '..'
-    TILDA                =  '~'
     SINGLE_QUOTE         =  "'"
     DOUBLE_QUOTE         =  '"'
     BACKTICK             =  '`'
@@ -91,13 +90,19 @@
     C_STRING             = 'c_string'
     raw_string           = 'raw_string'
     char                 = 'char'
+    SHIFT_RIGHT          =  '>>'
+    SHIFT_LEFT           =  '<<'
+    BIT_AND              =  '&'
+    BIT_OR               =  '|'
+    BIT_XOR              =  '^'
+    BIT_NOT              =  '~'
   ]
 
   extends("(Or|And|Add|Conversion|Mul|Selector|Conditional|OrBlock)Expr|(In|NotIn|Is|NotIs)Expression")=BinaryExpr
   extends(".*(Expr|Literal|Lit|OperandName)|CompileTimeIfExpression|IfExpression|ArrayCreation|InExpression|NotInExpression|MatchExpression|EnumFetch|MutExpression|DotExpression|IsExpression|NotIsExpression|AsExpression|UnpackingExpression|ConstexprIdentifierExpression|IncDecExpression|LiteralValueExpression|TactExpression")=Expression
 
-  implements("ModuleClause|(Var|Param|Field|Label|Var|Const|EnumField|InterfaceMethod|ModuleVar)Definition|(Struct|TypeAlias|Union)Declaration|Receiver|StaticReceiver|Import(Alias|Name)|ContractDeclaration|MessageDeclaration|TraitDeclaration|MessageFunctionDeclaration|ContractInitDeclaration|PrimitiveDeclaration")="org.ton.tact.lang.psi.TactNamedElement"
-  implements("FunctionLiteral|(Function)Declaration")="org.ton.tact.lang.psi.TactSignatureOwner"
+  implements("ModuleClause|(Var|Param|Field|Label|Var|Const|EnumField|InterfaceMethod|ModuleVar)Definition|(Struct|TypeAlias|Union|NativeFunction|AsmFunction)Declaration|Import(Alias|Name)|ContractDeclaration|MessageDeclaration|TraitDeclaration|MessageFunctionDeclaration|ContractInitDeclaration|PrimitiveDeclaration")="org.ton.tact.lang.psi.TactNamedElement"
+  implements("FunctionLiteral|(Function|NativeFunction|AsmFunction)Declaration")="org.ton.tact.lang.psi.TactSignatureOwner"
   implements("(Function)Declaration")="org.ton.tact.lang.psi.TactFunctionOrMethodDeclaration"
   implements(".*ReferenceExpression|FieldName|EnumFetch")="org.ton.tact.lang.psi.TactReferenceExpressionBase"
 
@@ -108,9 +113,9 @@
 
   extends("(Function)Declaration")="org.ton.tact.lang.psi.impl.TactFunctionOrMethodDeclarationImpl<?>"
   extends("Type|Signature|Result|Parameters|TypeUnionList|EmbeddedInterfaceDefinition|TypeReferenceExpression|Attributes|Attribute|PlainAttribute|AttributeExpression|AttributeValue|AttributeKey|ExternList|FieldDeclaration|GenericArguments|Block|ImportDeclaration")="org.ton.tact.lang.psi.impl.TactStubbedElementImpl<?>"
-  extends("(Struct|Message|Trait|Contract|MessageFunction|ContractInit|Primitive)Declaration|(Var|Param|Field|Const|ModuleVar)Definition")="org.ton.tact.lang.psi.impl.TactNamedElementImpl<?>"
+  extends("(Struct|Message|Trait|Contract|MessageFunction|ContractInit|Primitive|NativeFunction|AsmFunction)Declaration|(Var|Param|Field|Const|ModuleVar)Definition")="org.ton.tact.lang.psi.impl.TactNamedElementImpl<?>"
 
-  elementTypeFactory("ModuleClause|(Function|Struct|Field|Message|Trait|Contract|MessageFunction|ContractInit|Primitive)Declaration|.*Type|(Var|Label|Field|Param|Const|ModuleVar)Definition|LambdaParameter|Import(Alias|Name)|PlainGenericParameter|ConstantGenericParameter|GenericParameters|Parameters|Result|Signature|TypeReferenceExpression|Attributes|Attribute|PlainAttribute|AttributeExpression|AttributeValue|AttributeKey|EmbeddedDefinition|ExternList|GenericArguments|Block|ComptimeTypeStatement|ImportDeclaration")='org.ton.tact.lang.stubs.TactElementTypeFactory.stubFactory'
+  elementTypeFactory("ModuleClause|(Function|Struct|Field|Message|Trait|Contract|MessageFunction|ContractInit|Primitive|NativeFunction|AsmFunction)Declaration|.*Type|(Var|Label|Field|Param|Const|ModuleVar)Definition|LambdaParameter|Import(Alias|Name)|PlainGenericParameter|ConstantGenericParameter|GenericParameters|Parameters|Result|Signature|TypeReferenceExpression|Attributes|Attribute|PlainAttribute|AttributeExpression|AttributeValue|AttributeKey|EmbeddedDefinition|ExternList|GenericArguments|Block|ComptimeTypeStatement|ImportDeclaration")='org.ton.tact.lang.stubs.TactElementTypeFactory.stubFactory'
 
   extends(".*Statement")=Statement
   extends(".*Type|TypeList")=Type
@@ -144,6 +149,8 @@ private TopLevelDeclaration ::= !<<eof>> TopDeclaration {pin=1 recoverWhile=TopL
 private TopDeclaration ::=
     ModuleVarDeclaration
   | FunctionDeclaration
+  | NativeFunctionDeclaration
+  | AsmFunctionDeclaration
   | StructDeclaration
   | TraitDeclaration
   | PrimitiveDeclaration
@@ -152,7 +159,7 @@ private TopDeclaration ::=
   | ConstDeclaration
   | Statement // for single files without entry point
 
-private TopLevelDeclarationRecover ::= !('type' | message | primitive | contract | trait | enum | import | '$for' | '$if' | '#[' | '[' | '!' | '?' | '&' | '@' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | break | test | comptime | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | interface | oct | return | select | 'raw_string' | OPEN_QUOTE | char | struct | union | var | assert | match | asm | true | false | none | '$else' | null | extern)
+private TopLevelDeclarationRecover ::= !('type' | inline | extends | message | primitive | contract | trait | enum | import | '$for' | '$if' | '#[' | '[' | '!' | '?' | '&' | '@' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | break | test | comptime | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | interface | oct | return | select | 'raw_string' | OPEN_QUOTE | char | struct | union | var | assert | match | asm | true | false | none | '$else' | null | extern)
 
 ////////// TOP LEVEL DECLARATIONS END //////////
 
@@ -184,7 +191,7 @@ Statement ::=
   | ContinueStatement
   | SimpleStatement { methods=[processDeclarations] recoverWhile=StatementRecover }
 
-private StatementRecover ::= !('!' | '?' | '&' | '#['| '[' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | type | break | test | let | while | until | do | repeat | foreach | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | interface | oct | return | select | 'raw_string' | OPEN_QUOTE | char | struct | union | var | assert | match | true | false | none | '$for' | '$if' | '$else' | null | extern)
+private StatementRecover ::= !('!' | '?' | '&' | '#['| '[' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | type | break | test | let | while | until | do | repeat | foreach | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | oct | return | 'raw_string' | OPEN_QUOTE | char | struct | true | false | none | null | extern | mutates | extends | virtual | override | inline | abstract)
 
 // attributes start
 // #[attr1]
@@ -221,6 +228,7 @@ AttributeIdentifierPrefix ::= (identifier) '.'
 // simple statements
 SimpleStatement ::=
     VarDeclaration
+  | StatementDestruct
   | AssignStatement
   | ExpressionStatement
 
@@ -280,7 +288,7 @@ ConstDefinition ::= identifier TypeHint ('=' Expression)? {
   methods=[getTypeInner getName getExpressionText getExpressionType]
 }
 
-ContractInitDeclaration ::= init Parameters Block {
+ContractInitDeclaration ::= 'init' Parameters Block {
   pin=1
   stubClass="org.ton.tact.lang.stubs.TactContractInitDeclarationStub"
   methods=[getIdentifier getName]
@@ -288,7 +296,7 @@ ContractInitDeclaration ::= init Parameters Block {
 
 ReceiveStringId ::= '(' StringLiteral ')'
 
-MessageKind ::= receive | external | bounced
+MessageKind ::= receive | external | 'bounced'
 MessageFunctionDeclaration ::= MessageKind (ReceiveStringId | Parameters) Block {
   pin=1
   stubClass="org.ton.tact.lang.stubs.TactMessageFunctionDeclarationStub"
@@ -367,12 +375,46 @@ ModuleVarDefinition ::= identifier '=' Expression {
 }
 // end of module vars
 
-FunctionDeclaration ::= Attributes? fun identifier Signature Block? {
+FunctionDeclaration ::= Attributes? FunctionAttribute* fun identifier Signature Block? {
   pin=5
   stubClass="org.ton.tact.lang.stubs.TactFunctionDeclarationStub"
   methods=[getName getTypeInner isDefinition]
   mixin="org.ton.tact.lang.psi.impl.TactFunctionDeclarationWithScopeHolder"
 }
+
+FunctionAttribute ::=
+    'get' ('(' Expression ')')?
+  | mutates
+  | extends
+  | virtual
+  | override
+  | inline
+  | abstract
+
+StatementDestruct ::= let ReferenceExpression "{" DestructList "}" "=" Expression ";" {pin=3}
+
+private DestructList ::= DestructItem ("," DestructItem)* ("," "..")? ","?
+
+DestructItem ::=
+    ReferenceExpression ':' ReferenceExpression
+  | ReferenceExpression
+
+NativeFunctionDeclaration ::= Attributes? FunctionAttribute* native identifier Signature ';' {
+  pin=3
+  stubClass="org.ton.tact.lang.stubs.TactNativeFunctionDeclarationStub"
+  methods=[getTypeInner]
+}
+
+AsmHeader ::= 'asm' AsmShuffle? {pin=1}
+
+AsmFunctionDeclaration ::= AsmHeader FunctionAttribute* fun identifier Signature '{' AsmInstruction* '}' {
+  stubClass="org.ton.tact.lang.stubs.TactAsmFunctionDeclarationStub"
+  methods=[getTypeInner]
+}
+
+AsmShuffle ::= '(' identifier* ('->' int+)? ')'
+
+AsmInstruction ::= identifier | Literal
 
 ////// DECLARATIONS END //////
 
@@ -392,7 +434,13 @@ Expression ::=
   | UnaryExpr
   | InitOfExpr
   | MaxGroup
-  | ParenthesesExpr {methods=[getType] implements="org.ton.tact.lang.psi.TactTypeOwner"}
+  | ParenthesesExpr
+//  | BitwiseOrExpr
+//  | BitwiseXorExpr
+//  | BitwiseAndExpr
+//  | BitwiseShiftExpr
+//  | BitwiseNotExpr
+  {methods=[getType] implements="org.ton.tact.lang.psi.TactTypeOwner"}
 // end of expression rule
 
 // <type> {...}
@@ -427,7 +475,7 @@ FunctionLiteral ::= fun Signature Block {
 
 ////// TYPES //////
 
-Type ::= TypeLit | TypeName {
+Type ::= (TypeLit | TypeName) '?'? (as TypeReferenceExpression)? {
   stubClass="org.ton.tact.lang.stubs.TactTypeStub"
   methods=[getIdentifier resolveType getModuleName]
 }
@@ -549,6 +597,12 @@ ConditionalExpr ::= Expression RelOp Expression {methods=[isNone]}
 AddExpr ::= Expression AddOp Expression
 MulExpr ::= Expression MulOp Expression
 
+//BitwiseOrExpr ::= Expression '|' Expression
+//BitwiseXorExpr ::= Expression '^' Expression
+//BitwiseAndExpr ::= Expression '&' Expression
+//BitwiseShiftExpr ::= Expression ('<<' | '>>') Expression
+//BitwiseNotExpr ::= '~' Expression
+
 private RelOp ::= '==' | '!=' | '<' | '<=' | '>' !'>' | '>='
 private AddOp ::= '+' | '-' | '|' | '^'
 private MulOp ::= '*' | '/' | '%' | '<<' | '>>' | '&' | '&^'
@@ -620,7 +674,7 @@ CompileTimeExpression ::= comptime Expression {pin=1}
 //       cond: 3
 //       else: Block
 // ```
-// Что неудобно для обработки, так как требует обхода дерева для получения всех веток.
+// Что неудобно для обработки, так как требует ��бхода дерева для получения всех веток.
 //
 // Подход ниже строит линейное дерево:
 // ```

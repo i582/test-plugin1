@@ -16,8 +16,6 @@ abstract class TactLightType<E : TactCompositeElement>(
 
     override fun getContainingFile(): PsiFile = element.containingFile
 
-    override fun getTypeReferenceExpression() = null
-
     override fun getIdentifier() = null
 
     override fun toString() = javaClass.simpleName + "{" + element + "}"
@@ -27,12 +25,4 @@ abstract class TactLightType<E : TactCompositeElement>(
     override fun getStub(): TactTypeStub? = null
 
     override fun resolveType() = resolveType(this)
-
-    class TactGenericType(private val name: String, val param: TactCompositeElement) : TactLightType<TactCompositeElement>(param) {
-        override fun getName() = name
-
-        override fun getText() = name
-
-        override fun getModuleName() = ""
-    }
 }
