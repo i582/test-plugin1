@@ -4,8 +4,7 @@ import com.intellij.codeInsight.hints.declarative.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.ton.tact.lang.psi.TactVarDeclaration
-import org.ton.tact.lang.psi.TactVarDefinition
+import org.ton.tact.lang.psi.*
 import org.ton.tact.lang.psi.types.TactUnknownTypeEx
 
 class TactVariableTypeHintsProvider : InlayHintsProvider {
@@ -30,6 +29,10 @@ class TactVariableTypeHintsProvider : InlayHintsProvider {
                 return
             }
 
+            if (isObviousCase(parent?.expression)) {
+                return
+            }
+
             val type = element.getType(null) ?: return
             if (type is TactUnknownTypeEx) {
                 // no need to show a hint if type is unknown
@@ -44,6 +47,28 @@ class TactVariableTypeHintsProvider : InlayHintsProvider {
                 text(": ")
                 text(type.readableName(element))
             }
+        }
+
+        private fun isObviousCase(element: PsiElement?): Boolean {
+            if (element == null) return false
+
+            if (element is TactStringLiteral) {
+                // let a = "Hello";
+                return true
+            }
+
+            if (element is TactLiteral && element.isBoolean) {
+                // let a = true;
+                // let a = false;
+                return true
+            }
+
+            if (element is TactLiteralValueExpression) {
+                // let a = Foo {};
+                return true
+            }
+
+            return false
         }
     }
 }

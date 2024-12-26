@@ -11,17 +11,20 @@ import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
+import com.intellij.psi.util.parentOfTypes
 import com.intellij.util.ArrayUtil
 import org.ton.tact.ide.codeInsight.TactCodeInsightUtil
 import org.ton.tact.lang.psi.*
 import org.ton.tact.lang.psi.impl.TactPsiImplUtil.processNamedElements
 import org.ton.tact.lang.psi.impl.imports.TactImportResolver
-import org.ton.tact.lang.psi.types.TactArrayTypeEx
 import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.toEx
+import org.ton.tact.lang.psi.types.TactMessageTypeEx
 import org.ton.tact.lang.psi.types.TactStructTypeEx
+import org.ton.tact.lang.psi.types.TactTraitTypeEx
 import org.ton.tact.lang.psi.types.TactTypeEx
 import org.ton.tact.lang.stubs.StubWithText
 import org.ton.tact.lang.stubs.index.TactModulesIndex
+import org.ton.tact.lang.stubs.index.TactNamesIndex
 
 class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = false) :
     TactReferenceBase<TactReferenceExpressionBase>(
@@ -211,19 +214,39 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
         val newState = state.put(LOCAL_RESOLVE, localResolve)
 
         if (typ is TactStructTypeEx) {
-            val isMethodRef = element.parent is TactCallExpr
-
             val declaration = typ.resolve(project) ?: return true
             val structType = declaration.structType
 
-            // If it is a call, then most likely it is a method call, but it
-            // could be a function call stored in a structure field.
-            if (isMethodRef) {
-                if (!processMethods(typ, processor, newState, localResolve)) return false
-                if (!processNamedElements(processor, newState, structType.fieldList, localResolve)) return false
-            } else {
-                if (!processNamedElements(processor, newState, structType.fieldList, localResolve)) return false
-                if (!processMethods(typ, processor, newState, localResolve)) return false
+            if (!processNamedElements(processor, newState, structType.fieldList, localResolve)) return false
+            if (!processMethods(typ, processor, newState, localResolve)) return false
+        }
+
+        if (typ is TactMessageTypeEx) {
+            val declaration = typ.resolve(project) ?: return true
+            val traitType = declaration.messageType
+
+            if (!processNamedElements(processor, newState, traitType.fieldList, localResolve)) return false
+            if (!processMethods(typ, processor, newState, localResolve)) return false
+        }
+
+        if (typ is TactTraitTypeEx) {
+            val declaration = typ.resolve(project) ?: return true
+            val traitType = declaration.traitType
+
+            if (!processNamedElements(processor, newState, traitType.fieldList, localResolve)) return false
+            if (!processNamedElements(processor, newState, traitType.methodsList, localResolve)) return false
+            if (!processNamedElements(processor, newState, traitType.constantsList, localResolve)) return false
+
+            if (typ.qualifiedName() != "BaseTrait") {
+                val baseTrait = TactNamesIndex.find("BaseTrait", project, null).firstOrNull() as? TactTraitDeclaration ?: return true
+                if (!processExistingType(baseTrait.traitType.toEx(), processor, state)) return false
+            }
+
+            val superTypes = traitType.withClause?.typeListNoPin?.typeList ?: return true
+            if (superTypes.isEmpty()) return true
+
+            for (superType in superTypes) {
+                if (!processExistingType(superType.toEx(), processor, state)) return false
             }
         }
 
@@ -270,6 +293,11 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
         if (!processFileEntities(file, processor, state, true)) return false
         if (!processDirectory(file.originalFile.parent, processor, state, true)) return false
         if (!processModulesEntities(file, processor, state)) return false
+
+        if (identText == "self") {
+            val owner = identifier!!.parentOfTypes(TactTraitDeclaration::class, TactContractDeclaration::class) ?: return true
+            if (!processor.execute(owner, state.put(SEARCH_NAME, owner.name))) return false
+        }
 
         return true
     }
@@ -431,6 +459,16 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
         if (!processNamedElements(
                 processor,
                 state,
+                file.getTraits(),
+                Conditions.alwaysTrue(),
+                localProcessing,
+                false
+            )
+        ) return false
+
+        if (!processNamedElements(
+                processor,
+                state,
                 file.getMessages(),
                 Conditions.alwaysTrue(),
                 localProcessing,
@@ -531,22 +569,7 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
     private fun processLiteralValueField(processor: TactScopeProcessor, state: ResolveState): Boolean {
         val initExpr = element.parentOfType<TactLiteralValueExpression>()
         val type = initExpr?.type?.toEx() ?: return true
-        if (type is TactArrayTypeEx) {
-            return processArrayInitFields(processor, state)
-        }
         return processType(type, processor, state)
-    }
-
-    private fun processArrayInitFields(processor: TactScopeProcessor, state: ResolveState): Boolean {
-        val psiFile = stubsManager.findFile("arrays.sp") ?: return true
-        val struct = psiFile.getStructs().firstOrNull { it.name == "ArrayInit" } ?: return true
-        return processType(struct.structType.toEx(), processor, state)
-    }
-
-    private fun processChannelInitFields(processor: TactScopeProcessor, state: ResolveState): Boolean {
-        val psiFile = stubsManager.findFile("channels.sp") ?: return true
-        val struct = psiFile.getStructs().firstOrNull { it.name == "ChanInit" } ?: return true
-        return processType(struct.structType.toEx(), processor, state)
     }
 
     private fun createDelegate(processor: TactScopeProcessor, isCodeFragment: Boolean = false): TactVarProcessor {

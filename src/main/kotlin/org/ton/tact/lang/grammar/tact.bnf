@@ -149,7 +149,7 @@ private TopDeclaration ::=
   | ConstDeclaration
   | Statement // for single files without entry point
 
-private TopLevelDeclarationRecover ::= !('type' | inline | extends | message | primitive | contract | trait | enum | import | '$for' | '$if' | '#[' | '[' | '!' | '?' | '&' | '@' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | break | test | comptime | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | interface | oct | return | select | 'raw_string' | OPEN_QUOTE | char | struct | union | var | assert | match | asm | true | false | none | '$else' | null | extern)
+private TopLevelDeclarationRecover ::= !('type' | inline | extends | message | primitive | contract | trait | enum | import | '#[' | '[' | '!' | '?' | '&' | '@' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | break | test | comptime | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | interface | oct | return | select | 'raw_string' | OPEN_QUOTE | char | struct | union | var | assert | match | asm | true | false | none | null | extern)
 
 ////////// TOP LEVEL DECLARATIONS END //////////
 
@@ -257,7 +257,7 @@ WithClause ::= with TypeListNoPin {pin=1}
 ContractDeclaration ::= Attributes? contract identifier WithClause? ContractType {
   pin=2
   stubClass="org.ton.tact.lang.stubs.TactContractDeclarationStub"
-  methods=[getIdentifier getName getTypeInner addField]
+  methods=[getTypeInner]
 }
 
 ContractType ::= '{' ContractItem* '}'
@@ -305,7 +305,10 @@ TraitDeclaration ::= Attributes? TraitType {
   stubClass="org.ton.tact.lang.stubs.TactTraitDeclarationStub"
   methods=[getIdentifier getName getTypeInner]
 }
-TraitType ::= trait identifier WithClause? '{' TraitItem* '}' {pin=1}
+TraitType ::= trait identifier WithClause? '{' TraitItem* '}' {
+  pin=1
+  methods=[getFieldList getMethodsList getConstantsList]
+}
 
 private TraitItem ::=
     FieldDeclaration
@@ -507,7 +510,7 @@ private ParameterList ::= ParamDefinition (',' (ParamDefinition | &')'))* list_s
 ParamDefinition ::= ParamWithName | ParamWithoutName {
   pin=4
   stubClass="org.ton.tact.lang.stubs.TactParamDefinitionStub"
-  methods = [isVariadic getName]
+  methods = [getName]
 }
 private ParamWithName ::= identifier '...'? ':' Type
 private ParamWithoutName ::= '...'? ':' Type

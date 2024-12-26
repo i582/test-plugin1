@@ -254,9 +254,6 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 {RAW_DOUBLE_QUOTE_STRING}                 { return RAW_STRING; }
 {RAW_SINGLE_QUOTE_STRING}                 { return RAW_STRING; }
 
-"..."                                     { return TRIPLE_DOT; }
-"..="                                     { return DOTDOTEQUAL; }
-".."                                      { return RANGE; }
 "."                                       { return DOT; }
 "!!"                                      { return ASSERT_OP; }
 "~"                                       { return BIT_NOT; }
@@ -326,8 +323,6 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 ">="                                      { return GREATER_OR_EQUAL; }
 ">"                                       { return GREATER; }
 
-"`"                                       { return BACKTICK; }
-"$"                                       { return DOLLAR; }
 "->"                                      { return ARROW; }
 
 // top level declarations

@@ -10,8 +10,6 @@ import com.intellij.psi.util.parentOfType
 import org.ton.tact.ide.codeInsight.TactCodeInsightUtil
 import org.ton.tact.lang.psi.*
 import org.ton.tact.lang.psi.impl.TactReferenceBase.Companion.LOCAL_RESOLVE
-import org.ton.tact.lang.psi.types.TactArrayTypeEx
-import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.toEx
 import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.unwrapAlias
 import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.unwrapGenericInstantiation
 import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.unwrapReference
@@ -48,27 +46,12 @@ class TactFieldNameReference(element: TactReferenceExpressionBase) :
         }
 
         val typeToProcess = type.unwrapReference().unwrapAlias().unwrapGenericInstantiation()
-        if (typeToProcess is TactArrayTypeEx) {
-            return processArrayInitFields(fieldProcessor)
-        }
 
         val typeFile = type.anchor(project)?.containingFile as? TactFile
         val originFile = element.containingFile as TactFile
         val localResolve = typeFile == null || TactReference.isLocalResolve(typeFile, originFile)
 
         return processStructType(fieldProcessor, typeToProcess, localResolve)
-    }
-
-    private fun processArrayInitFields(processor: TactScopeProcessor, ): Boolean {
-        val psiFile = stubsManager.findFile("arrays.sp") ?: return true
-        val struct = psiFile.getStructs().firstOrNull { it.name == "ArrayInit" } ?: return true
-        return processStructType(processor, struct.structType.toEx(), false)
-    }
-
-    private fun processChannelInitFields(processor: TactScopeProcessor, ): Boolean {
-        val psiFile = stubsManager.findFile("channels.sp") ?: return true
-        val struct = psiFile.getStructs().firstOrNull { it.name == "ChanInit" } ?: return true
-        return processStructType(processor, struct.structType.toEx(), false)
     }
 
     private fun processStructType(fieldProcessor: TactScopeProcessor, type: TactTypeEx?, localResolve: Boolean): Boolean {

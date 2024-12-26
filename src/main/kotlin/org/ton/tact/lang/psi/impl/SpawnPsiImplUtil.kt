@@ -256,6 +256,21 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
+    fun getFieldList(o: TactTraitType): List<TactFieldDefinition> {
+        return o.fieldDeclarationList.mapNotNull { it.fieldDefinition }
+    }
+
+    @JvmStatic
+    fun getMethodsList(o: TactTraitType): List<TactFunctionDeclaration> {
+        return o.functionDeclarationList
+    }
+
+    @JvmStatic
+    fun getConstantsList(o: TactTraitType): List<TactConstDefinition> {
+        return o.constDeclarationList.mapNotNull { it.constDefinition }
+    }
+
+    @JvmStatic
     fun getFieldList(o: TactMessageType): List<TactFieldDefinition> {
         return o.fieldDeclarationList.mapNotNull { it.fieldDefinition }
     }
@@ -322,6 +337,18 @@ object TactPsiImplUtil {
     private fun elementToType(resolved: PsiElement): TactType? {
         if (resolved is TactStructDeclaration) {
             return resolved.structType
+        }
+
+        if (resolved is TactMessageDeclaration) {
+            return resolved.messageType
+        }
+
+        if (resolved is TactContractDeclaration) {
+            return resolved.contractType
+        }
+
+        if (resolved is TactTraitDeclaration) {
+            return resolved.traitType
         }
 
         return null
@@ -546,14 +573,13 @@ object TactPsiImplUtil {
     @JvmStatic
     fun resultCount(o: TactSignature): Pair<Int, Int> {
         return when (val type = o.result?.type) {
-            is TactTupleType -> {
+            is TactTupleType  -> {
                 val list = type.typeListNoPin
                 if (list != null) list.typeList.size to list.typeList.size
                 else 0 to 0
             }
 
-            is TactOptionType,
-                -> {
+            is TactOptionType -> {
                 val inner = type.type ?: return 0 to 1
                 if (inner is TactTupleType) {
                     val list = inner.typeListNoPin
@@ -564,8 +590,8 @@ object TactPsiImplUtil {
                 1 to 1
             }
 
-            null             -> 0 to 0
-            else             -> 1 to 1
+            null              -> 0 to 0
+            else              -> 1 to 1
         }
     }
 
@@ -581,15 +607,6 @@ object TactPsiImplUtil {
     @JvmStatic
     fun getType(o: TactResult, context: ResolveState?): TactTypeEx {
         return o.type.toEx()
-    }
-
-    @JvmStatic
-    fun isVariadic(o: TactParamDefinition): Boolean {
-        val stub = o.stub
-        if (stub != null) {
-            return stub.isVariadic
-        }
-        return o.tripleDot != null
     }
 
     @JvmStatic
@@ -710,6 +727,11 @@ object TactPsiImplUtil {
     @JvmStatic
     fun getTypeInner(o: TactTraitDeclaration, context: ResolveState?): TactTypeEx {
         return o.traitType.toEx()
+    }
+
+    @JvmStatic
+    fun getTypeInner(o: TactContractDeclaration, context: ResolveState?): TactTypeEx {
+        return o.contractType.toEx()
     }
 
     @JvmStatic

@@ -119,7 +119,7 @@ object TactElementFactory {
     }
 
     fun createFieldDeclaration(project: Project, name: String, type: String): PsiElement {
-        val file = createFileFromText(project, "struct S {\n\t$name $type\n}")
+        val file = createFileFromText(project, "struct S {\n\t$name: $type;\n}")
         return file.getStructs().firstOrNull()?.structType?.fieldList?.firstOrNull()?.parent
             ?: error("Impossible situation! Parser is broken.")
     }

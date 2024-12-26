@@ -53,7 +53,6 @@ class TactStringTypeEx private constructor(anchor: PsiElement) : TactStructTypeE
                 }
             }
 
-            thisLogger().error("Cannot find string type in builtin module")
             val pseudoType = TactElementFactory.createType(project, "string")
             return TactStringTypeEx(pseudoType)
         }

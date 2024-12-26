@@ -13,7 +13,7 @@ class TactParamDefinitionStubElementType(name: String) : TactNamedStubElementTyp
     }
 
     override fun createStub(psi: TactParamDefinition, parentStub: StubElement<*>?): TactParamDefinitionStub {
-        return TactParamDefinitionStub(parentStub, this, psi.name, true, psi.isVariadic())
+        return TactParamDefinitionStub(parentStub, this, psi.name, true, isVariadic = false)
     }
 
     override fun serialize(stub: TactParamDefinitionStub, dataStream: StubOutputStream) {

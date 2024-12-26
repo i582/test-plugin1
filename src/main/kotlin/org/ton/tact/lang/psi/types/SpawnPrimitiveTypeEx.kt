@@ -106,6 +106,7 @@ class TactPrimitiveTypeEx(val name: TactPrimitiveTypes, anchor: PsiElement? = nu
     companion object {
         val BOOL = TactPrimitiveTypeEx(TactPrimitiveTypes.BOOL)
         val INT = TactPrimitiveTypeEx(TactPrimitiveTypes.INT)
+        val STRING = TactPrimitiveTypeEx(TactPrimitiveTypes.STRING)
         val UINT = TactPrimitiveTypeEx(TactPrimitiveTypes.UINT)
         val NULL = TactPrimitiveTypeEx(TactPrimitiveTypes.NULL)
 

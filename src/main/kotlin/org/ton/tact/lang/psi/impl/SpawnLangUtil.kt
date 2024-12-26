@@ -161,10 +161,6 @@ object TactLangUtil {
     }
 
     private fun getTypeName(o: TactTypeEx): String {
-        if (o is TactArrayTypeEx) {
-            return "Array"
-        }
-
         if (o is TactOptionTypeEx) {
             return getTypeName(o.inner)
         }
@@ -207,10 +203,10 @@ object TactLangUtil {
         }
 
         is TactStringTypeEx    -> "''"
-        is TactArrayTypeEx     -> "[]"
         is TactMapTypeEx       -> "{}"
         is TactFunctionTypeEx  -> "fun ${type.signature.text} {}"
         is TactStructTypeEx    -> type.readableName(element) + "{}"
+        is TactTraitTypeEx     -> type.readableName(element) + "{}"
         is TactNoneTypeEx      -> "none"
         is TactOptionTypeEx    -> "none"
         is TactAnyTypeEx       -> "0"

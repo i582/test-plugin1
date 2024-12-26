@@ -103,8 +103,6 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
     }
 
     companion object {
-        protected val primitivesMap = TactPrimitiveTypes.entries.associateBy { it.value }
-
         val TactTypeEx?.isAny: Boolean
             get() = when (this) {
                 is TactAnyTypeEx     -> true
@@ -112,20 +110,7 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
                 else                 -> false
             }
 
-        fun TactTypeEx?.isNullableEqual(other: TactTypeEx?): Boolean {
-            if (this == null && other == null) return true
-            if (this == null || other == null) return false
-            return this.isEqual(other)
-        }
-
         fun TactTypeEx.unwrapReference(): TactTypeEx {
-            return this
-        }
-
-        fun TactTypeEx.unwrapArray(): TactTypeEx {
-            if (this is TactArrayTypeEx) {
-                return this.inner
-            }
             return this
         }
 
@@ -134,20 +119,6 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
         }
 
         fun TactTypeEx.unwrapAlias(): TactTypeEx {
-            return this
-        }
-
-        fun TactTypeEx.unwrapOptionOrResult(): TactTypeEx {
-            if (this is TactOptionTypeEx) {
-                return this.inner
-            }
-            return this
-        }
-
-        fun TactTypeEx.unwrapFunction(): TactTypeEx? {
-            if (this is TactFunctionTypeEx) {
-                return this.result
-            }
             return this
         }
 
@@ -184,17 +155,12 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
         private fun TactType.toExInner(visited: MutableMap<TactType, TactTypeEx>): TactTypeEx {
             val type = resolveType()
             if (type is TactStructType && type.parent is TactStructDeclaration) {
-                return when ((type.parent as TactStructDeclaration).getQualifiedName()) {
-                    "builtin.Array"  -> TactBuiltinArrayTypeEx.getInstance(type.project, type)
-                    "builtin.Option" -> TactBuiltinOptionTypeEx.getInstance(type.project, type)
-                    "builtin.Result" -> TactBuiltinResultTypeEx.getInstance(type.project, type)
-                    "builtin.Map"    -> TactBuiltinMapTypeEx.INSTANCE
-                    "builtin.string" -> TactStringTypeEx.getInstance(type.project)
-                    else             -> TactStructTypeEx(parentName(type), type)
-                }
+                return TactStructTypeEx(parentName(type), type)
             }
 
             return when (type) {
+                is TactTraitType     -> TactTraitTypeEx(parentName(type), type)
+                is TactMessageType   -> TactMessageTypeEx(parentName(type), type)
                 is TactPrimitiveType -> TactPrimitiveTypeEx(TactPrimitiveTypes.find(type.text) ?: TactPrimitiveTypes.INT)
                 is TactOptionType    -> TactOptionTypeEx(type.type.toEx(visited), type)
                 is TactMapType       -> TactMapTypeEx(type.keyType.toEx(visited), type.valueType.toEx(visited), type)
@@ -217,13 +183,7 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
                     // only for tests
                     // TODO: remove
                     if (type.text == "string") {
-                        return TactStringTypeEx.getInstance(type.project)
-                    }
-                    if (type.text == "Array") {
-                        return TactBuiltinArrayTypeEx.getInstance(type.project)
-                    }
-                    if (type.text == "Map") {
-                        return TactBuiltinMapTypeEx.INSTANCE
+                        return TactPrimitiveTypeEx.STRING
                     }
                     if (type.text == "Int") {
                         return TactPrimitiveTypeEx.INT

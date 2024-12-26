@@ -24,7 +24,6 @@ import org.ton.tact.lang.psi.impl.TactReferenceBase.Companion.NAMED_PARAMETER_CO
 import org.ton.tact.lang.psi.impl.TactReferenceBase.Companion.PROCESS_PRIVATE_MEMBERS
 import org.ton.tact.lang.psi.impl.TactReferenceBase.Companion.SAFE_ACCESS
 import org.ton.tact.lang.psi.impl.TactReferenceBase.Companion.UNWRAPPED_OPTION_METHODS
-import org.ton.tact.lang.psi.types.TactArrayTypeEx
 import org.ton.tact.lang.psi.types.TactTypeEx
 
 object ReferenceCompletionProvider : CompletionProvider<CompletionParameters>() {
@@ -134,12 +133,6 @@ object ReferenceCompletionProvider : CompletionProvider<CompletionParameters>() 
         })
 
         if (possiblyLiteralValueExpression != null) {
-            val type = possiblyLiteralValueExpression.getType(null)
-            if (type is TactArrayTypeEx) {
-                // don't add "Fill all field…" for array init
-                return
-            }
-
             val remainingFields = fields.filter { !alreadyAssignedFields.contains(it.first) }
             if (remainingFields.size > 1) {
                 val element = LookupElementBuilder.create("")

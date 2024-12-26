@@ -11,7 +11,6 @@ object TactTokenTypes {
     @JvmField val WS = TactTokenType("SPAWN_WHITESPACE")
     @JvmField val NLS = TactTokenType("SPAWN_WS_NEW_LINES")
 
-    val IDENTIFIERS = TokenSet.create(IDENTIFIER)
     val COMMENTS = TokenSet.create(LINE_COMMENT, MULTI_LINE_COMMENT, TactDocElementTypes.DOC_COMMENT)
     val STRING_LITERALS = TokenSet.create(
         RAW_STRING,
@@ -53,7 +52,6 @@ object TactTokenTypes {
         IMPORT,
         INTERFACE,
         IN,
-        NOT_IN,
         RETURN,
         SELECT,
         STRUCT,
@@ -61,13 +59,9 @@ object TactTokenTypes {
         PUB,
         LET,
         MUT,
-        IF_COMPILE_TIME,
-        ELSE_COMPILE_TIME,
         ASSERT,
         ENUM,
         MATCH,
-        NOT_IS,
-        FOR_COMPILE_TIME,
         UNION,
         ASM,
         NULL,
@@ -89,6 +83,7 @@ object TactTokenTypes {
         NATIVE,
         MUTATES,
         INLINE,
+        AS,
     )
 
     val OPERATORS = TokenSet.create(

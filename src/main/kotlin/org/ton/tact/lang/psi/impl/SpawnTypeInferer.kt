@@ -167,11 +167,7 @@ object TactTypeInferer {
     }
 
     private fun typeOrParameterType(typeOwner: TactTypeOwner, context: ResolveState?): TactTypeEx? {
-        val type = typeOwner.getType(context)
-        if (typeOwner is TactParamDefinition && typeOwner.isVariadic && type != null) {
-            return TactArrayTypeEx(type, typeOwner)
-        }
-        return type
+        return typeOwner.getType(context)
     }
 
     private fun inferTypeWithSmartcasts(resolved: TactTypeOwner, type: TactTypeEx?, expr: TactReferenceExpression): TactTypeEx? {
@@ -331,11 +327,7 @@ object TactTypeInferer {
             val right = binaryExpr.right ?: return null
             if (binaryExpr.right != null && right.isEquivalentTo(element)) {
                 val left = binaryExpr.left
-                val leftType = left.getType(null)
-                if (leftType is TactArrayTypeEx) {
-                    return leftType.inner
-                }
-                return leftType
+                return left.getType(null)
             }
         }
 

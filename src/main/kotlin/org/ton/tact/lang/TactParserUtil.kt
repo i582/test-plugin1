@@ -78,32 +78,6 @@ object TactParserUtil : GeneratedParserUtilBase() {
         return r
     }
 
-    @JvmStatic
-    fun typeOrExpression(builder: PsiBuilder, level: Int): Boolean {
-        val m = builder.mark()
-        var r = TactParser.Type(builder, level + 1)
-        if (r) {
-            if (builder.tokenType === COMMA || builder.tokenType === FAT_ARROW) {
-                m.drop()
-                return true
-            }
-        }
-
-        m.rollbackTo()
-        val m1 = builder.mark()
-        r = TactParser.Expression(builder, level + 1, -1)
-
-        if (r) {
-            if (builder.tokenType === COMMA || builder.tokenType === FAT_ARROW) {
-                m1.drop()
-                return true
-            }
-        }
-        m1.rollbackTo()
-
-        return TactParser.Expression(builder, level + 1, -1)
-    }
-
     private val identifierRegex = Regex("[a-zA-Z0-9_.]*")
 
     @JvmStatic
