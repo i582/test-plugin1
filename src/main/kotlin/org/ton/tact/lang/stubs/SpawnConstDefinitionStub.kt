@@ -14,10 +14,9 @@ class TactConstDefinitionStub : TactNamedStub<TactConstDefinition> {
         elementType: IStubElementType<*, *>,
         name: StringRef?,
         isPublic: Boolean,
-        extern: String?,
         value: String,
         type: String,
-    ) : super(parent, elementType, name, isPublic, extern) {
+    ) : super(parent, elementType, name, isPublic) {
         this.value = value
         this.type = type
     }
@@ -27,10 +26,9 @@ class TactConstDefinitionStub : TactNamedStub<TactConstDefinition> {
         elementType: IStubElementType<*, *>,
         name: String?,
         isPublic: Boolean,
-        extern: String?,
         value: String,
         type: String,
-    ) : super(parent, elementType, name, isPublic, extern) {
+    ) : super(parent, elementType, name, isPublic) {
         this.value = value
         this.type = type
     }

@@ -72,7 +72,7 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun getName(o: TactEmbeddedDefinition): String {
+    fun getName(o: TactMessageDeclaration): String {
         val stub = o.stub
         if (stub != null) {
             return stub.name ?: ""
@@ -82,8 +82,47 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun getIdentifier(o: TactEmbeddedDefinition): PsiElement? {
-        return o.type.identifier
+    fun addField(o: TactMessageDeclaration, name: String, type: String, mutable: Boolean): PsiElement? {
+        val fieldDeclaration = TactElementFactory.createFieldDeclaration(o.project, name, type)
+        val lastField = o.messageType.fieldDeclarationList.lastOrNull()
+        if (lastField != null) {
+            val nl = o.messageType.addAfter(TactElementFactory.createNewLine(o.project), lastField)
+            val decl = o.messageType.addAfter(fieldDeclaration, nl)
+            o.messageType.addBefore(TactElementFactory.createNewLine(o.project), decl)
+            return decl
+        }
+
+        return null
+    }
+
+    @JvmStatic
+    fun getName(o: TactTraitDeclaration): String {
+        val stub = o.stub
+        if (stub != null) {
+            return stub.name ?: ""
+        }
+
+        return o.getIdentifier()?.text ?: ""
+    }
+
+    @JvmStatic
+    fun getName(o: TactMessageFunctionDeclaration): String {
+        val stub = o.stub
+        if (stub != null) {
+            return stub.name ?: ""
+        }
+
+        return ""
+    }
+
+    @JvmStatic
+    fun getName(o: TactContractInitDeclaration): String {
+        val stub = o.stub
+        if (stub != null) {
+            return stub.name ?: ""
+        }
+
+        return ""
     }
 
     @JvmStatic
@@ -152,6 +191,26 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
+    fun getIdentifier(o: TactMessageDeclaration): PsiElement? {
+        return o.messageType.identifier
+    }
+
+    @JvmStatic
+    fun getIdentifier(o: TactTraitDeclaration): PsiElement? {
+        return o.traitType.identifier
+    }
+
+    @JvmStatic
+    fun getIdentifier(o: TactMessageFunctionDeclaration): PsiElement? {
+        return null
+    }
+
+    @JvmStatic
+    fun getIdentifier(o: TactContractInitDeclaration): PsiElement? {
+        return null
+    }
+
+    @JvmStatic
     fun getIdentifier(o: TactType): PsiElement? {
         return o.typeReferenceExpression?.getIdentifier()
     }
@@ -177,38 +236,13 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun getOwnFieldList(o: TactStructType): List<TactFieldDefinition> {
+    fun getFieldList(o: TactStructType): List<TactFieldDefinition> {
         return o.fieldDeclarationList.mapNotNull { it.fieldDefinition }
     }
 
     @JvmStatic
-    fun getFieldList(o: TactStructType): List<TactFieldDefinition> {
-        val ownFields = getOwnFieldList(o)
-
-        val embeddedStructFields = o.embeddedStructs
-            .map { it.toEx().unwrapAlias() }
-            .filterIsInstance<TactStructTypeEx>()
-            .mapNotNull { it.anchor(o.project) as? TactStructType }
-            .flatMap { it.fieldList }
-
-        return ownFields + embeddedStructFields
-    }
-
-    @JvmStatic
-    fun getEmbeddedStructList(o: TactStructType): List<TactEmbeddedDefinition> {
-        return o.fieldDeclarationList.mapNotNull { it.embeddedDefinition }
-    }
-
-    @JvmStatic
-    fun getEmbeddedStructs(o: TactStructType): List<TactStructType> {
-        return o.embeddedStructList
-            .map { it.type.resolveType() }
-            .filterIsInstance<TactStructType>()
-    }
-
-    @JvmStatic
-    fun getType(o: TactEmbeddedDefinition, context: ResolveState?): TactTypeEx {
-        return o.type.toEx()
+    fun getFieldList(o: TactMessageType): List<TactFieldDefinition> {
+        return o.fieldDeclarationList.mapNotNull { it.fieldDefinition }
     }
 
     @JvmStatic
@@ -630,11 +664,6 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun isMultiline(o: TactConstDeclaration): Boolean {
-        return o.lparen != null
-    }
-
-    @JvmStatic
     fun isMultiline(o: TactModuleVarDeclaration): Boolean {
         return o.lparen != null
     }
@@ -656,6 +685,16 @@ object TactPsiImplUtil {
     @JvmStatic
     fun getTypeInner(o: TactStructDeclaration, context: ResolveState?): TactTypeEx {
         return o.structType.toEx()
+    }
+
+    @JvmStatic
+    fun getTypeInner(o: TactMessageDeclaration, context: ResolveState?): TactTypeEx {
+        return o.messageType.toEx()
+    }
+
+    @JvmStatic
+    fun getTypeInner(o: TactTraitDeclaration, context: ResolveState?): TactTypeEx {
+        return o.traitType.toEx()
     }
 
     fun getFqn(moduleName: String?, elementName: String): String {
@@ -793,10 +832,6 @@ object TactPsiImplUtil {
                 continue
             if (!definition.isValid || checkContainingFile)
                 continue
-
-            if (definition is TactEmbeddedDefinition && state.get(NOT_PROCESS_EMBEDDED_DEFINITION) == true)
-                continue
-
             if (!processor.execute(definition, state.put(LOCAL_RESOLVE, localResolve)))
                 return false
         }

@@ -16,13 +16,12 @@ class TactConstDefinitionStubElementType(name: String) : TactNamedStubElementTyp
     override fun createStub(psi: TactConstDefinition, parentStub: StubElement<*>?): TactConstDefinitionStub {
 //        val type = psi.expression?.getType(null)?.qualifiedName() ?: ""
         val value = psi.expression?.text ?: ""
-        return TactConstDefinitionStub(parentStub, this, psi.name, true, psi.isExtern()?.abi, value, "")
+        return TactConstDefinitionStub(parentStub, this, psi.name, true, value, "")
     }
 
     override fun serialize(stub: TactConstDefinitionStub, dataStream: StubOutputStream) {
         dataStream.writeName(stub.name)
         dataStream.writeBoolean(stub.isPublic)
-        dataStream.writeName(stub.extern)
         dataStream.writeName(stub.value)
         dataStream.writeName(stub.type)
     }
@@ -33,7 +32,6 @@ class TactConstDefinitionStubElementType(name: String) : TactNamedStubElementTyp
             this,
             dataStream.readName(),
             dataStream.readBoolean(),
-            dataStream.readNameString(),
             dataStream.readNameString() ?: "",
             dataStream.readNameString() ?: ""
         )

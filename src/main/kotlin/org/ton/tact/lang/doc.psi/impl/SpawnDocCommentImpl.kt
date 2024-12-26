@@ -39,13 +39,8 @@ class TactDocCommentImpl(type: IElementType, text: CharSequence?) : LazyParseabl
     override fun getOwner(): TactNamedElement? {
         val element = skipSiblingsForward(this, PsiComment::class.java, PsiWhiteSpace::class.java) ?: return null
 
-        // treat as documentation if there is a constant declaration with one definition
-        //  const name = 0
-        if (element is TactConstDeclaration && !element.isMultiline) {
-            val defs = element.constDefinitionList
-            if (defs.size == 1) {
-                return defs[0]
-            }
+        if (element is TactConstDeclaration) {
+            return element.constDefinition
         }
 
         if (element is TactFieldDeclaration) {

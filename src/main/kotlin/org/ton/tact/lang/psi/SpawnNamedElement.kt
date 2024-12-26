@@ -15,5 +15,4 @@ interface TactNamedElement : TactTypeOwner, TactDocumentationOwner, TactComposit
     fun getOwner(): PsiElement?
     fun isDeprecated(): Boolean
     fun getModuleName(): String?
-    fun isExtern(): Extern?
 }

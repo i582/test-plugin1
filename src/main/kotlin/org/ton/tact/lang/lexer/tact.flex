@@ -336,6 +336,16 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 "struct"                                  { return STRUCT; }
 "const"                                   { return CONST; }
 "fun"                                     { return FUN; }
+"contract"                                { return CONTRACT; }
+"trait"                                   { return TRAIT; }
+"message"                                 { return MESSAGE; }
+"with"                                    { return WITH; }
+"init"                                    { return INIT; }
+"receive"                                 { return RECEIVE; }
+"external"                                { return EXTERNAL; }
+"virtual"                                 { return VIRTUAL; }
+"override"                                { return OVERRIDE; }
+"abstract"                                { return ABSTRACT; }
 
 "return"                                  { return RETURN; }
 "let"                                     { return LET; }

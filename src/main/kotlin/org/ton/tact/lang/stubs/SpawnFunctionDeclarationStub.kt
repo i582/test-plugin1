@@ -7,18 +7,14 @@ import org.ton.tact.lang.psi.TactFunctionDeclaration
 
 class TactFunctionDeclarationStub : TactFunctionOrMethodDeclarationStub<TactFunctionDeclaration> {
     var type: String? = null
-    var isUnsafe: Boolean = false
 
     constructor(
         parent: StubElement<*>?,
         elementType: IStubElementType<*, *>,
         name: StringRef?,
         isPublic: Boolean,
-        isUnsafe: Boolean,
-        extern: String?,
         type: String?,
-    ) : super(parent, elementType, name, isPublic, extern) {
-        this.isUnsafe = isUnsafe
+    ) : super(parent, elementType, name, isPublic) {
         this.type = type
     }
 
@@ -27,11 +23,8 @@ class TactFunctionDeclarationStub : TactFunctionOrMethodDeclarationStub<TactFunc
         elementType: IStubElementType<*, *>,
         name: String,
         isPublic: Boolean,
-        isUnsafe: Boolean,
-        extern: String?,
         type: String?,
-    ) : super(parent, elementType, name, isPublic, extern) {
-        this.isUnsafe = isUnsafe
+    ) : super(parent, elementType, name, isPublic) {
         this.type = type
     }
 }

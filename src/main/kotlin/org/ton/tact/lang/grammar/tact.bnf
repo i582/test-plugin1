@@ -96,21 +96,21 @@
   extends("(Or|And|Add|Conversion|Mul|Selector|Conditional|OrBlock)Expr|(In|NotIn|Is|NotIs)Expression")=BinaryExpr
   extends(".*(Expr|Literal|Lit|OperandName)|CompileTimeIfExpression|IfExpression|ArrayCreation|InExpression|NotInExpression|MatchExpression|EnumFetch|MutExpression|DotExpression|IsExpression|NotIsExpression|AsExpression|UnpackingExpression|ConstexprIdentifierExpression|IncDecExpression|LiteralValueExpression|TactExpression")=Expression
 
-  implements("ModuleClause|(Var|Param|Field|Label|Var|Const|EnumField|InterfaceMethod|ModuleVar)Definition|(Struct|TypeAlias|Union)Declaration|Receiver|StaticReceiver|Import(Alias|Name)|PlainGenericParameter|ConstantGenericParameter|LambdaParameter|EmbeddedDefinition|ComptimeTypeStatement")="org.ton.tact.lang.psi.TactNamedElement"
+  implements("ModuleClause|(Var|Param|Field|Label|Var|Const|EnumField|InterfaceMethod|ModuleVar)Definition|(Struct|TypeAlias|Union)Declaration|Receiver|StaticReceiver|Import(Alias|Name)|ContractDeclaration|MessageDeclaration|TraitDeclaration|MessageFunctionDeclaration|ContractInitDeclaration")="org.ton.tact.lang.psi.TactNamedElement"
   implements("FunctionLiteral|(Function)Declaration")="org.ton.tact.lang.psi.TactSignatureOwner"
   implements("(Function)Declaration")="org.ton.tact.lang.psi.TactFunctionOrMethodDeclaration"
   implements(".*ReferenceExpression|FieldName|EnumFetch")="org.ton.tact.lang.psi.TactReferenceExpressionBase"
 
-  implements("(Struct|Function|Const|ModuleVar)Declaration|ModuleClause")="org.ton.tact.lang.psi.TactAttributeOwner"
+  implements("(Struct|Function|ModuleVar)Declaration|ModuleClause")="org.ton.tact.lang.psi.TactAttributeOwner"
 
   implements("(Function)Declaration")="org.ton.tact.lang.psi.TactScopeHolder"
-  implements("(Struct)Declaration")="org.ton.tact.lang.psi.TactTopLevelTypeDeclaration"
+  implements("(Struct|Contract|Trait|Message)Declaration")="org.ton.tact.lang.psi.TactTopLevelTypeDeclaration"
 
   extends("(Function)Declaration")="org.ton.tact.lang.psi.impl.TactFunctionOrMethodDeclarationImpl<?>"
   extends("Type|Signature|Result|Parameters|TypeUnionList|EmbeddedInterfaceDefinition|TypeReferenceExpression|Attributes|Attribute|PlainAttribute|AttributeExpression|AttributeValue|AttributeKey|ExternList|FieldDeclaration|GenericArguments|Block|ImportDeclaration")="org.ton.tact.lang.psi.impl.TactStubbedElementImpl<?>"
-  extends("LambdaParameter|ModuleClause|(Struct)Declaration|(Var|Label|Param|Field|Const|EnumField|InterfaceMethod|ModuleVar)Definition|Receiver|StaticReceiver|Import(Alias|Name)|PlainGenericParameter|ConstantGenericParameter|EmbeddedDefinition|ComptimeTypeStatement")="org.ton.tact.lang.psi.impl.TactNamedElementImpl<?>"
+  extends("(Struct|Message|Trait|Contract|MessageFunction|ContractInit)Declaration|(Var|Param|Field|Const|ModuleVar)Definition")="org.ton.tact.lang.psi.impl.TactNamedElementImpl<?>"
 
-  elementTypeFactory("ModuleClause|(Function|Struct|Field)Declaration|.*Type|(Var|Label|Field|Param|Const|ModuleVar)Definition|LambdaParameter|Import(Alias|Name)|PlainGenericParameter|ConstantGenericParameter|GenericParameters|Parameters|Result|Signature|TypeReferenceExpression|Attributes|Attribute|PlainAttribute|AttributeExpression|AttributeValue|AttributeKey|EmbeddedDefinition|ExternList|GenericArguments|Block|ComptimeTypeStatement|ImportDeclaration")='org.ton.tact.lang.stubs.TactElementTypeFactory.stubFactory'
+  elementTypeFactory("ModuleClause|(Function|Struct|Field|Message|Trait|Contract|MessageFunction|ContractInit)Declaration|.*Type|(Var|Label|Field|Param|Const|ModuleVar)Definition|LambdaParameter|Import(Alias|Name)|PlainGenericParameter|ConstantGenericParameter|GenericParameters|Parameters|Result|Signature|TypeReferenceExpression|Attributes|Attribute|PlainAttribute|AttributeExpression|AttributeValue|AttributeKey|EmbeddedDefinition|ExternList|GenericArguments|Block|ComptimeTypeStatement|ImportDeclaration")='org.ton.tact.lang.stubs.TactElementTypeFactory.stubFactory'
 
   extends(".*Statement")=Statement
   extends(".*Type|TypeList")=Type
@@ -144,13 +144,16 @@ ImportDeclaration ::= import StringLiteral ';' {
 
 private TopLevelDeclaration ::= !<<eof>> TopDeclaration {pin=1 recoverWhile=TopLevelDeclarationRecover}
 private TopDeclaration ::=
-    ConstDeclaration
-  | ModuleVarDeclaration
+    ModuleVarDeclaration
   | FunctionDeclaration
   | StructDeclaration
+  | TraitDeclaration
+  | MessageDeclaration
+  | ContractDeclaration
+  | ConstDeclaration
   | Statement // for single files without entry point
 
-private TopLevelDeclarationRecover ::= !('type' | enum | import | '$for' | '$if' | '#[' | '[' | '!' | '?' | '&' | '@' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | break | test | comptime | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | interface | oct | return | select | 'raw_string' | OPEN_QUOTE | char | struct | union | var | assert | match | asm | true | false | none | '$else' | null | extern)
+private TopLevelDeclarationRecover ::= !('type' | message | contract | trait | enum | import | '$for' | '$if' | '#[' | '[' | '!' | '?' | '&' | '@' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | break | test | comptime | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | interface | oct | return | select | 'raw_string' | OPEN_QUOTE | char | struct | union | var | assert | match | asm | true | false | none | '$else' | null | extern)
 
 ////////// TOP LEVEL DECLARATIONS END //////////
 
@@ -250,20 +253,86 @@ BreakStatement ::= break ';'
 ContinueStatement ::= continue ';'
 
 ////// DECLARATIONS //////
+WithClause ::= with TypeListNoPin {pin=1}
 
-// struct or union
+ContractDeclaration ::= Attributes? contract identifier WithClause? ContractType {
+  pin=2
+  stubClass="org.ton.tact.lang.stubs.TactContractDeclarationStub"
+  methods=[getIdentifier getName getTypeInner addField]
+}
+
+ContractType ::= '{' ContractItem* '}'
+
+private ContractItem ::=
+    FieldDeclaration
+  | ConstDeclaration
+  | ContractInitDeclaration
+  | MessageFunctionDeclaration
+  | FunctionDeclaration
+
+ConstantModifier ::= virtual | override | abstract
+ConstDeclaration ::= ConstantModifier* const ConstDefinition ';' {pin=2}
+
+ConstDefinition ::= identifier TypeHint ('=' Expression)? {
+  pin=1
+  stubClass="org.ton.tact.lang.stubs.TactConstDefinitionStub"
+  methods=[getTypeInner getName getExpressionText getExpressionType]
+}
+
+ContractInitDeclaration ::= init Parameters Block {
+  pin=1
+  stubClass="org.ton.tact.lang.stubs.TactContractInitDeclarationStub"
+  methods=[getIdentifier getName]
+}
+
+ReceiveStringId ::= '(' StringLiteral ')'
+
+MessageKind ::= receive | external | bounced
+MessageFunctionDeclaration ::= MessageKind (ReceiveStringId | Parameters) Block {
+  pin=1
+  stubClass="org.ton.tact.lang.stubs.TactMessageFunctionDeclarationStub"
+  methods=[getIdentifier getName]
+}
+
+// trait
+TraitDeclaration ::= Attributes? TraitType {
+  stubClass="org.ton.tact.lang.stubs.TactTraitDeclarationStub"
+  methods=[getIdentifier getName getTypeInner]
+}
+TraitType ::= trait identifier WithClause? '{' TraitItem* '}' {pin=1}
+
+private TraitItem ::=
+    FieldDeclaration
+  | ConstDeclaration
+  | MessageFunctionDeclaration
+  | FunctionDeclaration
+
+
+MessageId ::= '(' int ')' {pin=1}
+MessageDeclaration ::= MessageType {
+  stubClass="org.ton.tact.lang.stubs.TactMessageDeclarationStub"
+  methods=[getIdentifier getName getTypeInner addField]
+}
+
+MessageType ::= message MessageId? identifier '{' FieldDeclaration* '}' {
+  pin=1
+  implements="org.ton.tact.lang.psi.TactFieldListOwner"
+  methods=[getFieldList]
+}
+
+// struct
 StructDeclaration ::= Attributes? StructType {
   stubClass="org.ton.tact.lang.stubs.TactStructDeclarationStub"
-  methods=[getIdentifier getName getTypeInner isUnion getKindName isAttribute addField]
+  methods=[getIdentifier getName getTypeInner addField]
 }
 
 StructType ::= struct identifier '{' FieldDeclaration* '}' {
   pin=1
   implements="org.ton.tact.lang.psi.TactFieldListOwner"
-  methods=[getFieldList getOwnFieldList getEmbeddedStructs getEmbeddedStructList isUnion]
+  methods=[getFieldList]
 }
 
-FieldDeclaration ::= Attributes? (PlainFieldDeclaration | EmbeddedDefinition) ';' {
+FieldDeclaration ::= PlainFieldDeclaration ';' {
   stubClass="org.ton.tact.lang.stubs.TactFieldDeclarationStub"
 }
 private PlainFieldDeclaration ::= FieldDefinition ':' Type DefaultFieldValue?
@@ -272,28 +341,6 @@ FieldDefinition ::= identifier {
   methods=[getQualifier getQualifiedName getTypeInner getOwner]
   stubClass="org.ton.tact.lang.stubs.TactFieldDefinitionStub"
 }
-
-EmbeddedDefinition ::= Type {
-  stubClass="org.ton.tact.lang.stubs.TactEmbeddedDefinitionStub"
-  methods=[getName getIdentifier getType]
-}
-
-// const declarations
-// [<visibility>] const <name> = <value>
-// [<visibility>] const (<list>)
-ConstDeclaration ::= Attributes? const ( ConstDefinition | '(' ConstDefinitions? ')' ) {
-  pin=5
-  methods=[isMultiline]
-}
-// <spec> [<spec2>]
-private ConstDefinitions ::= ConstDefinition (';' ConstDefinition)* ';' {pin=1}
-// <list> = <list>
-ConstDefinition ::= identifier '=' Expression {
-  pin=1
-  stubClass="org.ton.tact.lang.stubs.TactConstDefinitionStub"
-  methods=[getTypeInner getName getExpressionText getExpressionType getSymbolVisibility]
-}
-// end of consts
 
 // module var declarations
 // [<visibility>] var <name> = <value>

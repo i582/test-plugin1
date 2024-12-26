@@ -17,14 +17,12 @@ class TactStructDeclarationStubElementType(name: String) :
     }
 
     override fun createStub(psi: TactStructDeclaration, parentStub: StubElement<*>?): TactStructDeclarationStub {
-        return TactStructDeclarationStub(parentStub, this, psi.name, true, false, psi.isExtern()?.abi)
+        return TactStructDeclarationStub(parentStub, this, psi.name, true)
     }
 
     override fun serialize(stub: TactStructDeclarationStub, dataStream: StubOutputStream) {
         dataStream.writeName(stub.name)
         dataStream.writeBoolean(stub.isPublic)
-        dataStream.writeBoolean(stub.isUnion)
-        dataStream.writeName(stub.extern)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): TactStructDeclarationStub {
@@ -33,8 +31,6 @@ class TactStructDeclarationStubElementType(name: String) :
             this,
             dataStream.readName(),
             dataStream.readBoolean(),
-            dataStream.readBoolean(),
-            dataStream.readNameString()
         )
     }
 

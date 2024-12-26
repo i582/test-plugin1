@@ -75,6 +75,16 @@ object TactTokenTypes {
         COMPTIME,
         VAR,
         TEST,
+        CONTRACT,
+        TRAIT,
+        WITH,
+        INIT,
+        RECEIVE,
+        EXTERNAL,
+        VIRTUAL,
+        OVERRIDE,
+        ABSTRACT,
+        MESSAGE,
     )
 
     val OPERATORS = TokenSet.create(

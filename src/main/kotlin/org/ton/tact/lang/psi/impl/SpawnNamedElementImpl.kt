@@ -34,18 +34,6 @@ abstract class TactNamedElementImpl<T : TactNamedStub<*>> :
 
     override fun isBlank(): Boolean = name == "_"
 
-    override fun isExtern(): Extern? {
-        val stub = stub
-        if (stub != null) {
-            val extern = stub.extern
-            if (extern != null && extern != "") {
-                return Extern(extern)
-            }
-            return null
-        }
-        return Extern("")
-    }
-
     override fun isDeprecated(): Boolean = false // TODO
 
     override fun getName(): String? {

@@ -9,17 +9,14 @@ import org.ton.tact.lang.psi.TactNamedElement
 
 abstract class TactNamedStub<T : TactNamedElement> : NamedStubBase<T> {
     val isPublic: Boolean
-    val extern: String?
 
     constructor(
         parent: StubElement<*>?,
         elementType: IStubElementType<*, *>,
         name: StringRef?,
         isPublic: Boolean,
-        extern: String? = null,
     ) : super(parent, elementType, name) {
         this.isPublic = isPublic
-        this.extern = extern
     }
 
     constructor(
@@ -27,10 +24,8 @@ abstract class TactNamedStub<T : TactNamedElement> : NamedStubBase<T> {
         elementType: IStubElementType<*, *>,
         name: String?,
         isPublic: Boolean,
-        extern: String? = null,
     ) : super(parent, elementType, name) {
         this.isPublic = isPublic
-        this.extern = extern
     }
 
     override fun toString(): String {

@@ -13,8 +13,4 @@ abstract class TactStubElementType<S : StubBase<T>, T : TactCompositeElement>(de
     override fun getExternalId() = "tact." + super.toString()
 
     override fun indexStub(stub: S, sink: IndexSink) {}
-
-    override fun shouldCreateStub(node: ASTNode): Boolean {
-        return super.shouldCreateStub(node)
-    }
 }

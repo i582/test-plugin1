@@ -94,16 +94,8 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
         val unwrapped = unwrapReference().unwrapAlias()
         val inheritedMethods = if (unwrapped != this) unwrapped.methodsList(project, visited) else emptyList()
 
-        val embeddedMethods = if (unwrapped is TactStructTypeEx) {
-            val toExVisited = mutableMapOf<TactType, TactTypeEx>()
-            val embeddedStructs = (unwrapped.anchor(project) as? TactStructType)?.embeddedStructs ?: emptyList()
-            embeddedStructs.mapNotNull { it.toEx(toExVisited).methodsList(project, visited) }.flatten()
-        } else {
-            emptyList()
-        }
-
         visited.add(this)
-        return ownMethods + inheritedMethods + embeddedMethods
+        return ownMethods + inheritedMethods
     }
 
     override fun findMethod(project: Project, name: String): TactFunctionDeclaration? {

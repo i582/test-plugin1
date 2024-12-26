@@ -31,7 +31,7 @@ class TactAnnotator : Annotator {
 
         return when (element.elementType) {
             TactTypes.IDENTIFIER -> null
-            else                  -> null
+            else                 -> null
         }
     }
 
@@ -48,7 +48,8 @@ class TactAnnotator : Annotator {
         return when (resolved) {
             is TactFunctionDeclaration            -> TactColor.PUBLIC_FUNCTION
             is TactStructDeclaration              -> TactColor.PUBLIC_STRUCT
-            is TactEmbeddedDefinition             -> TactColor.STRUCT
+            is TactTraitDeclaration               -> TactColor.PUBLIC_TRAIT
+            is TactMessageDeclaration             -> TactColor.PUBLIC_TRAIT
             is TactFieldDefinition                -> TactColor.PUBLIC_FIELD
             is TactModuleVarDefinition            -> TactColor.MODULE_VARIABLE
             is TactParamDefinition                -> TactColor.PARAMETER

@@ -3,7 +3,6 @@ package org.ton.tact.lang.stubs
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.ton.tact.lang.psi.TactConstDefinition
 import org.ton.tact.lang.psi.TactModuleVarDefinition
 
 class TactModuleVarDefinitionStub : TactNamedStub<TactModuleVarDefinition> {
@@ -15,10 +14,9 @@ class TactModuleVarDefinitionStub : TactNamedStub<TactModuleVarDefinition> {
         elementType: IStubElementType<*, *>,
         name: StringRef?,
         isPublic: Boolean,
-        extern: String?,
         value: String,
         type: String,
-    ) : super(parent, elementType, name, isPublic, extern) {
+    ) : super(parent, elementType, name, isPublic) {
         this.value = value
         this.type = type
     }
@@ -28,10 +26,9 @@ class TactModuleVarDefinitionStub : TactNamedStub<TactModuleVarDefinition> {
         elementType: IStubElementType<*, *>,
         name: String?,
         isPublic: Boolean,
-        extern: String?,
         value: String,
         type: String,
-    ) : super(parent, elementType, name, isPublic, extern) {
+    ) : super(parent, elementType, name, isPublic) {
         this.value = value
         this.type = type
     }

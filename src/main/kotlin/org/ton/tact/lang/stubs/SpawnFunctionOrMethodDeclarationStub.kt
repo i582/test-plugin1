@@ -11,14 +11,12 @@ abstract class TactFunctionOrMethodDeclarationStub<T : TactFunctionOrMethodDecla
         elementType: IStubElementType<*, *>,
         name: StringRef?,
         isPublic: Boolean,
-        extern: String? = null,
-    ) : super(parent, elementType, name, isPublic, extern)
+    ) : super(parent, elementType, name, isPublic)
 
     protected constructor(
         parent: StubElement<*>?,
         elementType: IStubElementType<*, *>,
         name: String?,
         isPublic: Boolean,
-        extern: String? = null,
-    ) : super(parent, elementType, name, isPublic, extern)
+    ) : super(parent, elementType, name, isPublic)
 }

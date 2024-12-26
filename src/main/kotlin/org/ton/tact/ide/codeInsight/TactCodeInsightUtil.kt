@@ -72,15 +72,6 @@ object TactCodeInsightUtil {
         return importsToDelete
     }
 
-    fun externSymbol(named: TactNamedElement): Boolean {
-        return named.isExtern() != null || named.name?.startsWith("C.") ?: false
-    }
-
-    fun insideNonTactDecl(anchor: TactNamedElement): Boolean {
-        val parent = anchor.parentOfType<TactNamedElement>() ?: return false
-        return parent.name?.startsWith("C.") ?: false
-    }
-
     fun getQualifiedName(context: PsiElement, anchor: PsiElement, name: String): String {
         if (!context.isValid || !anchor.isValid) return name
 

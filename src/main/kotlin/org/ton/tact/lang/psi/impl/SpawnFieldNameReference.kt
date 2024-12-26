@@ -83,10 +83,6 @@ class TactFieldNameReference(element: TactReferenceExpressionBase) :
             if (!fieldProcessor.execute(field, state)) return false
         }
 
-        structType.embeddedStructList.forEach {
-            if (!processStructType(fieldProcessor, it.type.toEx(), localResolve)) return false
-        }
-
         return true
     }
 
@@ -105,7 +101,7 @@ class TactFieldNameReference(element: TactReferenceExpressionBase) :
         }
 
         override fun crossOff(e: PsiElement): Boolean {
-            if (e !is TactFieldDefinition && e !is TactEmbeddedDefinition)
+            if (e !is TactFieldDefinition)
                 return true
             val named = e as TactNamedElement
             val originFile = origin.containingFile as TactFile

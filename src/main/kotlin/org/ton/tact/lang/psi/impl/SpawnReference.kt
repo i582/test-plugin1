@@ -225,9 +225,6 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
                 if (!processNamedElements(processor, newState, structType.fieldList, localResolve)) return false
                 if (!processMethods(typ, processor, newState, localResolve)) return false
             }
-
-            val embedded = structType.embeddedStructList
-            if (!processNamedElements(processor, newState, embedded, localResolve)) return false
         }
 
         if (!processMethods(typ, processor, newState, localResolve)) return false

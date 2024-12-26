@@ -8,7 +8,6 @@ import com.intellij.util.ArrayFactory
 import org.ton.tact.lang.psi.TactFunctionDeclaration
 import org.ton.tact.lang.psi.impl.TactFunctionDeclarationImpl
 import org.ton.tact.lang.stubs.TactFunctionDeclarationStub
-import org.ton.tact.lang.stubs.TactParamDefinitionStub
 import org.ton.tact.lang.stubs.index.TactMethodIndex
 
 class TactFunctionDeclarationStubElementType(name: String) :
@@ -19,14 +18,12 @@ class TactFunctionDeclarationStubElementType(name: String) :
     }
 
     override fun createStub(psi: TactFunctionDeclaration, parentStub: StubElement<*>?): TactFunctionDeclarationStub {
-        return TactFunctionDeclarationStub(parentStub, this, psi.name, true, false, psi.isExtern()?.abi, calcTypeText(psi))
+        return TactFunctionDeclarationStub(parentStub, this, psi.name, true, calcTypeText(psi))
     }
 
     override fun serialize(stub: TactFunctionDeclarationStub, dataStream: StubOutputStream) {
         dataStream.writeName(stub.name)
         dataStream.writeBoolean(stub.isPublic)
-        dataStream.writeBoolean(stub.isUnsafe)
-        dataStream.writeName(stub.extern)
         dataStream.writeName(stub.type)
     }
 
@@ -36,8 +33,6 @@ class TactFunctionDeclarationStubElementType(name: String) :
             this,
             dataStream.readName(),
             dataStream.readBoolean(),
-            dataStream.readBoolean(),
-            dataStream.readNameString(),
             dataStream.readNameString(),
         )
     }

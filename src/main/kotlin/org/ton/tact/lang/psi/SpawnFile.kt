@@ -17,6 +17,9 @@ import org.ton.tact.lang.TactLanguage
 import org.ton.tact.lang.TactTypes
 import org.ton.tact.lang.psi.impl.ResolveUtil
 import org.ton.tact.lang.psi.impl.TactElementFactory
+import org.ton.tact.lang.stubs.TactContractDeclarationStub
+import org.ton.tact.lang.stubs.TactMessageDeclarationStub
+import org.ton.tact.lang.stubs.TactTraitDeclarationStub
 import org.ton.tact.lang.stubs.types.*
 
 open class TactFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, TactLanguage) {
@@ -97,6 +100,15 @@ open class TactFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, 
     fun getStructs(): List<TactStructDeclaration> =
         getNamedElements(TactTypes.STRUCT_DECLARATION, TactStructDeclarationStubElementType.ARRAY_FACTORY)
 
+    fun getMessages(): List<TactMessageDeclaration> =
+        getNamedElements(TactTypes.MESSAGE_DECLARATION, TactMessageDeclarationStub.Type.ARRAY_FACTORY)
+
+    fun getContracts(): List<TactContractDeclaration> =
+        getNamedElements(TactTypes.CONTRACT_DECLARATION, TactContractDeclarationStub.Type.ARRAY_FACTORY)
+
+    fun getTraits(): List<TactTraitDeclaration> =
+        getNamedElements(TactTypes.TRAIT_DECLARATION, TactTraitDeclarationStub.Type.ARRAY_FACTORY)
+
     fun getConstants(): List<TactConstDefinition> =
         getNamedElements(TactTypes.CONST_DEFINITION, TactConstDefinitionStubElementType.ARRAY_FACTORY)
 
@@ -126,11 +138,7 @@ open class TactFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, 
                         elements.add(it)
                     }
                     if (elementType == TactTypes.CONST_DEFINITION && it is TactConstDeclaration) {
-                        for (el in it.constDefinitionList) {
-                            if (el is T) {
-                                elements.add(el)
-                            }
-                        }
+                        elements.add(it.constDefinition as T)
                     }
                 }
                 return@getCachedValue CachedValueProvider.Result.create(elements, this)

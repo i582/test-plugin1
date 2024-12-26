@@ -15,9 +15,7 @@ abstract class TactNamedStubElementType<S : TactNamedStub<T>, T : TactNamedEleme
 
     override fun shouldCreateStub(node: ASTNode): Boolean {
         if (!super.shouldCreateStub(node)) return false
-        val psi = node.psi as? TactNamedElement ?: return false
-        val name = psi.name ?: return false
-        return name.isNotEmpty()
+        return node.psi is TactNamedElement
     }
 
     override fun indexStub(stub: S, sink: IndexSink) {
