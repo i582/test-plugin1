@@ -634,15 +634,15 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun resolveSignature(o: TactCallExpr): Pair<TactSignature, TactFunctionOrMethodDeclaration>? {
+    fun resolveSignature(o: TactCallExpr): Pair<TactSignature, TactSignatureOwner>? {
         val ty = o.expression?.getType(null)?.unwrapAlias()
         if (ty is TactFunctionTypeEx) {
-            val owner = ty.signature.parentOfType<TactFunctionOrMethodDeclaration>() ?: return null
+            val owner = ty.signature.parentOfType<TactSignatureOwner>() ?: return null
             return ty.signature to owner
         }
 
         val resolved = o.resolve() ?: return null
-        if (resolved !is TactFunctionOrMethodDeclaration) return null
+        if (resolved !is TactSignatureOwner) return null
         val signature = resolved.getSignature() ?: return null
         return signature to resolved
     }

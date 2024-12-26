@@ -329,7 +329,6 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 "`"                                       { return BACKTICK; }
 "$"                                       { return DOLLAR; }
 "->"                                      { return ARROW; }
-"=>"                                      { return FAT_ARROW; }
 
 // top level declarations
 "as"                                      { return AS ; }

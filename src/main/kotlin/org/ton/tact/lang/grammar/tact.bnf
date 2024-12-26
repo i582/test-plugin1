@@ -68,22 +68,12 @@
     GREATER_OR_EQUAL     =  '>='
     GREATER              =  '>'
     VAR_ASSIGN           =  ':='
-    TRIPLE_DOT           =  '...'
-    DOTDOTEQUAL          =  '..='
     DOT                  =  '.'
     ASSERT_OP            =  '!!'
-    RANGE                =  '..'
     SINGLE_QUOTE         =  "'"
     DOUBLE_QUOTE         =  '"'
     BACKTICK             =  '`'
     ARROW                =  '->'
-    FAT_ARROW            =  '=>'
-    DOLLAR               =  '$'
-    NOT_IN               =  '!in'
-    NOT_IS               =  '!is'
-    IF_COMPILE_TIME      =  '$if'
-    ELSE_COMPILE_TIME    =  '$else'
-    FOR_COMPILE_TIME     =  '$for'
     SEMICOLON_SYNTHETIC  = '<NL>'
     INIT_OF              = 'initOf'
     TYPE_                = 'type'
@@ -102,7 +92,7 @@
   extends(".*(Expr|Literal|Lit|OperandName)|CompileTimeIfExpression|IfExpression|ArrayCreation|InExpression|NotInExpression|MatchExpression|EnumFetch|MutExpression|DotExpression|IsExpression|NotIsExpression|AsExpression|UnpackingExpression|ConstexprIdentifierExpression|IncDecExpression|LiteralValueExpression|TactExpression")=Expression
 
   implements("ModuleClause|(Var|Param|Field|Label|Var|Const|EnumField|InterfaceMethod|ModuleVar)Definition|(Struct|TypeAlias|Union|NativeFunction|AsmFunction)Declaration|Import(Alias|Name)|ContractDeclaration|MessageDeclaration|TraitDeclaration|MessageFunctionDeclaration|ContractInitDeclaration|PrimitiveDeclaration")="org.ton.tact.lang.psi.TactNamedElement"
-  implements("FunctionLiteral|(Function|NativeFunction|AsmFunction)Declaration")="org.ton.tact.lang.psi.TactSignatureOwner"
+  implements("(Function|NativeFunction|AsmFunction)Declaration")="org.ton.tact.lang.psi.TactSignatureOwner"
   implements("(Function)Declaration")="org.ton.tact.lang.psi.TactFunctionOrMethodDeclaration"
   implements(".*ReferenceExpression|FieldName|EnumFetch")="org.ton.tact.lang.psi.TactReferenceExpressionBase"
 
@@ -115,7 +105,7 @@
   extends("Type|Signature|Result|Parameters|TypeUnionList|EmbeddedInterfaceDefinition|TypeReferenceExpression|Attributes|Attribute|PlainAttribute|AttributeExpression|AttributeValue|AttributeKey|ExternList|FieldDeclaration|GenericArguments|Block|ImportDeclaration")="org.ton.tact.lang.psi.impl.TactStubbedElementImpl<?>"
   extends("(Struct|Message|Trait|Contract|MessageFunction|ContractInit|Primitive|NativeFunction|AsmFunction)Declaration|(Var|Param|Field|Const|ModuleVar)Definition")="org.ton.tact.lang.psi.impl.TactNamedElementImpl<?>"
 
-  elementTypeFactory("ModuleClause|(Function|Struct|Field|Message|Trait|Contract|MessageFunction|ContractInit|Primitive|NativeFunction|AsmFunction)Declaration|.*Type|(Var|Label|Field|Param|Const|ModuleVar)Definition|LambdaParameter|Import(Alias|Name)|PlainGenericParameter|ConstantGenericParameter|GenericParameters|Parameters|Result|Signature|TypeReferenceExpression|Attributes|Attribute|PlainAttribute|AttributeExpression|AttributeValue|AttributeKey|EmbeddedDefinition|ExternList|GenericArguments|Block|ComptimeTypeStatement|ImportDeclaration")='org.ton.tact.lang.stubs.TactElementTypeFactory.stubFactory'
+  elementTypeFactory("ModuleClause|(Function|Struct|Field|Message|Trait|Contract|MessageFunction|ContractInit|Primitive|NativeFunction|AsmFunction)Declaration|.*Type|(Var|Label|Field|Param|Const|ModuleVar)Definition|LambdaParameter|Import(Alias|Name)|PlainGenericParameter|ConstantGenericParameter|GenericParameters|Parameters|Result|Signature|TypeReferenceExpression|Attributes|Attribute|PlainAttribute|AttributeExpression|AttributeValue|AttributeKey|EmbeddedDefinition|ExternList|GenericArguments|Block|ImportDeclaration")='org.ton.tact.lang.stubs.TactElementTypeFactory.stubFactory'
 
   extends(".*Statement")=Statement
   extends(".*Type|TypeList")=Type
@@ -460,18 +450,6 @@ Value ::= Expression
 private MaxGroup ::=
     DotExpression
   | Literal
-  | FunctionLiteral
-
-TupleLiteral ::= '(' Expression ',' ListExpression ')' {
-  pin=3
-  methods=[getType]
-}
-
-// fun [<generics>] (...) {...}
-FunctionLiteral ::= fun Signature Block {
-  pin=1
-  methods=[processDeclarations]
-}
 
 ////// TYPES //////
 
@@ -568,10 +546,7 @@ DotExpression ::= DotPrimaryExpr RightHandExprs {extends=Expression}
 private DotPrimaryExpr ::=
     LiteralValueExpression
   | ReferenceExpression
-  | TupleLiteral
   | ParenthesesExpr
-  | CompileTimeExpression
-  | FunctionLiteral
   | Literal
 
 // just <ident> with reference
@@ -650,9 +625,6 @@ TernaryExpr ::= Expression '?' Expression ':' Expression {
     elseBranch="/Expression[2]"
   ]
 }
-
-// comptime <expr>
-CompileTimeExpression ::= comptime Expression {pin=1}
 
 // if <condition> { ... }
 //

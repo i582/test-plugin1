@@ -62,7 +62,14 @@
                                               isEnabledByDefault="true"
                                               providerId="tact.inlay.hints.variables"/>
 
+        <codeInsight.parameterNameHints language="tact" id="TactParameterNameHintsProvider"
+                                        implementationClass="org.ton.tact.ide.hints.TactParameterNameHintsProvider"/>
+
         <!-- Code vision -->
+        <codeInsight.daemonBoundCodeVisionProvider implementation="org.ton.tact.ide.hints.TactUsagesCodeVisionProvider"/>
+        <vcs.codeVisionLanguageContext language="tact" implementationClass="org.ton.tact.ide.hints.TactCodeVisionLanguageContext"/>
+        <codeInsight.codeVisionSettingsPreviewLanguage modelId="vcs.code.vision" language="tact"/>
+        <codeInsight.codeVisionSettingsPreviewLanguage modelId="references" language="tact"/>
 
         <!-- endregion CodeVision & Hints -->
 
