@@ -19,6 +19,7 @@ object TactElementTypeFactory {
             put("CONTRACT_TYPE", TactContractTypeImpl::class.java)
             put("TRAIT_TYPE", TactTraitTypeImpl::class.java)
             put("MESSAGE_TYPE", TactMessageTypeImpl::class.java)
+            put("PRIMITIVE_TYPE", TactPrimitiveTypeImpl::class.java)
         }
     }
 
@@ -31,6 +32,7 @@ object TactElementTypeFactory {
         "MESSAGE_DECLARATION"          -> TactMessageDeclarationStub.Type(name)
         "CONTRACT_DECLARATION"         -> TactContractDeclarationStub.Type(name)
         "TRAIT_DECLARATION"            -> TactTraitDeclarationStub.Type(name)
+        "PRIMITIVE_DECLARATION"        -> TactPrimitiveDeclarationStub.Type(name)
         "MESSAGE_FUNCTION_DECLARATION" -> TactMessageFunctionDeclarationStub.Type(name)
         "CONTRACT_INIT_DECLARATION"    -> TactContractInitDeclarationStub.Type(name)
         "IMPORT_DECLARATION"           -> TactImportDeclarationStubElementType(name)

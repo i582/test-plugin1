@@ -19,6 +19,7 @@ import org.ton.tact.lang.psi.impl.ResolveUtil
 import org.ton.tact.lang.psi.impl.TactElementFactory
 import org.ton.tact.lang.stubs.TactContractDeclarationStub
 import org.ton.tact.lang.stubs.TactMessageDeclarationStub
+import org.ton.tact.lang.stubs.TactPrimitiveDeclarationStub
 import org.ton.tact.lang.stubs.TactTraitDeclarationStub
 import org.ton.tact.lang.stubs.types.*
 
@@ -108,6 +109,9 @@ open class TactFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, 
 
     fun getTraits(): List<TactTraitDeclaration> =
         getNamedElements(TactTypes.TRAIT_DECLARATION, TactTraitDeclarationStub.Type.ARRAY_FACTORY)
+
+    fun getPrimitives(): List<TactPrimitiveDeclaration> =
+        getNamedElements(TactTypes.PRIMITIVE_DECLARATION, TactPrimitiveDeclarationStub.Type.ARRAY_FACTORY)
 
     fun getConstants(): List<TactConstDefinition> =
         getNamedElements(TactTypes.CONST_DEFINITION, TactConstDefinitionStubElementType.ARRAY_FACTORY)

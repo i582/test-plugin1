@@ -46,6 +46,7 @@ class TactAnnotator : Annotator {
         val resolved = reference.resolve() ?: return null
 
         return when (resolved) {
+            is TactPrimitiveDeclaration           -> TactColor.PRIMITIVE
             is TactFunctionDeclaration            -> TactColor.PUBLIC_FUNCTION
             is TactStructDeclaration              -> TactColor.PUBLIC_STRUCT
             is TactTraitDeclaration               -> TactColor.PUBLIC_TRAIT

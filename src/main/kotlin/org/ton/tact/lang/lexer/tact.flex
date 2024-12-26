@@ -346,6 +346,7 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 "virtual"                                 { return VIRTUAL; }
 "override"                                { return OVERRIDE; }
 "abstract"                                { return ABSTRACT; }
+"primitive"                               { return PRIMITIVE; }
 
 "return"                                  { return RETURN; }
 "let"                                     { return LET; }

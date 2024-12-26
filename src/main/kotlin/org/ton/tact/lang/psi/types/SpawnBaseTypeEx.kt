@@ -195,17 +195,23 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
             }
 
             return when (type) {
-                is TactOptionType   -> TactOptionTypeEx(type.type.toEx(visited), type)
-                is TactMapType      -> TactMapTypeEx(type.keyType.toEx(visited), type.valueType.toEx(visited), type)
-                is TactTupleType    -> TactTupleTypeEx(
+                is TactPrimitiveType -> TactPrimitiveTypeEx(TactPrimitiveTypes.find(type.text) ?: TactPrimitiveTypes.INT)
+                is TactOptionType    -> TactOptionTypeEx(type.type.toEx(visited), type)
+                is TactMapType       -> TactMapTypeEx(type.keyType.toEx(visited), type.valueType.toEx(visited), type)
+                is TactTupleType     -> TactTupleTypeEx(
                     (type.typeListNoPin?.typeList ?: emptyList()).map { it.toEx(visited) },
                     type
                 )
 
-                is TactFunctionType -> TactFunctionTypeEx.from(type) ?: TactUnknownTypeEx.INSTANCE
-                else                -> {
+                is TactFunctionType  -> TactFunctionTypeEx.from(type) ?: TactUnknownTypeEx.INSTANCE
+                else                 -> {
                     if (type.text == "void") {
                         return TactVoidTypeEx.INSTANCE
+                    }
+
+                    val primitive = TactPrimitiveTypes.find(type.text)
+                    if (primitive != null) {
+                        return TactPrimitiveTypeEx(primitive, type)
                     }
 
                     // only for tests

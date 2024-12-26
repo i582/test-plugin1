@@ -16,6 +16,7 @@ enum class TactColor(readableName: @NlsContexts.AttributeDescriptor String, defa
     PUBLIC_STRUCT("Types//Public struct", Default.CLASS_NAME),
     PUBLIC_TRAIT("Types//Public trait", Default.CLASS_NAME),
     PUBLIC_MESSAGE("Types//Public message", Default.CLASS_NAME),
+    PRIMITIVE("Types//Primitive", Default.CLASS_NAME),
     MODULE("Declarations//Module", Default.IDENTIFIER),
 
     FIELD("Fields//Field", Default.INSTANCE_FIELD),

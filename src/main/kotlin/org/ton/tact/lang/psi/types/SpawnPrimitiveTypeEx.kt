@@ -1,12 +1,13 @@
 package org.ton.tact.lang.psi.types
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiAnchor
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import org.ton.tact.configurations.TactConfiguration
 
-class TactPrimitiveTypeEx(val name: TactPrimitiveTypes) : TactBaseTypeEx(null) {
+class TactPrimitiveTypeEx(val name: TactPrimitiveTypes, anchor: PsiElement? = null) : TactBaseTypeEx(anchor) {
     override fun module(): String = "builtin"
 
     override fun toString(): String = name.value

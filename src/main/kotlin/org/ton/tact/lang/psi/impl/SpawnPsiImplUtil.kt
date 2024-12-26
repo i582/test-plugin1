@@ -106,6 +106,16 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
+    fun getName(o: TactPrimitiveDeclaration): String {
+        val stub = o.stub
+        if (stub != null) {
+            return stub.name ?: ""
+        }
+
+        return o.getIdentifier()?.text ?: ""
+    }
+
+    @JvmStatic
     fun getName(o: TactMessageFunctionDeclaration): String {
         val stub = o.stub
         if (stub != null) {
@@ -198,6 +208,11 @@ object TactPsiImplUtil {
     @JvmStatic
     fun getIdentifier(o: TactTraitDeclaration): PsiElement? {
         return o.traitType.identifier
+    }
+
+    @JvmStatic
+    fun getIdentifier(o: TactPrimitiveDeclaration): PsiElement? {
+        return o.primitiveType.identifier
     }
 
     @JvmStatic
@@ -695,6 +710,11 @@ object TactPsiImplUtil {
     @JvmStatic
     fun getTypeInner(o: TactTraitDeclaration, context: ResolveState?): TactTypeEx {
         return o.traitType.toEx()
+    }
+
+    @JvmStatic
+    fun getTypeInner(o: TactPrimitiveDeclaration, context: ResolveState?): TactTypeEx {
+        return o.primitiveType.toEx()
     }
 
     fun getFqn(moduleName: String?, elementName: String): String {

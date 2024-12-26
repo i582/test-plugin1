@@ -31,9 +31,11 @@ class TactDumbAwareAnnotator : Annotator, DumbAware {
         val parent = element.parent as? TactCompositeElement ?: return null
 
         return when (parent) {
+            is TactPrimitiveType       -> TactColor.PRIMITIVE
             is TactFunctionDeclaration -> TactColor.PUBLIC_FUNCTION
             is TactStructDeclaration   -> TactColor.PUBLIC_FUNCTION
             is TactFieldDefinition     -> TactColor.PUBLIC_FIELD
+            is TactConstDefinition     -> TactColor.PUBLIC_CONSTANT
             else                       -> null
         }
     }

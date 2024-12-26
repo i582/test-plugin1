@@ -185,16 +185,20 @@ object TactLangUtil {
     fun getDefaultValue(element: PsiElement, type: TactTypeEx?): String = when (type) {
         is TactPrimitiveTypeEx -> {
             when (type.name) {
-                TactPrimitiveTypes.BOOL   -> "false"
-                TactPrimitiveTypes.STRING -> "''"
-                TactPrimitiveTypes.NULL   -> "nil"
+                TactPrimitiveTypes.BOOL    -> "false"
+                TactPrimitiveTypes.STRING  -> "''"
+                TactPrimitiveTypes.NULL    -> "nil"
 
                 TactPrimitiveTypes.INT,
                 TactPrimitiveTypes.UINT,
-                                          -> "0"
+                                           -> "0"
 
-                TactPrimitiveTypes.NEVER  -> "0"
-                TactPrimitiveTypes.VOID   -> ""
+                TactPrimitiveTypes.NEVER   -> "0"
+                TactPrimitiveTypes.VOID    -> ""
+                TactPrimitiveTypes.BUILDER -> "null"
+                TactPrimitiveTypes.CELL    -> "null"
+                TactPrimitiveTypes.ADDRESS -> "null"
+                TactPrimitiveTypes.SLICE   -> "null"
             }
         }
 

@@ -85,6 +85,7 @@ object TactTokenTypes {
         OVERRIDE,
         ABSTRACT,
         MESSAGE,
+        PRIMITIVE,
     )
 
     val OPERATORS = TokenSet.create(

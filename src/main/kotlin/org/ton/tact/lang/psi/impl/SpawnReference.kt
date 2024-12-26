@@ -442,6 +442,16 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
         if (!processNamedElements(
                 processor,
                 state,
+                file.getMessages(),
+                Conditions.alwaysTrue(),
+                localProcessing,
+                false
+            )
+        ) return false
+
+        if (!processNamedElements(
+                processor,
+                state,
                 file.getFunctions(),
                 Conditions.alwaysTrue(),
                 localProcessing,
@@ -453,6 +463,26 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
                 processor,
                 state,
                 file.getModuleVars(),
+                Conditions.alwaysTrue(),
+                localProcessing,
+                false
+            )
+        ) return false
+
+        if (!processNamedElements(
+                processor,
+                state,
+                file.getContracts(),
+                Conditions.alwaysTrue(),
+                localProcessing,
+                false
+            )
+        ) return false
+
+        if (!processNamedElements(
+                processor,
+                state,
+                file.getPrimitives(),
                 Conditions.alwaysTrue(),
                 localProcessing,
                 false
