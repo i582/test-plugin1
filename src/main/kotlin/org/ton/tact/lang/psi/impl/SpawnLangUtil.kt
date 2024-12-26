@@ -153,6 +153,10 @@ object TactLangUtil {
             return getTypeNameNative(o.type!!)
         }
 
+        if (o is TactMapType) {
+            return "map"
+        }
+
         return o.identifier?.text ?: ""
     }
 

@@ -6,6 +6,7 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.ArrayFactory
 import org.ton.tact.lang.psi.TactFunctionDeclaration
+import org.ton.tact.lang.psi.TactMapType
 import org.ton.tact.lang.psi.impl.TactFunctionDeclarationImpl
 import org.ton.tact.lang.stubs.TactFunctionDeclarationStub
 import org.ton.tact.lang.stubs.index.TactMethodIndex
@@ -54,6 +55,9 @@ class TactFunctionDeclarationStubElementType(name: String) :
             val params = psi.getSignature().parameters.paramDefinitionList
             if (params.isEmpty()) return null
             val type = params.first().type
+            if (type is TactMapType) {
+                return "map"
+            }
             return type.text
         }
     }

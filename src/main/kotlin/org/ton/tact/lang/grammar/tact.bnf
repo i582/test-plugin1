@@ -222,7 +222,9 @@ AttributeIdentifierPrefix ::= (identifier) '.'
 SimpleStatement ::=
     VarDeclaration
   | AssignStatement
-  | ListExpression ';'
+  | ExpressionStatement
+
+private ExpressionStatement ::= Expression ';' {pin=1}
 
 private AssignStatement ::= ListExpression AssignmentStatement ';' { pin=2 }
 

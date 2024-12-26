@@ -26,6 +26,15 @@
         <lang.foldingBuilder language="tact" implementationClass="org.ton.tact.lang.folding.TactFoldingBuilder"/>
         <!-- endregion Language general -->
 
+        <!-- region Completion -->
+        <completion.contributor
+                language="tact"
+                implementationClass="org.ton.tact.lang.completion.contributors.TactKeywordsCompletionContributor"/>
+        <completion.contributor
+                language="tact"
+                implementationClass="org.ton.tact.lang.completion.contributors.TactCompletionContributor"/>
+        <!-- endregion Completion -->
+
         <!-- region Indexes -->
         <stubIndex implementation="org.ton.tact.lang.stubs.index.TactModulesIndex"/>
         <stubIndex implementation="org.ton.tact.lang.stubs.index.TactModulesFingerprintIndex"/>
@@ -56,6 +65,11 @@
         <!-- Code vision -->
 
         <!-- endregion CodeVision & Hints -->
+
+        <!-- region Formatter -->
+        <lang.formatter language="tact" implementationClass="org.ton.tact.lang.formatter.TactFormattingModelBuilder"/>
+        <langCodeStyleSettingsProvider implementation="org.ton.tact.lang.formatter.TactLanguageCodeStyleSettingsProvider"/>
+        <!-- endregion Formatter -->
 
         <!-- region Color Settings & Schemes -->
         <colorSettingsPage implementation="org.ton.tact.ide.colors.TactColorsSettingsPage"/>
