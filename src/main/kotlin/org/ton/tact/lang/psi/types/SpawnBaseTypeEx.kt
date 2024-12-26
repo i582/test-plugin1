@@ -160,6 +160,7 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
 
             return when (type) {
                 is TactTraitType     -> TactTraitTypeEx(parentName(type), type)
+                is TactContractType  -> TactContractTypeEx(parentName(type), type)
                 is TactMessageType   -> TactMessageTypeEx(parentName(type), type)
                 is TactPrimitiveType -> TactPrimitiveTypeEx(TactPrimitiveTypes.find(type.text) ?: TactPrimitiveTypes.INT)
                 is TactOptionType    -> TactOptionTypeEx(type.type.toEx(visited), type)

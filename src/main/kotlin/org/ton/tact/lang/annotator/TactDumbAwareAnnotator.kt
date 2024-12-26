@@ -26,6 +26,8 @@ class TactDumbAwareAnnotator : Annotator, DumbAware {
         if (element.elementType != TactTypes.IDENTIFIER) return null
         if (element.textMatches("self")) return TactColor.KEYWORD
         if (element.textMatches("asm") && element.inside<TactAsmFunctionDeclaration>()) return TactColor.KEYWORD
+        if (element.textMatches("bounced") && element.inside<TactMessageFunctionDeclaration>()) return TactColor.KEYWORD
+        if (element.textMatches("init") && element.inside<TactContractInitDeclaration>()) return TactColor.KEYWORD
 
         val parent = element.parent as? TactCompositeElement ?: return null
 

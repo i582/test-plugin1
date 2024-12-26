@@ -113,6 +113,16 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
+    fun getName(o: TactContractDeclaration): String {
+        val stub = o.stub
+        if (stub != null) {
+            return stub.name ?: ""
+        }
+
+        return o.getIdentifier()?.text ?: ""
+    }
+
+    @JvmStatic
     fun getName(o: TactMessageFunctionDeclaration): String {
         val stub = o.stub
         if (stub != null) {
@@ -213,6 +223,11 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
+    fun getIdentifier(o: TactContractDeclaration): PsiElement? {
+        return o.contractType.identifier
+    }
+
+    @JvmStatic
     fun getIdentifier(o: TactMessageFunctionDeclaration): PsiElement? {
         return null
     }
@@ -224,7 +239,7 @@ object TactPsiImplUtil {
 
     @JvmStatic
     fun getIdentifier(o: TactType): PsiElement? {
-        return o.typeReferenceExpressionList.firstOrNull()
+        return o.typeReferenceExpression
     }
 
     @JvmStatic
@@ -253,6 +268,11 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
+    fun getFieldList(o: TactContractType): List<TactFieldDefinition> {
+        return o.fieldDeclarationList.mapNotNull { it.fieldDefinition }
+    }
+
+    @JvmStatic
     fun getFieldList(o: TactTraitType): List<TactFieldDefinition> {
         return o.fieldDeclarationList.mapNotNull { it.fieldDefinition }
     }
@@ -263,7 +283,17 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
+    fun getMethodsList(o: TactContractType): List<TactFunctionDeclaration> {
+        return o.functionDeclarationList
+    }
+
+    @JvmStatic
     fun getConstantsList(o: TactTraitType): List<TactConstDefinition> {
+        return o.constDeclarationList.mapNotNull { it.constDefinition }
+    }
+
+    @JvmStatic
+    fun getConstantsList(o: TactContractType): List<TactConstDefinition> {
         return o.constDeclarationList.mapNotNull { it.constDefinition }
     }
 
@@ -314,7 +344,7 @@ object TactPsiImplUtil {
             return type
         }
 
-        val resolved = type.typeReferenceExpressionList.firstOrNull()?.resolve() ?: return type
+        val resolved = type.typeReferenceExpression?.resolve() ?: return type
         return elementToType(resolved) ?: type
     }
 

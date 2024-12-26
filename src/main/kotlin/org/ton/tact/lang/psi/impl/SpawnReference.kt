@@ -17,14 +17,12 @@ import org.ton.tact.ide.codeInsight.TactCodeInsightUtil
 import org.ton.tact.lang.psi.*
 import org.ton.tact.lang.psi.impl.TactPsiImplUtil.processNamedElements
 import org.ton.tact.lang.psi.impl.imports.TactImportResolver
+import org.ton.tact.lang.psi.types.*
 import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.toEx
-import org.ton.tact.lang.psi.types.TactMessageTypeEx
-import org.ton.tact.lang.psi.types.TactStructTypeEx
-import org.ton.tact.lang.psi.types.TactTraitTypeEx
-import org.ton.tact.lang.psi.types.TactTypeEx
 import org.ton.tact.lang.stubs.StubWithText
 import org.ton.tact.lang.stubs.index.TactModulesIndex
 import org.ton.tact.lang.stubs.index.TactNamesIndex
+import org.ton.tact.toolchain.TactToolchainService.Companion.toolchainSettings
 
 class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = false) :
     TactReferenceBase<TactReferenceExpressionBase>(
@@ -213,6 +211,15 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
         val localResolve = isLocalResolve(contextFile, file)
         val newState = state.put(LOCAL_RESOLVE, localResolve)
 
+        if (typ is TactContractTypeEx) {
+            val declaration = typ.resolve(project) ?: return true
+            val contractType = declaration.contractType
+
+            if (!processNamedElements(processor, newState, contractType.fieldList, localResolve)) return false
+            if (!processNamedElements(processor, newState, contractType.methodsList, localResolve)) return false
+            if (!processNamedElements(processor, newState, contractType.constantsList, localResolve)) return false
+        }
+
         if (typ is TactStructTypeEx) {
             val declaration = typ.resolve(project) ?: return true
             val structType = declaration.structType
@@ -223,9 +230,9 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
 
         if (typ is TactMessageTypeEx) {
             val declaration = typ.resolve(project) ?: return true
-            val traitType = declaration.messageType
+            val messageType = declaration.messageType
 
-            if (!processNamedElements(processor, newState, traitType.fieldList, localResolve)) return false
+            if (!processNamedElements(processor, newState, messageType.fieldList, localResolve)) return false
             if (!processMethods(typ, processor, newState, localResolve)) return false
         }
 
@@ -292,12 +299,27 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
         if (!processImportedModules(file, processor, state, myElement)) return false
         if (!processFileEntities(file, processor, state, true)) return false
         if (!processDirectory(file.originalFile.parent, processor, state, true)) return false
+        if (!processBuiltin(processor, state)) return false
         if (!processModulesEntities(file, processor, state)) return false
 
         if (identText == "self") {
             val owner = identifier!!.parentOfTypes(TactTraitDeclaration::class, TactContractDeclaration::class) ?: return true
             if (!processor.execute(owner, state.put(SEARCH_NAME, owner.name))) return false
         }
+
+        return true
+    }
+
+    private fun processBuiltin(processor: TactScopeProcessor, state: ResolveState): Boolean {
+        val builtin = myElement.project.toolchainSettings.toolchain().stdlibDir() ?: return true
+        val psiManager = PsiManager.getInstance(myElement.project)
+        builtin.children
+            .map { psiManager.findFile(it) }
+            .filterIsInstance<TactFile>()
+            .forEach {
+                if (!processFileEntities(it, processor, state, false))
+                    return false
+            }
 
         return true
     }

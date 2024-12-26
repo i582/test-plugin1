@@ -254,13 +254,15 @@ ContinueStatement ::= continue ';'
 ////// DECLARATIONS //////
 WithClause ::= with TypeListNoPin {pin=1}
 
-ContractDeclaration ::= Attributes? contract identifier WithClause? ContractType {
+ContractDeclaration ::= Attributes? ContractType {
   pin=2
   stubClass="org.ton.tact.lang.stubs.TactContractDeclarationStub"
-  methods=[getTypeInner]
+  methods=[getIdentifier getName getTypeInner]
 }
 
-ContractType ::= '{' ContractItem* '}'
+ContractType ::= contract identifier WithClause? '{' ContractItem* '}' {
+  methods=[getFieldList getMethodsList getConstantsList]
+}
 
 private ContractItem ::=
     FieldDeclaration
@@ -317,7 +319,7 @@ private TraitItem ::=
   | FunctionDeclaration
 
 
-MessageId ::= '(' int ')' {pin=1}
+MessageId ::= '(' (int | hex | oct | bin) ')' {pin=1}
 MessageDeclaration ::= MessageType {
   stubClass="org.ton.tact.lang.stubs.TactMessageDeclarationStub"
   methods=[getIdentifier getName getTypeInner addField]
@@ -407,7 +409,7 @@ AsmFunctionDeclaration ::= AsmHeader FunctionAttribute* fun identifier Signature
 
 AsmShuffle ::= '(' identifier* ('->' int+)? ')'
 
-AsmInstruction ::= identifier | Literal
+AsmInstruction ::= identifier | Literal | 'b{' Literal '}'
 
 ////// DECLARATIONS END //////
 
@@ -425,7 +427,6 @@ Expression ::=
   | AddExpr
   | MulExpr
   | UnaryExpr
-  | InitOfExpr
   | MaxGroup
   | ParenthesesExpr
 //  | BitwiseOrExpr
@@ -456,7 +457,9 @@ private MaxGroup ::=
 
 ////// TYPES //////
 
-Type ::= (TypeLit | TypeName) '?'? (as TypeReferenceExpression)? {
+TypeExtra ::= '?' | (as TypeReferenceExpression) // TODO
+
+Type ::= (TypeLit | TypeName) TypeExtra? {
   stubClass="org.ton.tact.lang.stubs.TactTypeStub"
   methods=[getIdentifier resolveType getModuleName]
 }
@@ -474,6 +477,9 @@ private TypeLit ::=
   | TupleType
   | OptionType
   | FunctionType
+  | BouncedType
+
+BouncedType ::= 'bounced' '<' Type '>'
 
 // (<type>, <type>, ...)
 TupleType ::= '(' TypeListNoPin? ')' {pin=3}
@@ -549,6 +555,7 @@ DotExpression ::= DotPrimaryExpr RightHandExprs {extends=Expression}
 private DotPrimaryExpr ::=
     LiteralValueExpression
   | ReferenceExpression
+  | InitOfExpr
   | ParenthesesExpr
   | Literal
 

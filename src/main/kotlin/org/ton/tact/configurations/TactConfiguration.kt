@@ -22,6 +22,9 @@ class TactConfiguration(private val project: Project) {
     private val toolchain
         get() = null // TODO project.toolchainSettings.toolchain()
 
+    val stdlibLocation: VirtualFile?
+        get() = findFileByUrl("node_modules/@tact-lang/compiler/stdlib/std")
+
     val builtinLocation: VirtualFile?
         get() = null // TODO
 
@@ -29,7 +32,7 @@ class TactConfiguration(private val project: Project) {
         get() = findFileInProject("src")
 
     val localModulesLocation: VirtualFile?
-        get() = findFileInProject("modules")
+        get() = findFileByUrl("node_modules/@tact-lang/compiler/stdlib/libs")
 
     val stubsLocation: VirtualFile?
         get() {

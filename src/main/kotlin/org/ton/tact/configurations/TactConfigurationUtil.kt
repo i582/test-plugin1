@@ -20,7 +20,7 @@ object TactConfigurationUtil {
 
     const val TOOLCHAIN_NOT_SETUP = "Tact executable not found, toolchain not setup correctly?"
     const val UNDEFINED_VERSION = "N/A"
-    const val STANDARD_LIB_PATH = "y"
+    const val STANDARD_LIB_PATH = "std"
     val STANDARD_SPAWN_COMPILER = if (SystemInfo.isWindows) "spawnc.exe" else "spawnc"
 
     fun getStdlibLocation(path: String): String? {

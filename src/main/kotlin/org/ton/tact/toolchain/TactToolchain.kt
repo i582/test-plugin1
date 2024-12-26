@@ -26,7 +26,7 @@ interface TactToolchain {
         }
 
         private fun fromDirectory(rootDir: VirtualFile): TactToolchain {
-            val version = TactConfigurationUtil.guessToolchainVersion(rootDir.path)
+            val version = "0.0.1" // TactConfigurationUtil.guessToolchainVersion(rootDir.path)
             return TactLocalToolchain(version, rootDir)
         }
 

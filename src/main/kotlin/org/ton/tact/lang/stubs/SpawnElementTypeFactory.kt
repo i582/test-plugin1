@@ -12,6 +12,7 @@ object TactElementTypeFactory {
         init {
             put("TUPLE_TYPE", TactTupleTypeImpl::class.java)
             put("FUNCTION_TYPE", TactFunctionTypeImpl::class.java)
+            put("BOUNCED_TYPE", TactBouncedTypeImpl::class.java)
             put("MAP_TYPE", TactMapTypeImpl::class.java)
             put("STRUCT_TYPE", TactStructTypeImpl::class.java)
             put("TYPE", TactTypeImpl::class.java)
