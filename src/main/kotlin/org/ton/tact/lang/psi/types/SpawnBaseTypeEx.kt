@@ -2,6 +2,8 @@ package org.ton.tact.lang.psi.types
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolderBase
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -9,6 +11,7 @@ import com.intellij.psi.util.CachedValuesManager
 import org.ton.tact.ide.codeInsight.TactCodeInsightUtil
 import org.ton.tact.lang.psi.*
 import org.ton.tact.lang.psi.impl.TactLangUtil
+import org.ton.tact.toolchain.TactToolchainService.Companion.toolchainSettings
 
 @Suppress("PropertyName")
 abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDataHolderBase(), TactTypeEx {
@@ -198,5 +201,17 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
         }
 
         private fun parentName(type: PsiElement) = (type.parent as TactNamedElement).name!!
+
+        fun stateInitType(project: Project): TactStructTypeEx {
+            val errorFile = resolveStdlibPath(project, "contract.tact") ?: error("Cannot find contract.tact file in stdlib")
+            val errorDecl = errorFile.getStructs().find { it.name == "StateInit" } ?: error("Cannot find StateInit struct in contract.tact")
+            return errorDecl.getType(null) as TactStructTypeEx
+        }
+
+        private fun resolveStdlibPath(project: Project, path: String): TactFile? {
+            val stdlib = project.toolchainSettings.toolchain().stdlibDir()
+            val fullPath = "$stdlib/$path"
+            return VirtualFileManager.getInstance().findFileByUrl(fullPath)?.findPsiFile(project) as? TactFile
+        }
     }
 }

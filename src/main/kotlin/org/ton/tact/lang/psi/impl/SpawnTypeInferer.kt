@@ -103,9 +103,13 @@ object TactTypeInferer {
 
         if (expr is TactDotExpression) {
             if (expr.assertNotNullExpression != null) {
-                val type = expr.expression?.getType(context)
+                val type = expr.expression.getType(context)
                 return unwrapOptionOrResultType(type)
             }
+        }
+
+        if (expr is TactInitOfExpr) {
+            return TactBaseTypeEx.stateInitType(expr.project)
         }
 
         // fn () -> type(fn())

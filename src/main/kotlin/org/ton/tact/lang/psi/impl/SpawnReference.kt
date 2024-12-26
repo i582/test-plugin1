@@ -321,6 +321,15 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
                     return false
             }
 
+        val modules = myElement.project.toolchainSettings.toolchain().rootDir()?.findChild("libs") ?: return true
+        modules.children
+            .map { psiManager.findFile(it) }
+            .filterIsInstance<TactFile>()
+            .forEach {
+                if (!processFileEntities(it, processor, state, false))
+                    return false
+            }
+
         return true
     }
 

@@ -184,13 +184,13 @@ Statement ::=
 private StatementRecover ::= !('!' | '?' | '&' | '#['| '[' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | type | break | test | let | while | until | do | repeat | foreach | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | oct | return | 'raw_string' | OPEN_QUOTE | char | struct | true | false | none | null | extern | mutates | extends | virtual | override | inline | abstract)
 
 // attributes start
-// #[attr1]
-// #[attr2]
+// @attr1
+// @attr2
 Attributes ::= Attribute Attribute* {
   pin=1
   stubClass="org.ton.tact.lang.stubs.TactAttributesStub"
 }
-// #[<exprs>]
+// @<exprs>
 Attribute ::= '@' AttributeExpression {
   pin=1
   stubClass="org.ton.tact.lang.stubs.TactAttributeStub"
