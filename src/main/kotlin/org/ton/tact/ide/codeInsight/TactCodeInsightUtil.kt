@@ -3,16 +3,12 @@ package org.ton.tact.ide.codeInsight
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.ton.tact.lang.psi.*
-import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.toEx
-import org.ton.tact.lang.psi.types.TactTypeEx
 import org.ton.tact.utils.parentNth
 import org.ton.tact.utils.parentOfTypeWithStop
 
 object TactCodeInsightUtil {
     private const val MAIN_MODULE = "main"
-    const val BUILTIN_MODULE = "builtin"
     const val STUBS_MODULE = "stubs"
-    private const val ERR_VARIABLE = "err"
 
     fun getCallExpr(element: PsiElement): TactCallExpr? {
         if (element.parent is TactFieldName) {
@@ -26,14 +22,12 @@ object TactCodeInsightUtil {
         return element.parentOfTypeWithStop(TactSignatureOwner::class)
     }
 
-    fun getCalledParams(callExpr: TactCallExpr?): List<TactTypeEx>? {
-        val resolved = callExpr?.resolve() as? TactSignatureOwner ?: return null
-        val params = resolved.getSignature()?.parameters?.paramDefinitionList
-        return params?.map { it.type.toEx() }
-    }
-
     fun takeZeroArguments(owner: TactSignatureOwner): Boolean {
         return owner.getSignature()?.parameters?.paramDefinitionList?.isEmpty() ?: false
+    }
+
+    fun takeSingleArgument(owner: TactSignatureOwner): Boolean {
+        return owner.getSignature()?.parameters?.paramDefinitionList?.size == 1
     }
 
     fun findDuplicateImports(imports: List<TactImportDeclaration>): MutableSet<TactImportDeclaration> {
@@ -59,27 +53,9 @@ object TactCodeInsightUtil {
     fun getQualifiedName(context: PsiElement, anchor: PsiElement, name: String): String {
         if (!context.isValid || !anchor.isValid) return name
 
-//        val contextFile = context.containingFile as TactFile
-//        val contextModule = contextFile.getModuleQualifiedName()
-//
-//        val elementFile = anchor.containingFile as TactFile
-//        val elementModule = elementFile.getModuleQualifiedName()
-
-        if (name.startsWith("$BUILTIN_MODULE.")) {
-            return name.removePrefix("$BUILTIN_MODULE.")
-        }
-
         if (name.startsWith("$MAIN_MODULE.")) {
             return name.removePrefix("$MAIN_MODULE.")
         }
-
-//        if (contextModule == elementModule) {
-//            return name.removePrefix("$contextModule.")
-//        }
-//
-//        if (name.startsWith("$contextModule.")) {
-//            return name.removePrefix("$contextModule.")
-//        }
 
         val parts = name.split(".")
         if (parts.size < 3) {

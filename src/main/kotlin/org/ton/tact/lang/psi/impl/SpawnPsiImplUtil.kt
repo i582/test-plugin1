@@ -18,7 +18,6 @@ import org.ton.tact.lang.psi.*
 import org.ton.tact.lang.psi.impl.TactReferenceBase.Companion.LOCAL_RESOLVE
 import org.ton.tact.lang.psi.impl.TactTypeInferer.getVarType
 import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.toEx
-import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.unwrapAlias
 import org.ton.tact.lang.psi.types.TactFunctionTypeEx
 import org.ton.tact.lang.psi.types.TactTypeEx
 import org.ton.tact.utils.stubOrPsiParentOfType
@@ -651,7 +650,7 @@ object TactPsiImplUtil {
 
     @JvmStatic
     fun resolveSignature(o: TactCallExpr): Pair<TactSignature, TactSignatureOwner>? {
-        val ty = o.expression?.getType(null)?.unwrapAlias()
+        val ty = o.expression?.getType(null)?.let { it }
         if (ty is TactFunctionTypeEx) {
             val owner = ty.signature.parentOfType<TactSignatureOwner>() ?: return null
             return ty.signature to owner

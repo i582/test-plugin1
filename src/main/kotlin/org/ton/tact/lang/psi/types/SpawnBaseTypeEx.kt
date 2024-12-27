@@ -28,7 +28,7 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
         return qualifiedName().removePrefix(moduleName).removePrefix(".")
     }
 
-    override fun isBuiltin() = moduleName == TactCodeInsightUtil.BUILTIN_MODULE || moduleName == TactCodeInsightUtil.STUBS_MODULE
+    override fun isBuiltin() = moduleName == TactCodeInsightUtil.STUBS_MODULE
 
     override fun containingModule(project: Project): PsiDirectory? {
         val anchor = anchor ?: return null
@@ -94,11 +94,8 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
     override fun methodsList(project: Project, visited: MutableSet<TactTypeEx>): List<TactNamedElement> {
         if (this in visited) return emptyList()
         val ownMethods = this.ownMethodsList(project)
-        val unwrapped = unwrapReference().unwrapAlias()
-        val inheritedMethods = if (unwrapped != this) unwrapped.methodsList(project, visited) else emptyList()
-
         visited.add(this)
-        return ownMethods + inheritedMethods
+        return ownMethods
     }
 
     override fun findMethod(project: Project, name: String): TactNamedElement? {
@@ -112,18 +109,6 @@ abstract class TactBaseTypeEx(protected val anchor: PsiElement? = null) : UserDa
                 is TactUnknownTypeEx -> true
                 else                 -> false
             }
-
-        fun TactTypeEx.unwrapReference(): TactTypeEx {
-            return this
-        }
-
-        fun TactTypeEx.unwrapGenericInstantiation(): TactTypeEx {
-            return this
-        }
-
-        fun TactTypeEx.unwrapAlias(): TactTypeEx {
-            return this
-        }
 
         fun TactType?.toEx(visited: MutableMap<TactType, TactTypeEx> = mutableMapOf()): TactTypeEx {
             if (this == null) {

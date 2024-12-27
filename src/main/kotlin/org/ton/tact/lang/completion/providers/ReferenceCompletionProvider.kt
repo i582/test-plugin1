@@ -65,34 +65,10 @@ object ReferenceCompletionProvider : CompletionProvider<CompletionParameters>() 
             return
         }
 
-        val possiblyLiteralValueExpression = refExpression.parentOfType<TactLiteralValueExpression>()
-        val file = refExpression.containingFile as? TactFile ?: return
-
-        if (possiblyLiteralValueExpression == null) {
-            val argumentList = refExpression.parentOfType<TactArgumentList>()
-            val elementList = argumentList?.elementList ?: emptyList()
-            val alreadyAssignedFields = TactStructLiteralCompletion.alreadyAssignedFields(elementList)
-            val callExpr = argumentList?.parent as? TactCallExpr
-            val resolved = callExpr?.resolve() as? TactSignatureOwner
-            val params = resolved?.getSignature()?.parameters?.paramDefinitionList
-
-            if (params != null) {
-                val processor = MyScopeProcessor(parameters, result, false)
-                for (param in params) {
-                    val name = param.name
-                    if (name != null && !alreadyAssignedFields.contains(name)) {
-                        processor.execute(param, ResolveState.initial().put(NAMED_PARAMETER_COMPLETION, true))
-                    }
-                }
-                return
-            }
-        }
+        val possiblyLiteralValueExpression = refExpression.parentOfType<TactLiteralValueExpression>() ?: return
 
         val fields = mutableSetOf<Pair<String, TactTypeEx?>>()
-        val elementList =
-            possiblyLiteralValueExpression?.elementList
-                ?: refExpression.parentOfType<TactArgumentList>()?.elementList
-                ?: emptyList()
+        val elementList = possiblyLiteralValueExpression.elementList
 
         val alreadyAssignedFields = TactStructLiteralCompletion.alreadyAssignedFields(elementList)
 
@@ -110,13 +86,6 @@ object ReferenceCompletionProvider : CompletionProvider<CompletionParameters>() 
                         else                   -> null
                     }
 
-                val containingFile = element.containingFile as? TactFile ?: return true
-
-                // don't add private fields from other modules
-//                if (element is TactFieldDefinition && !isLocalResolve(file, containingFile)) {
-//                    return true
-//                }
-
                 if (structFieldName != null) {
                     fields.add(structFieldName to structFieldType)
                 }
@@ -132,16 +101,14 @@ object ReferenceCompletionProvider : CompletionProvider<CompletionParameters>() 
             }
         })
 
-        if (possiblyLiteralValueExpression != null) {
-            val remainingFields = fields.filter { !alreadyAssignedFields.contains(it.first) }
-            if (remainingFields.size > 1) {
-                val element = LookupElementBuilder.create("")
-                    .withPresentableText("Fill all fields…")
-                    .withIcon(AllIcons.Actions.RealIntentionBulb)
-                    .withInsertHandler(StructFieldsInsertHandler(remainingFields))
+        val remainingFields = fields.filter { !alreadyAssignedFields.contains(it.first) }
+        if (remainingFields.size > 1) {
+            val element = LookupElementBuilder.create("")
+                .withPresentableText("Fill all fields…")
+                .withIcon(AllIcons.Actions.RealIntentionBulb)
+                .withInsertHandler(StructFieldsInsertHandler(remainingFields))
 
-                result.addElement(element)
-            }
+            result.addElement(element)
         }
     }
 
@@ -302,7 +269,12 @@ object ReferenceCompletionProvider : CompletionProvider<CompletionParameters>() 
 
         val lookupElement = when (element) {
             is TactFunctionDeclaration       -> TactCompletionUtil.createFunctionLookupElement(element, state)
+            is TactAsmFunctionDeclaration    -> TactCompletionUtil.createAsmFunctionLookupElement(element, state)
+            is TactNativeFunctionDeclaration -> TactCompletionUtil.createNativeFunctionLookupElement(element, state)
             is TactStructDeclaration         -> TactCompletionUtil.createStructLookupElement(element, state, !forTypes)
+            is TactTraitDeclaration          -> TactCompletionUtil.createTraitLookupElement(element, state)
+            is TactMessageDeclaration        -> TactCompletionUtil.createMessageLookupElement(element, state, !forTypes)
+            is TactPrimitiveDeclaration      -> TactCompletionUtil.createPrimitiveLookupElement(element, state)
             is TactFieldDefinition           -> TactCompletionUtil.createFieldLookupElement(element)
             is TactConstDefinition           -> TactCompletionUtil.createConstantLookupElement(element, inComptimeStubs, state)
             is TactModuleVarDefinition       -> TactCompletionUtil.createModuleVariableLikeLookupElement(element, state)

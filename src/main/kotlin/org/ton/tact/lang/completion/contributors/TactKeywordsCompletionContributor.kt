@@ -3,7 +3,9 @@ package org.ton.tact.lang.completion.contributors
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.template.impl.ConstantNode
+import com.intellij.psi.util.parentOfTypes
 import com.intellij.util.ProcessingContext
+import org.ton.tact.ide.ui.Icons
 import org.ton.tact.lang.completion.TactCompletionPatterns.onExpression
 import org.ton.tact.lang.completion.TactCompletionPatterns.onIfElse
 import org.ton.tact.lang.completion.TactCompletionPatterns.onStatement
@@ -16,6 +18,8 @@ import org.ton.tact.lang.completion.TactCompletionUtil.toTactLookupElement
 import org.ton.tact.lang.completion.TactCompletionUtil.withPriority
 import org.ton.tact.lang.completion.TactLookupElementProperties
 import org.ton.tact.lang.completion.sort.withTactSorter
+import org.ton.tact.lang.psi.TactContractDeclaration
+import org.ton.tact.lang.psi.TactTraitDeclaration
 
 class TactKeywordsCompletionContributor : CompletionContributor() {
     init {
@@ -62,6 +66,12 @@ class TactKeywordsCompletionContributor : CompletionContributor() {
             CompletionType.BASIC,
             onExpression(),
             CellCompletionProvider,
+        )
+
+        extend(
+            CompletionType.BASIC,
+            onExpression(),
+            SelfCompletionProvider,
         )
 
         // Other
@@ -113,6 +123,22 @@ class TactKeywordsCompletionContributor : CompletionContributor() {
                         "code" to ConstantNode(""),
                     )
                 )
+                .bold()
+                .withPriority(KEYWORD_PRIORITY)
+
+            result.addElement(constElement)
+        }
+    }
+
+    private object SelfCompletionProvider : CompletionProvider<CompletionParameters>() {
+        override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+            val owner = parameters.position.parentOfTypes(TactTraitDeclaration::class, TactContractDeclaration::class) ?: return
+
+            val icon = if (owner is TactTraitDeclaration) Icons.Trait else Icons.Contract
+
+            val constElement = LookupElementBuilder.create("self")
+                .withTypeText(owner.getType(null)?.qualifiedName() ?: "")
+                .withIcon(icon)
                 .bold()
                 .withPriority(KEYWORD_PRIORITY)
 

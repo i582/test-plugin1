@@ -24,10 +24,6 @@ import org.ton.tact.lang.psi.*
 import org.ton.tact.lang.psi.impl.TactReferenceBase.Companion.MODULE_NAME
 import org.ton.tact.lang.psi.impl.TactReferenceBase.Companion.NAMED_PARAMETER_COMPLETION
 import org.ton.tact.lang.psi.impl.TactReferenceBase.Companion.NEED_QUALIFIER_NAME
-import org.ton.tact.lang.psi.impl.contextType
-import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.unwrapAlias
-import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.unwrapReference
-import org.ton.tact.lang.psi.types.TactFunctionTypeEx
 import javax.swing.Icon
 
 object TactCompletionUtil {
@@ -132,6 +128,32 @@ object TactCompletionUtil {
         )
     }
 
+    fun createAsmFunctionLookupElement(element: TactAsmFunctionDeclaration, state: ResolveState): LookupElement? {
+        val name = element.name
+        if (name.isNullOrEmpty()) {
+            return null
+        }
+
+        val moduleName = state.get(MODULE_NAME)
+        return createFunctionLookupElement(
+            element, name, moduleName, state,
+            insertHandler = FunctionInsertHandler(element, moduleName),
+        )
+    }
+
+    fun createNativeFunctionLookupElement(element: TactNativeFunctionDeclaration, state: ResolveState): LookupElement? {
+        val name = element.name
+        if (name.isNullOrEmpty()) {
+            return null
+        }
+
+        val moduleName = state.get(MODULE_NAME)
+        return createFunctionLookupElement(
+            element, name, moduleName, state,
+            insertHandler = FunctionInsertHandler(element, moduleName),
+        )
+    }
+
     fun createConstantLookupElement(element: TactNamedElement, isComptime: Boolean, state: ResolveState): LookupElement? {
         var name = element.name
         if (name.isNullOrEmpty()) {
@@ -170,31 +192,55 @@ object TactCompletionUtil {
         val moduleName = state.get(MODULE_NAME)
         return createStructLookupElement(
             element, name, moduleName, state,
-            insertHandler = StructInsertHandler(moduleName, element.structType, needBrackets)
+            insertHandler = StructInsertHandler(moduleName, needBrackets)
         )
     }
 
-    private fun createClassLikeLookupElement(element: TactNamedElement, state: ResolveState, icon: Icon): LookupElement? {
+    fun createTraitLookupElement(element: TactTraitDeclaration, state: ResolveState): LookupElement? {
         val name = element.name
-        if (name.isNullOrEmpty()) {
+        if (name.isEmpty()) {
             return null
         }
 
         val moduleName = state.get(MODULE_NAME)
         return createClassLikeLookupElement(
-            element, name, icon, moduleName, state,
+            element, name, Icons.Trait, moduleName, state, false,
+        )
+    }
+
+    fun createMessageLookupElement(element: TactMessageDeclaration, state: ResolveState, needBrackets: Boolean): LookupElement? {
+        val name = element.name
+        if (name.isEmpty()) {
+            return null
+        }
+
+        val moduleName = state.get(MODULE_NAME)
+        return createClassLikeLookupElement(
+            element, name, Icons.Message, moduleName, state, needBrackets
+        )
+    }
+
+    fun createPrimitiveLookupElement(element: TactPrimitiveDeclaration, state: ResolveState): LookupElement? {
+        val name = element.name
+        if (name.isEmpty()) {
+            return null
+        }
+
+        val moduleName = state.get(MODULE_NAME)
+        return createClassLikeLookupElement(
+            element, name, Icons.Primitive, moduleName, state, false,
         )
     }
 
     private fun createClassLikeLookupElement(
         element: TactNamedElement, lookupString: String,
-        icon: Icon, moduleName: String?, state: ResolveState,
+        icon: Icon, moduleName: String?, state: ResolveState, needBrackets: Boolean,
     ): LookupElement {
         val qualifiedName = createQualifiedName(state, lookupString)
         return PrioritizedLookupElement.withPriority(
             LookupElementBuilder.createWithSmartPointer(qualifiedName, element)
                 .withRenderer(ClassLikeRenderer(icon, moduleName))
-                .withInsertHandler(ClassLikeInsertHandler(moduleName)), STRUCT_PRIORITY.toDouble()
+                .withInsertHandler(ClassLikeInsertHandler(moduleName, needBrackets)), STRUCT_PRIORITY.toDouble()
         )
     }
 
@@ -210,7 +256,7 @@ object TactCompletionUtil {
         )
     }
 
-    fun createFieldLookupElement(
+    private fun createFieldLookupElement(
         element: TactNamedElement, lookupString: String,
         insertHandler: InsertHandler<LookupElement>? = null,
         priority: Int = 0,
@@ -324,17 +370,6 @@ object TactCompletionUtil {
         }
     }
 
-    class ModuleInsertHandler(moduleName: String?) : ElementInsertHandler(moduleName) {
-        override fun handleInsertion(context: InsertionContext, item: LookupElement) {
-            val caretOffset = context.editor.caretModel.offset
-
-            context.document.insertString(caretOffset, ".")
-            context.editor.caretModel.moveToOffset(caretOffset + 1)
-
-            showCompletion(context.editor)
-        }
-    }
-
     open class FunctionInsertHandler(
         private val function: TactSignatureOwner,
         moduleName: String?,
@@ -343,29 +378,10 @@ object TactCompletionUtil {
             val caretOffset = context.editor.caretModel.offset
             val element = context.file.findElementAt(caretOffset - 1)
 
-            if (element != null) {
-                val type = element.parent.contextType()?.unwrapReference()?.unwrapAlias()
-
-                if (type is TactFunctionTypeEx) {
-                    // we don't want to add parentheses for function if a context type is function type
-                    //
-                    // Example:
-                    // struct Name {
-                    // 	 cb fn ()
-                    // }
-                    //
-                    // fn foo() {}
-                    //
-                    // fn main() {
-                    // 	 n := Name{
-                    // 	   cb: foo // don't add parentheses here
-                    // 	 }
-                    // }
-                    return
-                }
-            }
-
+            val parent = element?.parent as? TactReferenceExpression
             val takeZeroArguments = TactCodeInsightUtil.takeZeroArguments(function)
+            val methodCall = parent?.getQualifier() != null && TactCodeInsightUtil.takeSingleArgument(function)
+            val cursorAfterParens = takeZeroArguments || methodCall
 
             val prevChar = context.document.charsSequence.getOrNull(caretOffset)
             val withParenAfterCursor = prevChar == '('
@@ -378,7 +394,7 @@ object TactCompletionUtil {
                 }
             }
 
-            if (takeZeroArguments) {
+            if (cursorAfterParens) {
                 // move after ()
                 context.editor.caretModel.moveToOffset(caretOffset + 2)
                 return
@@ -390,16 +406,10 @@ object TactCompletionUtil {
         }
     }
 
-    fun snakeCaseToCamelCase(value: String): String {
-        return value.split("_").joinToString("") { it.replaceFirstChar { ch -> ch.uppercaseChar() } }
-            .replaceFirstChar { ch -> ch.lowercaseChar() }
-    }
-
     class ConstantInsertHandler(moduleName: String?) : ElementInsertHandler(moduleName)
 
     class StructInsertHandler(
         moduleName: String?,
-        private val struct: TactStructType,
         private val needBrackets: Boolean = true,
     ) : ElementInsertHandler(moduleName) {
 
@@ -421,10 +431,20 @@ object TactCompletionUtil {
         }
     }
 
-    class ClassLikeInsertHandler(moduleName: String?) : ElementInsertHandler(moduleName) {
+    class ClassLikeInsertHandler(moduleName: String?, private val needBrackets: Boolean) : ElementInsertHandler(moduleName) {
         override fun handleInsertion(context: InsertionContext, item: LookupElement) {
             val file = context.file as? TactFile ?: return
             context.commitDocument()
+
+            val caretOffset = context.editor.caretModel.offset
+
+            if (needBrackets) {
+                context.document.insertString(caretOffset, "{}")
+                context.editor.caretModel.moveToOffset(caretOffset + 1)
+
+                showCompletion(context.editor)
+                return
+            }
 
             val offset = context.startOffset
             val at = file.findElementAt(offset) ?: return
@@ -579,7 +599,7 @@ object TactCompletionUtil {
 
     class FunctionRenderer(moduleName: String?) : ElementRenderer(moduleName) {
         override fun render(element: LookupElement, p: LookupElementPresentation) {
-            val elem = element.psiElement as? TactFunctionDeclaration ?: return
+            val elem = element.psiElement as? TactSignatureOwner ?: return
             p.icon = Icons.Function
 
             val signature = elem.getSignature()
@@ -589,7 +609,6 @@ object TactCompletionUtil {
             p.tailText = parameters
             p.itemText = element.lookupString
             p.typeText = result
-            p.isStrikeout = elem.isDeprecated()
         }
     }
 

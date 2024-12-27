@@ -1,25 +1,18 @@
 package org.ton.tact.lang.psi.impl
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
-import org.ton.tact.ide.codeInsight.TactCodeInsightUtil
 import org.ton.tact.lang.psi.*
 import org.ton.tact.lang.psi.impl.TactReferenceBase.Companion.LOCAL_RESOLVE
-import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.unwrapAlias
-import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.unwrapGenericInstantiation
-import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.unwrapReference
+import org.ton.tact.lang.psi.types.TactMessageTypeEx
 import org.ton.tact.lang.psi.types.TactStructTypeEx
-import org.ton.tact.lang.psi.types.TactTypeEx
 
 class TactFieldNameReference(element: TactReferenceExpressionBase) :
     TactCachedReference<TactReferenceExpressionBase>(element) {
-
-    private val stubsManager = project.service<TactStubsManager>()
 
     override fun processResolveVariants(processor: TactScopeProcessor): Boolean {
         val fieldProcessor =
@@ -38,28 +31,36 @@ class TactFieldNameReference(element: TactReferenceExpressionBase) :
             return true
         }
 
-        var type = myElement.parentOfType<TactLiteralValueExpression>()?.getType(null)
-        if (type == null) {
-            val callExpr = TactCodeInsightUtil.getCallExpr(element)
-            val paramTypes = TactCodeInsightUtil.getCalledParams(callExpr)
-            type = paramTypes?.lastOrNull { it.unwrapReference().unwrapAlias().unwrapGenericInstantiation() is TactStructTypeEx }?: return true
-        }
-
-        val typeToProcess = type.unwrapReference().unwrapAlias().unwrapGenericInstantiation()
+        val type = myElement.parentOfType<TactLiteralValueExpression>()?.getType(null) ?: return true
 
         val typeFile = type.anchor(project)?.containingFile as? TactFile
         val originFile = element.containingFile as TactFile
         val localResolve = typeFile == null || TactReference.isLocalResolve(typeFile, originFile)
 
-        return processStructType(fieldProcessor, typeToProcess, localResolve)
+        return when (type) {
+            is TactStructTypeEx  -> processStructType(fieldProcessor, type, localResolve)
+            is TactMessageTypeEx -> processMessageType(fieldProcessor, type, localResolve)
+            else                 -> true
+        }
     }
 
-    private fun processStructType(fieldProcessor: TactScopeProcessor, type: TactTypeEx?, localResolve: Boolean): Boolean {
-        if (type !is TactStructTypeEx) return true
-
+    private fun processStructType(fieldProcessor: TactScopeProcessor, type: TactStructTypeEx?, localResolve: Boolean): Boolean {
         val state = if (localResolve) ResolveState.initial().put(LOCAL_RESOLVE, true) else ResolveState.initial()
-        val declaration = type.resolve(project) ?: return true
+        val declaration = type?.resolve(project) ?: return true
         val structType = declaration.structType
+
+        val fields = structType.fieldList
+        for (field in fields) {
+            if (!fieldProcessor.execute(field, state)) return false
+        }
+
+        return true
+    }
+
+    private fun processMessageType(fieldProcessor: TactScopeProcessor, type: TactMessageTypeEx?, localResolve: Boolean): Boolean {
+        val state = if (localResolve) ResolveState.initial().put(LOCAL_RESOLVE, true) else ResolveState.initial()
+        val declaration = type?.resolve(project) ?: return true
+        val structType = declaration.messageType
 
         val fields = structType.fieldList
         for (field in fields) {
@@ -86,10 +87,6 @@ class TactFieldNameReference(element: TactReferenceExpressionBase) :
         override fun crossOff(e: PsiElement): Boolean {
             if (e !is TactFieldDefinition)
                 return true
-            val named = e as TactNamedElement
-            val originFile = origin.containingFile as TactFile
-            val file = e.containingFile as TactFile
-            val localResolve = TactReference.isLocalResolve(originFile, file)
             return !e.isValid
         }
     }

@@ -1,6 +1,5 @@
 package org.ton.tact.lang.psi.impl
 
-import ai.grazie.utils.chainIf
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
 import com.intellij.psi.util.PsiTreeUtil
@@ -10,7 +9,6 @@ import org.ton.tact.ide.codeInsight.TactCodeInsightUtil
 import org.ton.tact.lang.psi.*
 import org.ton.tact.lang.psi.types.*
 import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.toEx
-import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.unwrapAlias
 import org.ton.tact.utils.parentNth
 
 fun TactExpression.inferType(context: ResolveState?): TactTypeEx? {
@@ -90,7 +88,7 @@ object TactTypeInferer {
         if (expr is TactCallExpr) {
             val calledExpr = expr.expression
             val exprType = calledExpr?.getType(context) ?: return null
-            val unwrapped = exprType.unwrapAlias()
+            val unwrapped = exprType
             if (unwrapped !is TactFunctionTypeEx) {
                 return exprType
             }

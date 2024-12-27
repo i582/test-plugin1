@@ -15,6 +15,10 @@ object Icons {
     val Interface = AllIcons.Nodes.Interface
     val Enum = AllIcons.Nodes.Enum
     val Union = AllIcons.Nodes.AbstractClass // TODO: change
+    val Trait = AllIcons.Nodes.Test // TODO: change
+    val Contract = AllIcons.Nodes.Class // TODO: change
+    val Primitive = AllIcons.Nodes.Parameter // TODO: change
+    val Message = AllIcons.Nodes.Method // TODO: change
     val Method = AllIcons.Nodes.Method
     val StaticMethod = AllIcons.Nodes.Static
     val Function = AllIcons.Nodes.Function
