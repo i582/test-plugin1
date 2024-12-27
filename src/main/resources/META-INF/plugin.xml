@@ -77,6 +77,11 @@
         <codeInsight.typeInfo language="tact" implementationClass="org.ton.tact.ide.codeInsight.TactTypeInfoProvider"/>
         <!-- endregion Code Insight -->
 
+        <!-- region Documentation -->
+        <lang.documentationProvider language="tact"
+                                    implementationClass="org.ton.tact.ide.documentation.TactDocumentationProvider"/>
+        <!-- endregion Documentation -->
+
         <!-- region Formatter -->
         <lang.formatter language="tact" implementationClass="org.ton.tact.lang.formatter.TactFormattingModelBuilder"/>
         <langCodeStyleSettingsProvider implementation="org.ton.tact.lang.formatter.TactLanguageCodeStyleSettingsProvider"/>

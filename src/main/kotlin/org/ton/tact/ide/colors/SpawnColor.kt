@@ -10,8 +10,10 @@ enum class TactColor(readableName: @NlsContexts.AttributeDescriptor String, defa
     KEYWORD("Keywords//Keyword", Default.KEYWORD),
 
     // Declarations
-    FUNCTION("Functions//Function/method", Default.FUNCTION_DECLARATION),
-    PUBLIC_FUNCTION("Functions//Public function/method", Default.FUNCTION_DECLARATION),
+    FUNCTION("Functions//Function", Default.FUNCTION_DECLARATION),
+    PUBLIC_FUNCTION("Functions//Public function", Default.FUNCTION_DECLARATION),
+    PUBLIC_NATIVE_FUNCTION("Functions//Public native function", Default.FUNCTION_DECLARATION),
+    PUBLIC_ASM_FUNCTION("Functions//Public asm function", Default.FUNCTION_DECLARATION),
     STRUCT("Types//Struct", Default.CLASS_NAME),
     PUBLIC_STRUCT("Types//Public struct", Default.CLASS_NAME),
     PUBLIC_TRAIT("Types//Public trait", Default.CLASS_NAME),
@@ -21,32 +23,20 @@ enum class TactColor(readableName: @NlsContexts.AttributeDescriptor String, defa
 
     FIELD("Fields//Field", Default.INSTANCE_FIELD),
     PUBLIC_FIELD("Fields//Public field", Default.INSTANCE_FIELD),
-    ENUM_VARIANT("Fields//Enum variant", Default.INSTANCE_FIELD),
-
-    INTERFACE_METHOD("Interface Methods//Method", Default.INSTANCE_METHOD),
 
     CONSTANT("Constants//Constant", Default.CONSTANT),
     PUBLIC_CONSTANT("Constants//Public constant", Default.CONSTANT),
-
-    TYPE_ALIAS("Type aliases//Type alias", Default.CLASS_NAME),
-    PUBLIC_TYPE_ALIAS("Type aliases//Public type alias", Default.CLASS_NAME),
 
     // Variable like
     VARIABLE("Variables//Variable", Default.LOCAL_VARIABLE),
     MUTABLE_VARIABLE("Variables//Mutable variable", Default.REASSIGNED_LOCAL_VARIABLE),
     PARAMETER("Variables//Parameter", Default.PARAMETER),
     MUTABLE_PARAMETER("Variables//Mutable parameter", Default.PARAMETER),
-    RECEIVER("Variables//Receiver", Default.PARAMETER),
-    MUTABLE_RECEIVER("Variables//Mutable receiver", Default.PARAMETER),
     MODULE_VARIABLE("Variables//Module variable", Default.GLOBAL_VARIABLE),
     PUBLIC_MODULE_VARIABLE("Variables//Public module variable", Default.GLOBAL_VARIABLE),
 
     // Types
     BUILTIN_TYPE("Types//Builtin type", Default.KEYWORD),
-
-    // Labels
-    LABEL("Labels//Label", Default.LABEL),
-    USED_LABEL("Labels//Used label", Default.LABEL),
 
     // Comments
     LINE_COMMENT("Comments//Line comments", Default.LINE_COMMENT),
@@ -81,10 +71,6 @@ enum class TactColor(readableName: @NlsContexts.AttributeDescriptor String, defa
     // Unsafe
     UNSAFE_CODE("Unsafe//Unsafe code"),
 
-    // Generics
-    TYPE_PARAMETER("Generics//Type parameter", Default.IDENTIFIER),
-    CONST_TYPE_PARAMETER("Generics//Constant type parameter", Default.CONSTANT),
-
     // Docs
     DOC_COMMENT("Doc//Comment", Default.DOC_COMMENT),
     DOC_HEADING("Doc//Heading", Default.DOC_COMMENT_TAG),
@@ -93,12 +79,6 @@ enum class TactColor(readableName: @NlsContexts.AttributeDescriptor String, defa
     DOC_STRONG("Doc//Bold"),
     DOC_CODE("Doc//Code", Default.DOC_COMMENT_MARKUP),
     COMMENT_REFERENCE("Doc//Comment reference", Default.DOC_COMMENT),
-
-    // Other
-    COMPTIME_SELECTOR("Compile time//Selector", Default.KEYWORD),
-    SMARTCAST("Smartcast//Smartcast"),
-    ARRAY_LITERAL_SUFFIX("Array literal suffix", Default.IDENTIFIER),
-    CFG_DISABLED_CODE("Conditionally disabled code")
     ;
 
     val textAttributesKey = TextAttributesKey.createTextAttributesKey("org.ton.tact.$name", default)
