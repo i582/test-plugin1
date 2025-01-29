@@ -20,9 +20,7 @@
     LBRACE               =  '{'
     RBRACE               =  '}'
     LBRACK               =  '['
-    HASH_LBRACK          =  '#['
     RBRACK               =  ']'
-    RBRACK_EXP           =  ']!'
     LPAREN               =  '('
     RPAREN               =  ')'
     COLON                =  ':'
@@ -67,18 +65,14 @@
     UNSIGNED_SHIFT_RIGHT =  '>>>'
     GREATER_OR_EQUAL     =  '>='
     GREATER              =  '>'
-    VAR_ASSIGN           =  ':='
     DOT                  =  '.'
     ASSERT_OP            =  '!!'
     SINGLE_QUOTE         =  "'"
     DOUBLE_QUOTE         =  '"'
     BACKTICK             =  '`'
     ARROW                =  '->'
-    SEMICOLON_SYNTHETIC  = '<NL>'
     INIT_OF              = 'initOf'
     TYPE_                = 'type'
-    C_STRING             = 'c_string'
-    raw_string           = 'raw_string'
     char                 = 'char'
     SHIFT_RIGHT          =  '>>'
     SHIFT_LEFT           =  '<<'
@@ -149,7 +143,7 @@ private TopDeclaration ::=
   | ConstDeclaration
   | Statement // for single files without entry point
 
-private TopLevelDeclarationRecover ::= !('type' | inline | extends | message | primitive | contract | trait | enum | import | '#[' | '[' | '!' | '?' | '&' | '@' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | break | test | comptime | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | interface | oct | return | select | 'raw_string' | OPEN_QUOTE | char | struct | union | var | assert | match | asm | true | false | none | null | extern)
+private TopLevelDeclarationRecover ::= !('type' | inline | extends | message | primitive | contract | trait | enum | import | '[' | '!' | '?' | '&' | '@' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | break | test | comptime | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | interface | oct | return | select | OPEN_QUOTE | char | struct | union | var | assert | match | asm | true | false | none | null | extern)
 
 ////////// TOP LEVEL DECLARATIONS END //////////
 
@@ -181,7 +175,7 @@ Statement ::=
   | ContinueStatement
   | SimpleStatement { methods=[processDeclarations] recoverWhile=StatementRecover }
 
-private StatementRecover ::= !('!' | '?' | '&' | '#['| '[' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | type | break | test | let | while | until | do | repeat | foreach | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | oct | return | 'raw_string' | OPEN_QUOTE | char | struct | true | false | none | null | extern | mutates | extends | virtual | override | inline | abstract)
+private StatementRecover ::= !('!' | '?' | '&' | '[' | '(' | '*' | '+' | '-' | ';' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | type | break | test | let | while | until | do | repeat | foreach | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | oct | return | OPEN_QUOTE | char | struct | true | false | none | null | extern | mutates | extends | virtual | override | inline | abstract)
 
 // attributes start
 // @attr1
@@ -319,7 +313,7 @@ private TraitItem ::=
   | FunctionDeclaration
 
 
-MessageId ::= '(' (int | hex | oct | bin) ')' {pin=1}
+MessageId ::= '(' Expression ')' {pin=1}
 MessageDeclaration ::= MessageType {
   stubClass="org.ton.tact.lang.stubs.TactMessageDeclarationStub"
   methods=[getIdentifier getName getTypeInner addField]
@@ -541,7 +535,7 @@ ListExpression ::= ExpressionList {
 
 private ExpressionList ::= ExpressionWithRecover (',' (ExpressionWithRecover | &')'))* {pin=3}
 private ExpressionWithRecover ::= Expression !':' {recoverWhile=ExpressionListRecover}
-private ExpressionListRecover ::= !('!' | '?' | '->' | '=>' | '!=' | '%' | '%=' | '&&' | '&' | '&=' | '&^' | '&^=' | '(' | ')' | '*' | '*=' | '+'  | '++' | '+=' | ',' | '-' | '--' | '-=' | '...' | '..=' | '/' | '/=' | ':' | ';' | '<' | '<-' | '<<' | '<<=' | '<=' | '<NL>' | '=' | '==' | '>' | '>=' | '>>' | '>>=' | '>>>=' | '#[' | '[' | ']' | '^' | '^=' | '{' | '|' | '|=' | '||' | '}' | 'type' | break | test | comptime | const | continue | defer | else | float | for | fun | go | spawn | goto | hex | identifier | if | int | interface | oct | return | select | 'raw_string' | OPEN_QUOTE | char | struct | enum | union | var | assert | match | true | false | none | null )
+private ExpressionListRecover ::= !('!' | '?' | '->' | '!=' | '%' | '%=' | '&&' | '&' | '&=' | '&^' | '&^=' | '(' | ')' | '*' | '*=' | '+'  | '++' | '+=' | ',' | '-' | '--' | '-=' | '/' | '/=' | ':' | ';' | '<' | '<-' | '<<' | '<<=' | '<=' | '=' | '==' | '>' | '>=' | '>>' | '>>=' | '>>>=' | '[' | ']' | '^' | '^=' | '{' | '|' | '|=' | '||' | '}' | 'type' | break | test | comptime | const | continue | defer | else | float | for | fun | go | spawn | goto | hex | identifier | if | int | interface | oct | return | select | OPEN_QUOTE | char | struct | enum | union | var | assert | match | true | false | none | null )
 
 VarDefinition ::= identifier {
   pin=2
