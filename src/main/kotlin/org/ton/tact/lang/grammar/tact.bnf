@@ -255,6 +255,7 @@ ContractDeclaration ::= Attributes? ContractType {
 }
 
 ContractType ::= contract identifier WithClause? '{' ContractItem* '}' {
+  implements="org.ton.tact.lang.psi.TactStorageMembersOwner"
   methods=[getFieldList getMethodsList getConstantsList]
 }
 
@@ -303,6 +304,7 @@ TraitDeclaration ::= Attributes? TraitType {
 }
 TraitType ::= trait identifier WithClause? '{' TraitItem* '}' {
   pin=1
+  implements="org.ton.tact.lang.psi.TactStorageMembersOwner"
   methods=[getFieldList getMethodsList getConstantsList]
 }
 

@@ -7,16 +7,7 @@ import org.ton.tact.lang.psi.TactTraitDeclaration
 import org.ton.tact.lang.stubs.index.TactNamesIndex
 
 open class TactTraitTypeEx(private val name: String, anchor: PsiElement?) :
-    TactResolvableTypeEx<TactTraitDeclaration>(anchor), TactImportableTypeEx {
-
-    override fun toString() = name
-
-    override fun qualifiedName(): String {
-        if (moduleName.isEmpty()) {
-            return name
-        }
-        return "$moduleName.$name"
-    }
+    StorageMembersOwnerTy<TactTraitDeclaration>(name, anchor), TactImportableTypeEx {
 
     override fun readableName(context: PsiElement, detailed: Boolean) =
         TactCodeInsightUtil.getQualifiedName(context, anchor!!, qualifiedName())

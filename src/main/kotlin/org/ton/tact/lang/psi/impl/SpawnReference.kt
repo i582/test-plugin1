@@ -94,8 +94,12 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
 
         val qualifier = element.getQualifier()
         return if (qualifier != null) {
+            // foo.bar
+            // ^^^ qualifier
             processQualifierExpression(qualifier, processor, state)
         } else {
+            //  bar()
+            // ^ no qualifier
             processUnqualifiedResolve(file, processor, state)
         }
     }
@@ -211,15 +215,6 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
         val localResolve = isLocalResolve(contextFile, file)
         val newState = state.put(LOCAL_RESOLVE, localResolve)
 
-        if (typ is TactContractTypeEx) {
-            val declaration = typ.resolve(project) ?: return true
-            val contractType = declaration.contractType
-
-            if (!processNamedElements(processor, newState, contractType.fieldList, localResolve)) return false
-            if (!processNamedElements(processor, newState, contractType.methodsList, localResolve)) return false
-            if (!processNamedElements(processor, newState, contractType.constantsList, localResolve)) return false
-        }
-
         if (typ is TactStructTypeEx) {
             val declaration = typ.resolve(project) ?: return true
             val structType = declaration.structType
@@ -236,24 +231,14 @@ class TactReference(el: TactReferenceExpressionBase, val forTypes: Boolean = fal
             if (!processMethods(typ, processor, newState, localResolve)) return false
         }
 
-        if (typ is TactTraitTypeEx) {
-            val declaration = typ.resolve(project) ?: return true
-            val traitType = declaration.traitType
-
-            if (!processNamedElements(processor, newState, traitType.fieldList, localResolve)) return false
-            if (!processNamedElements(processor, newState, traitType.methodsList, localResolve)) return false
-            if (!processNamedElements(processor, newState, traitType.constantsList, localResolve)) return false
+        if (typ is StorageMembersOwnerTy<*>) {
+            if (!processNamedElements(processor, newState, typ.ownFields(), localResolve)) return false
+            if (!processNamedElements(processor, newState, typ.methods(), localResolve)) return false
+            if (!processNamedElements(processor, newState, typ.ownConstants(), localResolve)) return false
 
             if (typ.qualifiedName() != "BaseTrait") {
                 val baseTrait = TactNamesIndex.find("BaseTrait", project, null).firstOrNull() as? TactTraitDeclaration ?: return true
                 if (!processExistingType(baseTrait.traitType.toEx(), processor, state)) return false
-            }
-
-            val superTypes = traitType.withClause?.typeListNoPin?.typeList ?: return true
-            if (superTypes.isEmpty()) return true
-
-            for (superType in superTypes) {
-                if (!processExistingType(superType.toEx(), processor, state)) return false
             }
         }
 

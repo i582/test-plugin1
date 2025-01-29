@@ -36,9 +36,6 @@ class TactSyntaxHighlighter : SyntaxHighlighterBase() {
 
             CHAR                                 -> TactColor.CHAR
 
-            RAW_STRING                           -> TactColor.RAW_STRING
-            C_STRING                             -> TactColor.C_STRING
-
             in KEYWORDS                          -> TactColor.KEYWORD
             in BOOL_LITERALS                     -> TactColor.KEYWORD
             in STRING_LITERALS                   -> TactColor.STRING

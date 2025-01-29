@@ -550,17 +550,7 @@ object TactPsiImplUtil {
 
     @JvmStatic
     fun getContents(o: TactStringLiteral): String {
-        val raw = o.rawString
-        if (raw != null) {
-            return raw.text.substring(2, raw.text.length - 1)
-        }
-
-        val text = o.text
-        if (text.startsWith("c")) {
-            return text.substring(2, text.length - 1)
-        }
-
-        return text.substring(1, text.length - 1)
+        return o.text.substring(1, o.text.length - 1)
     }
 
     @JvmStatic

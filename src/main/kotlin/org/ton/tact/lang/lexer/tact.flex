@@ -251,16 +251,11 @@ b?"`" ("\\x" {HEX_DIGIT} {2}) {1,3} "`"?    { return CHAR; }
 b?"`\\u" {HEX_DIGIT} {4} "`"?               { return CHAR; }
 b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 
-{RAW_DOUBLE_QUOTE_STRING}                 { return RAW_STRING; }
-{RAW_SINGLE_QUOTE_STRING}                 { return RAW_STRING; }
-
 "."                                       { return DOT; }
 "!!"                                      { return ASSERT_OP; }
 "~"                                       { return BIT_NOT; }
 "|"                                       { return BIT_OR; }
 "{"                                       { return LBRACE; }
-
-"#["                                      { return HASH_LBRACK; }
 
 "["                                       { return LBRACK; }
 "]"                                       { return RBRACK; }

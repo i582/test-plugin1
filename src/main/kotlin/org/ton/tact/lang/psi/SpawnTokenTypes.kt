@@ -13,7 +13,6 @@ object TactTokenTypes {
 
     val COMMENTS = TokenSet.create(LINE_COMMENT, MULTI_LINE_COMMENT, TactDocElementTypes.DOC_COMMENT)
     val STRING_LITERALS = TokenSet.create(
-        RAW_STRING,
         CHAR,
         SINGLE_QUOTE,
         DOUBLE_QUOTE,
@@ -21,7 +20,6 @@ object TactTokenTypes {
         OPEN_QUOTE,
         CLOSING_QUOTE,
         LITERAL_STRING_TEMPLATE_ENTRY,
-        C_STRING,
     )
     val NUMBERS = TokenSet.create(
         INT,
@@ -122,7 +120,6 @@ object TactTokenTypes {
         SHIFT_RIGHT,
         GREATER_OR_EQUAL,
         GREATER,
-        VAR_ASSIGN,
     )
 
     val STRING_INTERPOLATION = TokenSet.create(

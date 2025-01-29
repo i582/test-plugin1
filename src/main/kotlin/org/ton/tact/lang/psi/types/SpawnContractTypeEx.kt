@@ -3,12 +3,11 @@ package org.ton.tact.lang.psi.types
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.ton.tact.ide.codeInsight.TactCodeInsightUtil
-import org.ton.tact.lang.psi.TactContractDeclaration
+import org.ton.tact.lang.psi.*
 import org.ton.tact.lang.stubs.index.TactNamesIndex
 
-open class TactContractTypeEx(private val name: String, anchor: PsiElement?) :
-    TactResolvableTypeEx<TactContractDeclaration>(anchor), TactImportableTypeEx {
-
+abstract class StorageMembersOwnerTy<T: TactNamedElement>(private val name: String, anchor: PsiElement?) :
+    TactResolvableTypeEx<T>(anchor) {
     override fun toString() = name
 
     override fun qualifiedName(): String {
@@ -20,6 +19,37 @@ open class TactContractTypeEx(private val name: String, anchor: PsiElement?) :
 
     override fun readableName(context: PsiElement, detailed: Boolean) =
         TactCodeInsightUtil.getQualifiedName(context, anchor!!, qualifiedName())
+
+    fun ownMethods(): List<TactFunctionDeclaration> {
+        return owner()?.getMethodsList() ?: emptyList()
+    }
+
+    fun ownFields(): List<TactFieldDefinition> {
+        return owner()?.getFieldList() ?: emptyList()
+    }
+
+    fun ownConstants(): List<TactConstDefinition> {
+        return owner()?.getConstantsList() ?: emptyList()
+    }
+
+    fun methods(): List<TactFunctionDeclaration> {
+        return owner()?.methods() ?: emptyList()
+    }
+
+    fun fields(): List<TactFieldDefinition> {
+        return owner()?.fields() ?: emptyList()
+    }
+
+    private fun owner(): TactStorageMembersOwner? {
+        if (anchor is TactStorageMembersOwner) {
+            return anchor as TactStorageMembersOwner
+        }
+        return null
+    }
+}
+
+open class TactContractTypeEx(private val name: String, anchor: PsiElement?) :
+    StorageMembersOwnerTy<TactContractDeclaration>(name, anchor), TactImportableTypeEx {
 
     override fun isAssignableFrom(project: Project, rhs: TactTypeEx, kind: AssignableKind): Boolean {
         if (rhs.isAny) return true
