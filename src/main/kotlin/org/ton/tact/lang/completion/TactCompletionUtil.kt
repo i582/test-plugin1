@@ -41,7 +41,6 @@ object TactCompletionUtil {
     private const val UNION_PRIORITY = NOT_IMPORTED_TYPE_ALIAS_PRIORITY + 0
     private const val NOT_IMPORTED_CONSTANT_PRIORITY = 0
     private const val CONSTANT_PRIORITY = NOT_IMPORTED_CONSTANT_PRIORITY + 0
-    private const val MODULE_VAR_PRIORITY = 0
     private const val NOT_IMPORTED_VAR_PRIORITY = 0
     private const val VAR_PRIORITY = NOT_IMPORTED_VAR_PRIORITY + 0
     private const val FIELD_PRIORITY = 16
@@ -97,22 +96,6 @@ object TactCompletionUtil {
             insertHandler = insertHandler,
             forNamedCompletion = namedCompletion
         )
-    }
-
-    fun createModuleVariableLikeLookupElement(element: TactNamedElement, state: ResolveState): LookupElement? {
-        val name = element.name
-        if (name.isNullOrEmpty()) {
-            return null
-        }
-        val moduleName = state.get(MODULE_NAME)
-        return createModuleVariableLookupElement(
-            element, name,
-            insertHandler = ModuleVariableInsertHandler(moduleName)
-        )
-    }
-
-    class ModuleVariableInsertHandler(moduleName: String?) : ElementInsertHandler(moduleName) {
-        override fun handleInsertion(context: InsertionContext, item: LookupElement) {}
     }
 
     fun createFunctionLookupElement(element: TactFunctionDeclaration, state: ResolveState): LookupElement? {
@@ -337,17 +320,6 @@ object TactCompletionUtil {
         )
     }
 
-    private fun createModuleVariableLookupElement(
-        element: TactNamedElement, lookupString: String,
-        insertHandler: InsertHandler<LookupElement>? = null,
-    ): LookupElement {
-        return PrioritizedLookupElement.withPriority(
-            LookupElementBuilder.createWithSmartPointer(lookupString, element)
-                .withRenderer(VARIABLE_RENDERER)
-                .withInsertHandler(insertHandler), MODULE_VAR_PRIORITY.toDouble()
-        )
-    }
-
     fun showCompletion(editor: Editor) {
         AutoPopupController.getInstance(editor.project!!).autoPopupMemberLookup(editor, null)
     }
@@ -538,14 +510,10 @@ object TactCompletionUtil {
     private val VARIABLE_RENDERER = object : LookupElementRenderer<LookupElement>() {
         override fun renderElement(element: LookupElement, p: LookupElementPresentation) {
             val elem = element.psiElement as? TactNamedElement ?: return
-            val type = when (elem) {
-                is TactModuleVarDefinition -> elem.expressionType
-                else                       -> elem.getType(null)?.readableName(elem)
-            }
+            val type = elem.getType(null)?.readableName(elem)
             val icon = when (elem) {
                 is TactVarDefinition       -> Icons.Variable
                 is TactParamDefinition     -> Icons.Parameter
-                is TactModuleVarDefinition -> Icons.ModuleVariable
                 else                       -> null
             }
 

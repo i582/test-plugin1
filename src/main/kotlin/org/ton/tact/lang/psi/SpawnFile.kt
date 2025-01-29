@@ -119,21 +119,6 @@ open class TactFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, 
     fun getConstants(): List<TactConstDefinition> =
         getNamedElements(TactTypes.CONST_DEFINITION, TactConstDefinitionStubElementType.ARRAY_FACTORY)
 
-    fun getModuleVars(): List<TactModuleVarDefinition> {
-        val value = {
-            if (stub != null) {
-                getChildrenByType(stub!!, TactTypes.MODULE_VAR_DEFINITION) { arrayOfNulls<TactModuleVarDefinition>(it) }
-            } else {
-                val decls = children.filterIsInstance<TactModuleVarDeclaration>()
-                decls.flatMap { it.moduleVarDefinitionList }
-            }
-        }
-
-        return CachedValuesManager.getCachedValue(this) {
-            CachedValueProvider.Result.create(value(), this)
-        }
-    }
-
     private inline fun <reified T : PsiElement> getNamedElements(elementType: IElementType, arrayFactory: ArrayFactory<T>): List<T> {
         return CachedValuesManager.getCachedValue(this) {
             val stub = stub

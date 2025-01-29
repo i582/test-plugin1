@@ -127,7 +127,7 @@ object ReferenceCompletionProvider : CompletionProvider<CompletionParameters>() 
             }
 
             val template = TemplateManager.getInstance(project)
-                .createTemplate("closures", "spawn", templateText)
+                .createTemplate("closures", "tact", templateText)
             template.isToReformat = true
 
             fields.forEach {
@@ -250,7 +250,6 @@ object ReferenceCompletionProvider : CompletionProvider<CompletionParameters>() 
             is TactConstDefinition     -> TactLookupElementProperties.ElementKind.CONSTANT
             is TactContractDeclaration -> TactLookupElementProperties.ElementKind.CONSTANT // TODO
             is TactFieldDefinition     -> TactLookupElementProperties.ElementKind.FIELD
-            is TactModuleVarDefinition -> TactLookupElementProperties.ElementKind.MODULE_VAR
             is TactNamedElement        -> TactLookupElementProperties.ElementKind.OTHER
             else                       -> return null
         }
@@ -277,7 +276,6 @@ object ReferenceCompletionProvider : CompletionProvider<CompletionParameters>() 
             is TactPrimitiveDeclaration      -> TactCompletionUtil.createPrimitiveLookupElement(element, state)
             is TactFieldDefinition           -> TactCompletionUtil.createFieldLookupElement(element)
             is TactConstDefinition           -> TactCompletionUtil.createConstantLookupElement(element, inComptimeStubs, state)
-            is TactModuleVarDefinition       -> TactCompletionUtil.createModuleVariableLikeLookupElement(element, state)
             is TactParamDefinition           -> TactCompletionUtil.createParamLookupElement(element, state)
             is TactNamedElement              -> TactCompletionUtil.createVariableLikeLookupElement(element)
             else                             -> null

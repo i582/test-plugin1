@@ -114,8 +114,6 @@
 // [TopLevelDeclarations]
 File ::= ImportList? TopLevelDeclaration*
 
-private list_separator ::= ','
-
 // import "@stdlib/deploy"
 // import "other"
 ImportList ::= ImportDeclaration+
@@ -131,19 +129,18 @@ ImportDeclaration ::= import StringLiteral ';' {
 
 private TopLevelDeclaration ::= !<<eof>> TopDeclaration {pin=1 recoverWhile=TopLevelDeclarationRecover}
 private TopDeclaration ::=
-    ModuleVarDeclaration
-  | FunctionDeclaration
+    FunctionDeclaration
   | NativeFunctionDeclaration
   | AsmFunctionDeclaration
-  | StructDeclaration
-  | TraitDeclaration
   | PrimitiveDeclaration
+  | StructDeclaration
   | MessageDeclaration
+  | TraitDeclaration
   | ContractDeclaration
   | ConstDeclaration
   | Statement // for single files without entry point
 
-private TopLevelDeclarationRecover ::= !('type' | inline | extends | message | primitive | contract | trait | enum | import | '[' | '!' | '?' | '&' | '@' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | break | test | comptime | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | interface | oct | return | select | OPEN_QUOTE | char | struct | union | var | assert | match | asm | true | false | none | null | extern)
+private TopLevelDeclarationRecover ::= !('type' | inline | extends | message | primitive | contract | trait | enum | import | '[' | '!' | '?' | '&' | '@' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | const | else | for | fun | pub | hex | identifier | if | int | oct | return | OPEN_QUOTE | char | struct | asm | true | false | null)
 
 ////////// TOP LEVEL DECLARATIONS END //////////
 
@@ -175,7 +172,7 @@ Statement ::=
   | ContinueStatement
   | SimpleStatement { methods=[processDeclarations] recoverWhile=StatementRecover }
 
-private StatementRecover ::= !('!' | '?' | '&' | '[' | '(' | '*' | '+' | '-' | ';' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | type | break | test | let | while | until | do | repeat | foreach | const | continue | defer | else | float | for | fun | pub | mut | spawn | goto | hex | identifier | if | int | oct | return | OPEN_QUOTE | char | struct | true | false | none | null | extern | mutates | extends | virtual | override | inline | abstract)
+private StatementRecover ::= !('!' | '?' | '&' | '[' | '(' | '*' | '+' | '-' | ';' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | type | let | while | until | do | repeat | foreach | const | else | for | fun | hex | identifier | if | int | oct | return | OPEN_QUOTE | char | struct | true | false | null | mutates | extends | virtual | override | inline | abstract)
 
 // attributes start
 // @attr1
@@ -254,12 +251,12 @@ ContractDeclaration ::= Attributes? ContractType {
   methods=[getIdentifier getName getTypeInner]
 }
 
-ContractType ::= contract identifier WithClause? '{' ContractItem* '}' {
+ContractType ::= contract identifier WithClause? '{' MemberItem* '}' {
   implements="org.ton.tact.lang.psi.TactStorageMembersOwner"
   methods=[getFieldList getMethodsList getConstantsList]
 }
 
-private ContractItem ::=
+private MemberItem ::=
     FieldDeclaration
   | ConstDeclaration
   | ContractInitDeclaration
@@ -302,18 +299,11 @@ TraitDeclaration ::= Attributes? TraitType {
   stubClass="org.ton.tact.lang.stubs.TactTraitDeclarationStub"
   methods=[getIdentifier getName getTypeInner]
 }
-TraitType ::= trait identifier WithClause? '{' TraitItem* '}' {
+TraitType ::= trait identifier WithClause? '{' MemberItem* '}' {
   pin=1
   implements="org.ton.tact.lang.psi.TactStorageMembersOwner"
   methods=[getFieldList getMethodsList getConstantsList]
 }
-
-private TraitItem ::=
-    FieldDeclaration
-  | ConstDeclaration
-  | MessageFunctionDeclaration
-  | FunctionDeclaration
-
 
 MessageId ::= '(' Expression ')' {pin=1}
 MessageDeclaration ::= MessageType {
@@ -339,32 +329,14 @@ StructType ::= struct identifier '{' FieldDeclaration* '}' {
   methods=[getFieldList]
 }
 
-FieldDeclaration ::= PlainFieldDeclaration ';' {
+FieldDeclaration ::= FieldDefinition ':' Type DefaultFieldValue? ';' {
   stubClass="org.ton.tact.lang.stubs.TactFieldDeclarationStub"
 }
-private PlainFieldDeclaration ::= FieldDefinition ':' Type DefaultFieldValue?
 DefaultFieldValue ::= '=' Expression {pin=1}
 FieldDefinition ::= identifier {
   methods=[getQualifier getQualifiedName getTypeInner getOwner]
   stubClass="org.ton.tact.lang.stubs.TactFieldDefinitionStub"
 }
-
-// module var declarations
-// [<visibility>] var <name> = <value>
-// [<visibility>] var (<list>)
-ModuleVarDeclaration ::= Attributes? var ( ModuleVarDefinition | '(' ModuleVarDefinitions? ')' ) {
-  pin=4
-  methods=[isMultiline]
-}
-// <spec> [<spec2>]
-private ModuleVarDefinitions ::= ModuleVarDefinition (';' ModuleVarDefinition)* ';'? {pin=1}
-// <list> = <list>
-ModuleVarDefinition ::= identifier '=' Expression {
-  pin=1
-  stubClass="org.ton.tact.lang.stubs.TactModuleVarDefinitionStub"
-  methods=[getTypeInner getName getExpressionText getExpressionType getSymbolVisibility isMutable makeMutable makeImmutable]
-}
-// end of module vars
 
 FunctionDeclaration ::= Attributes? FunctionAttribute* fun identifier Signature Block? {
   pin=5
@@ -437,8 +409,7 @@ Expression ::=
 LiteralValueExpression ::= <<braceRuleMarker>> Type <<prevIsNotFunType>> '{' ElementList? '}'
 private CommaElementList ::= ElementInner (',' ElementInner?)*
 private ElementList ::= ElementInner (',' ElementInner?)*
-private ElementInner ::= Element | (!() Element) // {recoverWhile=ElementInnerRecover}
-//private ElementInnerRecover ::= !('}' | ',' | semi | ')')
+private ElementInner ::= Element | (!() Element)
 Element ::= First [':' Value]  {pin(".*")=1}
 private First ::= Key | <<keyOrValueExpression>>
 Key ::= (FieldName &':') | !() Expression // nullability hack for key without reference inside
@@ -453,7 +424,9 @@ private MaxGroup ::=
 
 ////// TYPES //////
 
-TypeExtra ::= '?' | (as TypeReferenceExpression) // TODO
+TypeExtra ::= '?' | Tlb // TODO
+
+Tlb ::= as TypeReferenceExpression
 
 Type ::= (TypeLit | TypeName) TypeExtra? {
   stubClass="org.ton.tact.lang.stubs.TactTypeStub"
@@ -507,15 +480,13 @@ Parameters ::= '(' ParameterList? ','? ')' {
   stubClass="org.ton.tact.lang.stubs.TactParametersStub"
 }
 
-private ParameterList ::= ParamDefinition (',' (ParamDefinition | &')'))* list_separator? {pin(".*")=1}
+private ParameterList ::= ParamDefinition (',' (ParamDefinition | &')'))* ','? {pin(".*")=1}
 
-ParamDefinition ::= ParamWithName | ParamWithoutName {
+ParamDefinition ::= identifier ':' Type {
   pin=4
   stubClass="org.ton.tact.lang.stubs.TactParamDefinitionStub"
   methods = [getName]
 }
-private ParamWithName ::= identifier '...'? ':' Type
-private ParamWithoutName ::= '...'? ':' Type
 
 TypeListNoPin ::= Type (',' Type)* ','?
 // end of signature
@@ -537,7 +508,7 @@ ListExpression ::= ExpressionList {
 
 private ExpressionList ::= ExpressionWithRecover (',' (ExpressionWithRecover | &')'))* {pin=3}
 private ExpressionWithRecover ::= Expression !':' {recoverWhile=ExpressionListRecover}
-private ExpressionListRecover ::= !('!' | '?' | '->' | '!=' | '%' | '%=' | '&&' | '&' | '&=' | '&^' | '&^=' | '(' | ')' | '*' | '*=' | '+'  | '++' | '+=' | ',' | '-' | '--' | '-=' | '/' | '/=' | ':' | ';' | '<' | '<-' | '<<' | '<<=' | '<=' | '=' | '==' | '>' | '>=' | '>>' | '>>=' | '>>>=' | '[' | ']' | '^' | '^=' | '{' | '|' | '|=' | '||' | '}' | 'type' | break | test | comptime | const | continue | defer | else | float | for | fun | go | spawn | goto | hex | identifier | if | int | interface | oct | return | select | OPEN_QUOTE | char | struct | enum | union | var | assert | match | true | false | none | null )
+private ExpressionListRecover ::= !('!' | '?' | '->' | '!=' | '%' | '%=' | '&&' | '&' | '&=' | '&^' | '&^=' | '(' | ')' | '*' | '*=' | '+'  | '++' | '+=' | ',' | '-' | '--' | '-=' | '/' | '/=' | ':' | ';' | '<' | '<-' | '<<' | '<<=' | '<=' | '=' | '==' | '>' | '>=' | '>>' | '>>=' | '>>>=' | '[' | ']' | '^' | '^=' | '{' | '|' | '|=' | '||' | '}' | 'type' | const | else | for | fun |  hex | identifier | if | int | oct | return | OPEN_QUOTE | char | struct | true | false | null )
 
 VarDefinition ::= identifier {
   pin=2
@@ -695,7 +666,6 @@ private Condition ::= BeforeBlockExpression
 // literals like 0 or 10.5 and other
 Literal ::=
     int
-  | float
   | hex
   | oct
   | bin
@@ -708,20 +678,9 @@ Literal ::=
 }
 
 // just different strings
-StringLiteral ::= 'raw_string' | StringTemplate {
+StringLiteral ::= OPEN_QUOTE (STRING_ENTRY | STRING_ESCAPE_ENTRY)* CLOSING_QUOTE {
   implements = "com.intellij.psi.PsiLanguageInjectionHost"
   methods = [isValidHost updateText createLiteralTextEscaper getDecodedText getReferences getContents isC]
 }
-
-StringTemplate ::= OPEN_QUOTE StringTemplatePart* CLOSING_QUOTE {pin=1}
-
-private StringTemplatePart ::=
-    LITERAL_STRING_TEMPLATE_ENTRY
-  | LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY
-  | LongStringTemplateEntry
-  | StringTemplateEntry
-
-LongStringTemplateEntry ::= LONG_TEMPLATE_ENTRY_START Expression TEMPLATE_ENTRY_END {pin=1}
-StringTemplateEntry ::= TEMPLATE_ENTRY_START Expression TEMPLATE_ENTRY_END {pin=1}
 
 ////// LITERALS END //////

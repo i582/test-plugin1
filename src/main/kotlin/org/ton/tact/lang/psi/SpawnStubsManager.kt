@@ -48,11 +48,6 @@ class TactStubsManager(private val project: Project) {
         return type
     }
 
-    fun getErrVariableDefinition(): TactModuleVarDefinition? {
-        val stubFile = findFile("errors.sp") ?: return null
-        return stubFile.getModuleVars().firstOrNull { it.name == "err" }
-    }
-
     companion object {
         fun getInstance(project: Project) = project.service<TactStubsManager>()
     }

@@ -172,36 +172,6 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun getName(o: TactModuleVarDefinition): String {
-        val stub = o.stub
-        if (stub != null) {
-            return stub.name ?: ""
-        }
-
-        return o.getIdentifier().text ?: ""
-    }
-
-    @JvmStatic
-    fun getExpressionText(o: TactModuleVarDefinition): String {
-        val stub = o.stub
-        if (stub != null) {
-            return stub.value
-        }
-
-        return o.expression?.text ?: ""
-    }
-
-    @JvmStatic
-    fun getExpressionType(o: TactModuleVarDefinition): String {
-        val stub = o.stub
-        if (stub != null) {
-            return stub.type
-        }
-
-        return o.expression?.getType(null)?.qualifiedName() ?: ""
-    }
-
-    @JvmStatic
     fun getIdentifier(o: TactStructDeclaration): PsiElement? {
         return o.structType.identifier
     }
@@ -684,19 +654,7 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun isMultiline(o: TactModuleVarDeclaration): Boolean {
-        return o.lparen != null
-    }
-
-    @JvmStatic
     fun getTypeInner(o: TactConstDefinition, context: ResolveState?): TactTypeEx? {
-        val expr = o.expression ?: return null
-        if (expr.text == o.name) return null
-        return expr.inferType(context)
-    }
-
-    @JvmStatic
-    fun getTypeInner(o: TactModuleVarDefinition, context: ResolveState?): TactTypeEx? {
         val expr = o.expression ?: return null
         if (expr.text == o.name) return null
         return expr.inferType(context)
@@ -759,7 +717,7 @@ object TactPsiImplUtil {
 
     @JvmStatic
     fun isNumeric(o: TactLiteral): Boolean {
-        return o.int != null || o.bin != null || o.hex != null || o.oct != null || o.float != null
+        return o.int != null || o.bin != null || o.hex != null || o.oct != null
     }
 
     @JvmStatic
@@ -793,19 +751,6 @@ object TactPsiImplUtil {
         }
 
         return null
-    }
-
-    @JvmStatic
-    fun isMutable(o: TactModuleVarDefinition): Boolean {
-        return true
-    }
-
-    @JvmStatic
-    fun makeMutable(o: TactModuleVarDefinition) {
-    }
-
-    @JvmStatic
-    fun makeImmutable(o: TactModuleVarDefinition) {
     }
 
     @JvmStatic

@@ -4,9 +4,7 @@ import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler
 import com.intellij.openapi.editor.highlighter.HighlighterIterator
 
 class TactQuoteHandler : SimpleTokenSetQuoteHandler(
-    TactTypes.STRING_TEMPLATE,
     TactTypes.OPEN_QUOTE,
-    TactTypes.CLOSING_QUOTE,
     TactTypes.CHAR,
     TactTypes.BACKTICK,
 ) {
@@ -14,7 +12,7 @@ class TactQuoteHandler : SimpleTokenSetQuoteHandler(
         if (iterator.tokenType == TactTypes.CHAR) {
             return super.isClosingQuote(iterator, offset)
         }
-        return iterator.tokenType == TactTypes.CLOSING_QUOTE
+        return iterator.tokenType == TactTypes.OPEN_QUOTE
     }
 
     override fun isOpeningQuote(iterator: HighlighterIterator, offset: Int): Boolean {

@@ -18,7 +18,7 @@ interface TactDocComment : PsiDocCommentBase {
      *
      * For example, in the following code:
      *
-     * ```spawn
+     * ```tact
      * // foo
      * fn foo() {}
      * ```
@@ -27,7 +27,7 @@ interface TactDocComment : PsiDocCommentBase {
      *
      * In the following code:
      *
-     * ```spawn
+     * ```tact
      * // bar
      * fn foo() {}
      * ```

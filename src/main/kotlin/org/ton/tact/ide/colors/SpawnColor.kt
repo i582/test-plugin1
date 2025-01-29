@@ -32,8 +32,6 @@ enum class TactColor(readableName: @NlsContexts.AttributeDescriptor String, defa
     MUTABLE_VARIABLE("Variables//Mutable variable", Default.REASSIGNED_LOCAL_VARIABLE),
     PARAMETER("Variables//Parameter", Default.PARAMETER),
     MUTABLE_PARAMETER("Variables//Mutable parameter", Default.PARAMETER),
-    MODULE_VARIABLE("Variables//Module variable", Default.GLOBAL_VARIABLE),
-    PUBLIC_MODULE_VARIABLE("Variables//Public module variable", Default.GLOBAL_VARIABLE),
 
     // Types
     BUILTIN_TYPE("Types//Builtin type", Default.KEYWORD),

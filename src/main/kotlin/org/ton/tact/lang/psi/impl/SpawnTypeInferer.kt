@@ -174,7 +174,6 @@ object TactTypeInferer {
 
     private fun inferTypeWithSmartcasts(resolved: TactTypeOwner, type: TactTypeEx?, expr: TactReferenceExpression): TactTypeEx? {
         if (resolved !is TactVarDefinition &&
-            resolved !is TactModuleVarDefinition &&
             resolved !is TactParamDefinition &&
             resolved !is TactFieldDefinition
         ) {

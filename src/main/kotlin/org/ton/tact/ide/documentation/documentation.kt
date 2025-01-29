@@ -192,13 +192,13 @@ fun TactExpression.generateDoc(): String {
 
         builder.append(
             when {
-                keyword             -> colorize(tokenText, asKeyword)
-                number              -> colorize(tokenText, asNumber)
-                string              -> colorize(tokenText, asString)
-                operators           -> colorize(tokenText, asOperator)
-                booleanLiteral      -> colorize(tokenText, asKeyword)
-                primitiveType       -> colorize(tokenText, asBuiltin)
-                else                -> tokenText
+                keyword        -> colorize(tokenText, asKeyword)
+                number         -> colorize(tokenText, asNumber)
+                string         -> colorize(tokenText, asString)
+                operators      -> colorize(tokenText, asOperator)
+                booleanLiteral -> colorize(tokenText, asKeyword)
+                primitiveType  -> colorize(tokenText, asBuiltin)
+                else           -> tokenText
             }
         )
         lexer.advance()
@@ -212,8 +212,8 @@ fun TactTypeEx.generateDoc(anchor: PsiElement): String {
         is TactMapTypeEx       -> return this.generateDoc(anchor)
         is TactOptionTypeEx    -> return this.generateDoc(anchor)
         is TactStructTypeEx    -> return this.generateDoc(anchor)
-        is TactMessageTypeEx    -> return this.generateDoc(anchor)
-        is TactTraitTypeEx    -> return this.generateDoc(anchor)
+        is TactMessageTypeEx   -> return this.generateDoc(anchor)
+        is TactTraitTypeEx     -> return this.generateDoc(anchor)
         is TactFunctionTypeEx  -> return this.generateDoc(anchor)
         is TactTupleTypeEx     -> return this.generateDoc(anchor)
         is TactPrimitiveTypeEx -> return this.generateDoc(anchor)

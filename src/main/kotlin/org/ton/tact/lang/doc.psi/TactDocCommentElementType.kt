@@ -20,7 +20,7 @@ import org.ton.tact.lang.psi.TactDocElementTypes.DOC_GAP
 import kotlin.math.max
 import kotlin.math.min
 
-class TactDocCommentElementType : ILazyParseableElementType("SPAWN_DOC_COMMENT", TactLanguage) {
+class TactDocCommentElementType : ILazyParseableElementType("TACT_DOC_COMMENT", TactLanguage) {
     override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode {
         val charTable = SharedImplUtil.findCharTableByTree(chameleon)
         val textMap = TactDocTextMap.new(chameleon.chars, TactDocKind.of(this))

@@ -43,10 +43,6 @@ import static org.ton.tact.lang.psi.TactDocElementTypes.*;
     yybegin(state.state);
   }
 
-  private void popMaybeSemicolonState() {
-     popState();
-  }
-
   public _TactLexer() {
     this((java.io.Reader)null);
  }
@@ -69,7 +65,6 @@ WS = [ \t\f]
 
 EOL_DOC_COMMENT = ({WS}*"//".*{NL})*({WS}*"//".*)
 LINE_COMMENT = "//" [^\r\n]*
-HASH_COMMENT = "#" [^\[] [^\r\n]*
 
 MULTI_LINE_DEGENERATE_COMMENT = "/*" "*"+ "/"
 
@@ -95,97 +90,23 @@ NUM_BIN = "0b" (({BIN_DIGIT} {BIN_DIGIT_OR_SEP}* {BIN_DIGIT}) | {BIN_DIGIT})
 
 HEX_EXPONENT = [pP] [+-]? {NUM_INT}*
 
-FLOAT_EXPONENT = [eE] [+-]? {NUM_INT}
-NUM_FLOAT = (
-    ({NUM_INT}? "." {NUM_INT}) {FLOAT_EXPONENT}?) |
-    ({NUM_INT} {FLOAT_EXPONENT}
-)
-
 IDENT = {LETTER} {IDENT_PART}*
 IDENT_PART = {LETTER} | {DIGIT}
 
-// C special identifier like C.free
-SPECIAL_IDENT = "C." {LETTER} ({LETTER} | {DIGIT} | "." )*
+REGULAR_STRING_PART=[^\\\"]+
 
-STR_DOUBLE = "\""
-STR_SINGLE = "'"
-STR_OPENING_ANGLE = "<"
-STR_CLOSING_ANGLE = ">"
-
-// raw string, like r"hello" or r'hello'
-RAW_STR_MODIFIER = "r"
-
-RAW_DOUBLE_QUOTE_STRING = {RAW_STR_MODIFIER} {STR_DOUBLE} [^\"]* {STR_DOUBLE}
-RAW_SINGLE_QUOTE_STRING = {RAW_STR_MODIFIER} {STR_SINGLE} [^\']* {STR_SINGLE}
-
-LONELY_DOLLAR=\$
-LONG_TEMPLATE_ENTRY_START=\$\{
-REGULAR_STRING_PART=[^\\\"\$]+
-REGULAR_SINGLE_STRING_PART=[^\\\'\$]+
-
-C_STRING_PART=[^\\\"]+
-C_SINGLE_STRING_PART=[^\\\']+
-
-%xstate STRING SINGLE_STRING C_STRING SINGLE_C_STRING MULTI_LINE_COMMENT_STATE
-%state LONG_TEMPLATE_ENTRY
-
-%state ASM_BLOCK
-%state ASM_BLOCK_LINE
+%xstate STRING MULTI_LINE_COMMENT_STATE
 
 %%
 // String templates
 
-
-c\'                                           { pushState(SINGLE_C_STRING); return OPEN_QUOTE; }
-<SINGLE_C_STRING> \'                          { popState(); return CLOSING_QUOTE; }
-<SINGLE_C_STRING> "\\" (. | "\\")             { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<SINGLE_C_STRING> "\\"  {OCT_DIGIT} {3}       { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<SINGLE_C_STRING> "\\x" {HEX_DIGIT} {2}       { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<SINGLE_C_STRING> "\\u" {HEX_DIGIT} {4}       { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<SINGLE_C_STRING> "\\U" {HEX_DIGIT} {8}       { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-
-c\"                                           { pushState(C_STRING); return OPEN_QUOTE; }
-<C_STRING> \"                                 { popState(); return CLOSING_QUOTE; }
-<C_STRING> "\\" (. | "\\")                    { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<C_STRING> "\\"  {OCT_DIGIT} {3}              { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<C_STRING> "\\x" {HEX_DIGIT} {2}              { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<C_STRING> "\\u" {HEX_DIGIT} {4}              { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-
-<C_STRING> {C_STRING_PART}                  { return LITERAL_STRING_TEMPLATE_ENTRY; }
-<SINGLE_C_STRING> {C_SINGLE_STRING_PART}    { return LITERAL_STRING_TEMPLATE_ENTRY; }
-
-
-\'                                          { pushState(SINGLE_STRING); return OPEN_QUOTE; }
-<SINGLE_STRING> \'                          { popState(); return CLOSING_QUOTE; }
-<SINGLE_STRING> "\\" (. | "\\")             { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<SINGLE_STRING> "\\"  {OCT_DIGIT} {3}       { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<SINGLE_STRING> "\\x" {HEX_DIGIT} {2}       { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<SINGLE_STRING> "\\u" {HEX_DIGIT} {4}       { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<SINGLE_STRING> "\\U" {HEX_DIGIT} {8}       { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<SINGLE_STRING> {LONG_TEMPLATE_ENTRY_START} { pushState(LONG_TEMPLATE_ENTRY); return LONG_TEMPLATE_ENTRY_START; }
-
-\"                                          { pushState(STRING); return OPEN_QUOTE; }
-<STRING> \"                                 { popState(); return CLOSING_QUOTE; }
-<STRING> "\\" (. | "\\")                    { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<STRING> "\\"  {OCT_DIGIT} {3}              { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<STRING> "\\x" {HEX_DIGIT} {2}              { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<STRING> "\\u" {HEX_DIGIT} {4}              { return LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY; }
-<STRING> {LONG_TEMPLATE_ENTRY_START}        { pushState(LONG_TEMPLATE_ENTRY); return LONG_TEMPLATE_ENTRY_START; }
-
-<STRING> {REGULAR_STRING_PART}                  { return LITERAL_STRING_TEMPLATE_ENTRY; }
-<SINGLE_STRING> {REGULAR_SINGLE_STRING_PART}    { return LITERAL_STRING_TEMPLATE_ENTRY; }
-
-<STRING, SINGLE_STRING> {LONELY_DOLLAR}         { return LITERAL_STRING_TEMPLATE_ENTRY; }
-
-<LONG_TEMPLATE_ENTRY> "{"                       { lBraceCount++; return LBRACE; }
-<LONG_TEMPLATE_ENTRY> "}"                       {
-                                                    if (lBraceCount == 0) {
-                                                      popState();
-                                                      return TEMPLATE_ENTRY_END;
-                                                    }
-                                                    lBraceCount--;
-                                                    return RBRACE;
-                                                }
+\"                                { pushState(STRING); return OPEN_QUOTE; }
+<STRING> \"                       { popState(); return CLOSING_QUOTE; }
+<STRING> "\\" (. | "\\")          { return STRING_ESCAPE_ENTRY; }
+<STRING> "\\"  {OCT_DIGIT} {3}    { return STRING_ESCAPE_ENTRY; }
+<STRING> "\\x" {HEX_DIGIT} {2}    { return STRING_ESCAPE_ENTRY; }
+<STRING> "\\u" {HEX_DIGIT} {4}    { return STRING_ESCAPE_ENTRY; }
+<STRING> {REGULAR_STRING_PART}    { return STRING_ENTRY; }
 
 // (Nested) comments
 
@@ -229,7 +150,7 @@ c\"                                           { pushState(C_STRING); return OPEN
 
 <YYINITIAL> "}" { return RBRACE; }
 
-<YYINITIAL, LONG_TEMPLATE_ENTRY> {
+<YYINITIAL> {
 {WS}                                      { return WS; }
 {NL}+                                     { return NLS; }
 
@@ -294,7 +215,6 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 
 "<<="                                     { return SHIFT_LEFT_ASSIGN; }
 "<<"                                      { return SHIFT_LEFT; }
-"<-"                                      { return SEND_CHANNEL; }
 "<="                                      { return LESS_OR_EQUAL; }
 "<"                                       { return LESS; }
 
@@ -313,8 +233,8 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 
 ">>="                                     { return SHIFT_RIGHT_ASSIGN; }
 ">>>="                                    { return UNSIGNED_SHIFT_RIGHT_ASSIGN; }
- ">>"                                     { return SHIFT_RIGHT; } // done in parser <<gtGt>>
- ">>>"                                    { return UNSIGNED_SHIFT_RIGHT; } // done in parser <<gtGtGt>>
+">>"                                      { return SHIFT_RIGHT; } // done in parser <<gtGt>>
+">>>"                                     { return UNSIGNED_SHIFT_RIGHT; } // done in parser <<gtGtGt>>
 ">="                                      { return GREATER_OR_EQUAL; }
 ">"                                       { return GREATER; }
 
@@ -346,9 +266,6 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 "let"                                     { return LET; }
 "while"                                   { return WHILE; }
 "repeat"                                  { return REPEAT; }
-"do"                                      { return DO; }
-"until"                                   { return UNTIL; }
-"foreach"                                 { return FOREACH; }
 "try"                                     { return TRY; }
 "catch"                                   { return CATCH; }
 "if"                                      { return IF; }
@@ -358,24 +275,19 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 
 // loop
 "for"                                     { return FOR; }
-"break"                                   { return BREAK; }
-"continue"                                { return CONTINUE; }
+"foreach"                                 { return FOREACH; }
+"until"                                   { return UNTIL; }
+"do"                                      { return DO; }
 
 "map"                                     { return MAP; }
-"in"                                      { return IN; }
 
 // literals
 "null"                                    { return NULL; }
 "true"                                    { return TRUE; }
 "false"                                   { return FALSE; }
 
-// modifiers
-"var"                                     { return VAR; }
-
 {IDENT}                                   { return IDENTIFIER; }
-{SPECIAL_IDENT}                           { return IDENTIFIER; }
 
-{NUM_FLOAT}                               { return FLOAT; }
 {NUM_BIN}                                 { return BIN; }
 {NUM_OCT}                                 { return OCT; }
 {NUM_HEX}                                 { return HEX; }
@@ -386,6 +298,3 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 
 // error fallback
 [\s\S]       { return BAD_CHARACTER; }
-// error fallback for exclusive states
-<STRING, SINGLE_STRING> .
-             { return BAD_CHARACTER; }

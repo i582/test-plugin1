@@ -5,25 +5,24 @@ import com.intellij.psi.tree.TokenSet
 import org.ton.tact.lang.TactTypes.*
 
 object TactTokenTypes {
-    @JvmField val LINE_COMMENT = TactTokenType("SPAWN_LINE_COMMENT")
-    @JvmField val MULTI_LINE_COMMENT = TactTokenType("SPAWN_MULTI_LINE_COMMENT")
+    @JvmField val LINE_COMMENT = TactTokenType("TACT_LINE_COMMENT")
+    @JvmField val MULTI_LINE_COMMENT = TactTokenType("TACT_MULTI_LINE_COMMENT")
 
-    @JvmField val WS = TactTokenType("SPAWN_WHITESPACE")
-    @JvmField val NLS = TactTokenType("SPAWN_WS_NEW_LINES")
+    @JvmField val WS = TactTokenType("TACT_WHITESPACE")
+    @JvmField val NLS = TactTokenType("TACT_WS_NEW_LINES")
 
     val COMMENTS = TokenSet.create(LINE_COMMENT, MULTI_LINE_COMMENT, TactDocElementTypes.DOC_COMMENT)
     val STRING_LITERALS = TokenSet.create(
         CHAR,
         SINGLE_QUOTE,
         DOUBLE_QUOTE,
+        STRING_ENTRY,
+        CLOSING_QUOTE,
         BACKTICK,
         OPEN_QUOTE,
-        CLOSING_QUOTE,
-        LITERAL_STRING_TEMPLATE_ENTRY,
     )
     val NUMBERS = TokenSet.create(
         INT,
-        FLOAT,
         HEX,
         OCT,
         BIN
@@ -34,13 +33,10 @@ object TactTokenTypes {
         BREAK,
         CONST,
         CONTINUE,
-        DEFER,
         ELSE,
         MAP,
         FOR,
         FUN,
-        GO,
-        GOTO,
         IF,
         FOREACH,
         WHILE,
@@ -48,25 +44,15 @@ object TactTokenTypes {
         DO,
         REPEAT,
         IMPORT,
-        INTERFACE,
         IN,
         RETURN,
-        SELECT,
         STRUCT,
         TYPE_,
         PUB,
         LET,
-        MUT,
-        ASSERT,
         ENUM,
-        MATCH,
-        UNION,
         ASM,
         NULL,
-        SPAWN,
-        COMPTIME,
-        VAR,
-        TEST,
         CONTRACT,
         TRAIT,
         WITH,
@@ -120,12 +106,6 @@ object TactTokenTypes {
         SHIFT_RIGHT,
         GREATER_OR_EQUAL,
         GREATER,
-    )
-
-    val STRING_INTERPOLATION = TokenSet.create(
-        LONG_TEMPLATE_ENTRY_START,
-        TEMPLATE_ENTRY_END,
-        TEMPLATE_ENTRY_START,
     )
 
     val WHITE_SPACES = TokenSet.create(WS, NLS, TokenType.WHITE_SPACE)

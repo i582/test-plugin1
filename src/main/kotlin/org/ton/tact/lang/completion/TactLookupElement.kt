@@ -42,7 +42,6 @@ data class TactLookupElementProperties(
         METHOD,
         FUNCTION,
         STRUCT,
-        MODULE_VAR,
         CONSTANT,
         OTHER,
         // Least priority

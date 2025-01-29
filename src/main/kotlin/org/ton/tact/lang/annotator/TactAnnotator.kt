@@ -54,7 +54,6 @@ class TactAnnotator : Annotator {
             is TactTraitDeclaration               -> TactColor.PUBLIC_TRAIT
             is TactMessageDeclaration             -> TactColor.PUBLIC_TRAIT
             is TactFieldDefinition                -> TactColor.PUBLIC_FIELD
-            is TactModuleVarDefinition            -> TactColor.MODULE_VARIABLE
             is TactParamDefinition                -> TactColor.PARAMETER
             is TactVarDefinition                  -> TactColor.VARIABLE
             is TactModule.TactPomTargetPsiElement -> TactColor.MODULE

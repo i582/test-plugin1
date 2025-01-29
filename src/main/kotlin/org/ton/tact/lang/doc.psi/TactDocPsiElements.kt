@@ -12,8 +12,8 @@ interface TactDocElement : TactCompositeElement {
 }
 
 /**
- * A skipped `///`, `//!` or `*` (or other kind of documentation comment decorations)
- * is treated as a comment leaf in the markdown tree
+ * A skipped `///`, or `*` (or other kind of documentation comment decorations)
+ * is treated as a comment leaf in the Markdown tree
  */
 interface TactDocGap : PsiComment
 

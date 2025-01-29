@@ -41,7 +41,6 @@ object TactElementTypeFactory {
         "IMPORT_DECLARATION"           -> TactImportDeclarationStubElementType(name)
         "PARAM_DEFINITION"             -> TactParamDefinitionStubElementType(name)
         "CONST_DEFINITION"             -> TactConstDefinitionStubElementType(name)
-        "MODULE_VAR_DEFINITION"        -> TactModuleVarDefinitionStubElementType(name)
         "VAR_DEFINITION"               -> TactVarDefinitionStubElementType(name)
         "SIGNATURE"                    -> TactSignatureStubElementType(name)
         "PARAMETERS"                   -> TactParametersStubElementType(name)

@@ -32,12 +32,12 @@ class TactFileElementType : IStubFileElementType<TactFileStub>("TACT_FILE", Tact
         super.indexStub(stub, sink)
         if (stub !is TactFileStub) return
 
-        val fqn = stub.getModuleQualifiedName() ?: return
+        val fqn = stub.getModuleQualifiedName()
         if (fqn.isNotEmpty()) {
             sink.occurrence(TactModulesIndex.KEY, fqn)
         }
 
-        val name = stub.getModuleName() ?: return
+        val name = stub.getModuleName()
         if (name.isNotEmpty()) {
             sink.occurrence(TactModulesFingerprintIndex.KEY, name)
         }

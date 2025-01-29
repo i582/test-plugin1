@@ -21,7 +21,6 @@ class TactSyntaxHighlighter : SyntaxHighlighterBase() {
 
     companion object {
         fun map(tokenType: IElementType): TactColor? = when (tokenType) {
-            LITERAL_STRING_TEMPLATE_ESCAPE_ENTRY -> TactColor.VALID_STRING_ESCAPE
             DOC_COMMENT                          -> TactColor.LINE_COMMENT
 
             LPAREN, RPAREN                       -> TactColor.PARENTHESES
@@ -30,9 +29,6 @@ class TactSyntaxHighlighter : SyntaxHighlighterBase() {
 
             DOT                                  -> TactColor.DOT
             COMMA                                -> TactColor.COMMA
-
-            LONG_TEMPLATE_ENTRY_START            -> TactColor.STRING_INTERPOLATION
-            TEMPLATE_ENTRY_END                   -> TactColor.STRING_INTERPOLATION
 
             CHAR                                 -> TactColor.CHAR
 
