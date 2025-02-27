@@ -1,109 +1,109 @@
 <?xml version='1.0'?>
 <list>
-    <option name="org.ton.tact.MUTABLE_PARAMETER">
+    <option name="org.tonstudio.tact.MUTABLE_PARAMETER">
         <value>
             <option name="EFFECT_COLOR" value="0"/>
             <option name="EFFECT_TYPE" value="1"/>
         </value>
     </option>
-    <option name="org.ton.tact.MUTABLE_RECEIVER">
+    <option name="org.tonstudio.tact.MUTABLE_RECEIVER">
         <value>
             <option name="EFFECT_COLOR" value="0"/>
             <option name="EFFECT_TYPE" value="1"/>
         </value>
     </option>
-    <option name="org.ton.tact.PUBLIC_ENUM">
+    <option name="org.tonstudio.tact.PUBLIC_ENUM">
         <value>
             <option name="FOREGROUND" value="0"/>
             <option name="FONT_TYPE" value="2"/>
         </value>
     </option>
-    <option name="org.ton.tact.PUBLIC_FUNCTION">
+    <option name="org.tonstudio.tact.PUBLIC_FUNCTION">
         <value>
             <option name="FOREGROUND" value="627a"/>
             <option name="FONT_TYPE" value="2"/>
         </value>
     </option>
-    <option name="org.ton.tact.PUBLIC_INTERFACE">
+    <option name="org.tonstudio.tact.PUBLIC_INTERFACE">
         <value>
             <option name="FOREGROUND" value="0"/>
             <option name="FONT_TYPE" value="2"/>
         </value>
     </option>
-    <option name="org.ton.tact.PUBLIC_STRUCT">
+    <option name="org.tonstudio.tact.PUBLIC_STRUCT">
         <value>
             <option name="FOREGROUND" value="0"/>
             <option name="FONT_TYPE" value="2"/>
         </value>
     </option>
-    <option name="org.ton.tact.PUBLIC_TYPE_ALIAS">
+    <option name="org.tonstudio.tact.PUBLIC_TYPE_ALIAS">
         <value>
             <option name="FOREGROUND" value="0"/>
             <option name="FONT_TYPE" value="2"/>
         </value>
     </option>
-    <option name="org.ton.tact.PUBLIC_UNION">
+    <option name="org.tonstudio.tact.PUBLIC_UNION">
         <value>
             <option name="FOREGROUND" value="0"/>
             <option name="FONT_TYPE" value="2"/>
         </value>
     </option>
-    <option name="org.ton.tact.TYPE_ALIAS">
+    <option name="org.tonstudio.tact.TYPE_ALIAS">
         <value>
             <option name="FOREGROUND" value="0"/>
         </value>
     </option>
-    <option name="org.ton.tact.TYPE_PARAMETER">
+    <option name="org.tonstudio.tact.TYPE_PARAMETER">
         <value>
             <option name="FOREGROUND" value="20999D"/>
         </value>
     </option>
-    <option name="org.ton.tact.DOC_EMPHASIS">
+    <option name="org.tonstudio.tact.DOC_EMPHASIS">
         <value>
             <option name="FONT_TYPE" value="3"/>
         </value>
     </option>
-    <option name="org.ton.tact.DOC_STRONG">
+    <option name="org.tonstudio.tact.DOC_STRONG">
         <value>
             <option name="FONT_TYPE" value="1"/>
         </value>
     </option>
-    <option name="org.ton.tact.DOC_CODE">
+    <option name="org.tonstudio.tact.DOC_CODE">
         <value>
             <option name="FOREGROUND" value="404040"/>
         </value>
     </option>
-    <option name="org.ton.tact.UNSAFE_CODE">
+    <option name="org.tonstudio.tact.UNSAFE_CODE">
         <value>
             <option name="BACKGROUND" value="FFE8C6" />
         </value>
     </option>
-    <option name="org.ton.tact.RECEIVER">
+    <option name="org.tonstudio.tact.RECEIVER">
         <value>
             <option name="FOREGROUND" value="8a91"/>
         </value>
     </option>
-    <option name="org.ton.tact.COMMENT_REFERENCE">
+    <option name="org.tonstudio.tact.COMMENT_REFERENCE">
         <value>
             <option name="FOREGROUND" value="525252"/>
         </value>
     </option>
-    <option name="org.ton.tact.SMARTCAST">
+    <option name="org.tonstudio.tact.SMARTCAST">
         <value>
             <option name="BACKGROUND" value="E3FCE3" />
         </value>
     </option>
-    <option name="org.ton.tact.OVERLOADED_OPERATOR">
+    <option name="org.tonstudio.tact.OVERLOADED_OPERATOR">
         <value>
             <option name="FOREGROUND" value="008080" />
         </value>
     </option>
-    <option name="org.ton.tact.CFG_DISABLED_CODE">
+    <option name="org.tonstudio.tact.CFG_DISABLED_CODE">
         <value>
             <option name="FOREGROUND" value="526544"/>
         </value>
     </option>
-    <option name="org.ton.tact.ARRAY_LITERAL_SUFFIX">
+    <option name="org.tonstudio.tact.ARRAY_LITERAL_SUFFIX">
         <value>
             <option name="EFFECT_COLOR" value="0"/>
             <option name="EFFECT_TYPE" value="1"/>
