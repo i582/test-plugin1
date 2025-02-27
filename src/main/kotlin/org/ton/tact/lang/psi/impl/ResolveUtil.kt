@@ -57,8 +57,7 @@ object ResolveUtil {
         val type = run.elementType
         if (type === TokenType.WHITE_SPACE || type === TactTypes.LBRACE || type === TactTypes.RBRACE) return false
         if (type === TactTypes.SIMPLE_STATEMENT) {
-            val first = run.firstChildNode
-            return first == null || first.elementType !== TactTypes.LIST_EXPRESSION
+            return run.firstChildNode == null
         }
         return true
     }

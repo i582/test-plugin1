@@ -14,7 +14,7 @@ class TactOptionTypeEx(val inner: TactTypeEx, anchor: PsiElement) : TactBaseType
 
     override fun isAssignableFrom(project: Project, rhs: TactTypeEx, kind: AssignableKind): Boolean {
         if (rhs.isAny) return true
-        if (rhs is TactNoneTypeEx) return true
+        if (rhs is TactNullTypeEx) return true
         if (rhs is TactOptionTypeEx) {
             return inner.isEqual(rhs.inner)
         }

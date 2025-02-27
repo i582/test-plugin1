@@ -5,7 +5,6 @@ import com.intellij.psi.ResolveState
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import org.ton.tact.lang.psi.TactBlock
-import org.ton.tact.lang.psi.TactFunctionLiteral
 import org.ton.tact.lang.psi.TactStatement
 import org.ton.tact.lang.psi.TactVarDefinition
 
@@ -38,8 +37,10 @@ class TactVarReference(element: TactVarDefinition) : TactCachedReference<TactVar
                 PsiTreeUtil.getParentOfType(myElement, TactStatement::class.java),
                 myElement
             )
-        ) return false
+        ) {
+            return false
+        }
 
-        return ResolveUtil.treeWalkUp(myElement, proc) { it is TactFunctionLiteral }
+        return ResolveUtil.treeWalkUp(myElement, proc)
     }
 }

@@ -160,12 +160,6 @@ REGULAR_STRING_PART=[^\\\"]+
 // without this rule /*****/ is parsed as doc comment and /**/ is parsed as not closed doc comment, thanks Dart plugin
 {MULTI_LINE_DEGENERATE_COMMENT}           { return MULTI_LINE_COMMENT; }
 
-b?"`\\`"                                    { return BAD_CHARACTER; }
-b?"``"                                      { return CHAR; }
-b?"`" [^\\] "`"                             { return CHAR; }
-b?"`" \n "`"?                               { return CHAR; }
-b?"`\\" (. | "\\") "`"                      { return CHAR; }
-
 // \141`, `\342\230\205`
 b?"`" ("\\" {OCT_DIGIT} {3}) {1,3} "`"?     { return CHAR; }
 b?"`" ("\\x" {HEX_DIGIT} {2}) {1,3} "`"?    { return CHAR; }
@@ -270,8 +264,10 @@ b?"`\\U" {HEX_DIGIT} {8} "`"?               { return CHAR; }
 "catch"                                   { return CATCH; }
 "if"                                      { return IF; }
 "else"                                    { return ELSE; }
+"in"                                      { return IN; }
 
 "initOf"                                  { return INIT_OF; }
+"codeOf"                                  { return CODE_OF; }
 
 // loop
 "for"                                     { return FOR; }

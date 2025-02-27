@@ -11,9 +11,6 @@ public interface TactLiteral extends TactExpression {
   PsiElement getBin();
 
   @Nullable
-  PsiElement getChar();
-
-  @Nullable
   PsiElement getFalse();
 
   @Nullable

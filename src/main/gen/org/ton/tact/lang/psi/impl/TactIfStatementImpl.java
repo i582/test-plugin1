@@ -46,6 +46,18 @@ public class TactIfStatementImpl extends TactStatementImpl implements TactIfStat
   }
 
   @Override
+  @Nullable
+  public PsiElement getLparen() {
+    return findChildByType(LPAREN);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getRparen() {
+    return findChildByType(RPAREN);
+  }
+
+  @Override
   @NotNull
   public PsiElement getIf() {
     return notNullChild(findChildByType(IF));

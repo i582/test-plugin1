@@ -30,9 +30,7 @@ object TactTokenTypes {
     val BOOL_LITERALS = TokenSet.create(TRUE, FALSE)
 
     val KEYWORDS = TokenSet.create(
-        BREAK,
         CONST,
-        CONTINUE,
         ELSE,
         MAP,
         FOR,

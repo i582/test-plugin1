@@ -8,9 +8,6 @@ import org.ton.tact.lang.psi.impl.TactAttributeReference;
 
 public interface TactAttributeIdentifier extends TactCompositeElement {
 
-  @Nullable
-  TactAttributeIdentifierPrefix getAttributeIdentifierPrefix();
-
   @NotNull
   PsiElement getIdentifier();
 

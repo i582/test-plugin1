@@ -5,15 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface TactLongStringTemplateEntry extends TactCompositeElement {
+public interface TactCodeOfExpr extends TactExpression {
 
   @Nullable
-  TactExpression getExpression();
+  TactReferenceExpression getReferenceExpression();
 
   @NotNull
-  PsiElement getLongTemplateEntryStart();
-
-  @Nullable
-  PsiElement getTemplateEntryEnd();
+  PsiElement getCodeOf();
 
 }

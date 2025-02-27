@@ -28,27 +28,21 @@ public class TactInitOfExprImpl extends TactExpressionImpl implements TactInitOf
   }
 
   @Override
-  @NotNull
-  public List<TactExpression> getExpressionList() {
-    return TactPsiTreeUtil.getChildrenOfTypeAsList(this, TactExpression.class);
+  @Nullable
+  public TactArgumentList getArgumentList() {
+    return TactPsiTreeUtil.getChildOfType(this, TactArgumentList.class);
+  }
+
+  @Override
+  @Nullable
+  public TactReferenceExpression getReferenceExpression() {
+    return TactPsiTreeUtil.getChildOfType(this, TactReferenceExpression.class);
   }
 
   @Override
   @NotNull
   public PsiElement getInitOf() {
     return notNullChild(findChildByType(INIT_OF));
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getLparen() {
-    return findChildByType(LPAREN);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getRparen() {
-    return findChildByType(RPAREN);
   }
 
 }

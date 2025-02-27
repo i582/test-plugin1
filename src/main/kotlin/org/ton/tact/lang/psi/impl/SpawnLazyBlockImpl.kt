@@ -31,8 +31,7 @@ abstract class TactLazyBlockImpl : LazyParseablePsiElement, TactLazyBlock {
             this is TactIfStatement ||
             this is TactForEachStatement ||
             this is TactUntilStatement ||
-            this is TactWhileStatement ||
-            this is TactFunctionLiteral
+            this is TactWhileStatement
         ) {
             if (!processor.execute(this, state)) {
                 return false

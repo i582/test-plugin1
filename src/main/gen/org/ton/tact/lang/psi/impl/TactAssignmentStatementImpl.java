@@ -41,20 +41,16 @@ public class TactAssignmentStatementImpl extends TactStatementImpl implements Ta
 
   @Override
   @NotNull
-  public TactListExpression getListExpression() {
-    return notNullChild(TactPsiTreeUtil.getChildOfType(this, TactListExpression.class));
+  public TactExpression getLeft() {
+    List<TactExpression> p1 = getExpressionList();
+    return p1.get(0);
   }
 
   @Override
-  @NotNull
-  public List<TactExpression> getLeftExpressions() {
-    return TactPsiImplUtil.getLeftExpressions(this);
-  }
-
-  @Override
-  @NotNull
-  public List<TactExpression> getRightExpressions() {
-    return TactPsiImplUtil.getRightExpressions(this);
+  @Nullable
+  public TactExpression getRight() {
+    List<TactExpression> p1 = getExpressionList();
+    return p1.size() < 2 ? null : p1.get(1);
   }
 
 }

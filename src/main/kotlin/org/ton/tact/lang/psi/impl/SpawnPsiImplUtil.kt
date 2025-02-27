@@ -192,7 +192,7 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun getIdentifier(o: TactContractDeclaration): PsiElement? {
+    fun getIdentifier(o: TactContractDeclaration): PsiElement {
         return o.contractType.identifier
     }
 
@@ -368,14 +368,9 @@ object TactPsiImplUtil {
         val expression = getConsiderableExpression(o)
         val parent = expression.parent
 
-        if (parent is TactListExpression) {
-            val grandParent = parent.getParent()
-            if (grandParent is TactAssignmentStatement) {
-                // += or =
-                return if (grandParent.assignOp.assign == null) Access.ReadWrite else Access.Write
-            }
-
-            return Access.Read
+        if (parent is TactAssignmentStatement) {
+            // += or =
+            return if (parent.assignOp.assign == null) Access.ReadWrite else Access.Write
         }
 
         // TODO
@@ -432,28 +427,6 @@ object TactPsiImplUtil {
         return TactAttributeReference(o)
     }
 
-    @JvmStatic
-    fun getLeftExpressions(o: TactAssignmentStatement): List<TactExpression> {
-        return o.listExpression.expressionList
-    }
-
-    @JvmStatic
-    fun getRightExpressions(o: TactAssignmentStatement): List<TactExpression> {
-        val op = o.assignOp
-        val expressions = mutableListOf<TactExpression>()
-        o.children.forEachReversed { child ->
-            if (child == op) {
-                return expressions
-            }
-
-            if (child is TactExpression) {
-                expressions.add(child)
-            }
-        }
-
-        return expressions
-    }
-
     fun prevDot(e: PsiElement?): Boolean {
         val prev = if (e == null) null else PsiTreeUtil.prevVisibleLeaf(e)
         return prev is LeafElement && (prev as LeafElement).elementType === DOT
@@ -476,7 +449,7 @@ object TactPsiImplUtil {
             return stub.name ?: ""
         }
 
-        return o.getIdentifier()?.text
+        return o.getIdentifier().text
     }
 
     @JvmStatic
@@ -535,17 +508,6 @@ object TactPsiImplUtil {
                 val list = type.typeListNoPin
                 if (list != null) list.typeList.size to list.typeList.size
                 else 0 to 0
-            }
-
-            is TactOptionType -> {
-                val inner = type.type ?: return 0 to 1
-                if (inner is TactTupleType) {
-                    val list = inner.typeListNoPin
-                    if (list != null) return 1 to list.typeList.size
-                    return 1 to 1
-                }
-
-                1 to 1
             }
 
             null              -> 0 to 0
@@ -610,7 +572,7 @@ object TactPsiImplUtil {
 
     @JvmStatic
     fun resolveSignature(o: TactCallExpr): Pair<TactSignature, TactSignatureOwner>? {
-        val ty = o.expression?.getType(null)?.let { it }
+        val ty = o.expression?.getType(null)
         if (ty is TactFunctionTypeEx) {
             val owner = ty.signature.parentOfType<TactSignatureOwner>() ?: return null
             return ty.signature to owner

@@ -5,31 +5,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
-import com.intellij.psi.ResolveState
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.util.PsiTreeUtil
 import org.ton.tact.lang.psi.*
 import org.ton.tact.lang.psi.types.*
 import org.ton.tact.lang.psi.types.TactBaseTypeEx.Companion.toEx
 import org.ton.tact.lang.stubs.index.TactMethodIndex
-import org.ton.tact.utils.ancestorOrSelf
 
 object TactLangUtil {
-    fun getContinueStatementOwner(o: PsiElement): TactCompositeElement? {
-        val parent = PsiTreeUtil.getParentOfType(
-            o,
-            TactForEachStatement::class.java,
-            TactWhileStatement::class.java,
-            TactUntilStatement::class.java,
-            TactFunctionLiteral::class.java
-        )
-        if (parent is TactFunctionLiteral) return null
-        return parent
-    }
-
     private fun getStubFile(name: String, stubDir: VirtualFile, psiManager: PsiManager): TactFile? {
         val stubFile = stubDir.findChild(name) ?: return null
         return psiManager.findFile(stubFile) as? TactFile ?: return null
@@ -125,16 +110,6 @@ object TactLangUtil {
             GlobalSearchScope.allScope(project)
         }
 
-//        val logger = logger<TactLangUtil>()
-//        var declarations: Collection<TactFunctionDeclaration>
-//        val duration = measureTime { declarations = TactMethodIndex.find(key, project, scope) }
-////        val st =
-////            Thread.currentThread().stackTrace.toList().joinToString(separator = "\n") { stackTraceElement -> stackTraceElement.toString() }
-//        logger.info("find methods of $key in $duration")
-//        if (duration.inWholeMilliseconds > 100) {
-//            logger.warn("SLOW")
-//        }
-
         val declarations = TactMethodIndex.find(key, project, scope)
         if (declarations.isEmpty()) return emptyList()
         if (declarations.size == 1 || type !is TactResolvableTypeEx<*>) {
@@ -145,10 +120,6 @@ object TactLangUtil {
     }
 
     private fun getTypeNameNative(o: TactType): String {
-        if (o is TactOptionType) {
-            return getTypeNameNative(o.type!!)
-        }
-
         if (o is TactMapType) {
             return "map"
         }
@@ -164,47 +135,28 @@ object TactLangUtil {
         return o.toString()
     }
 
-    fun findNamesInScope(ctx: PsiElement): Set<String> {
-        val function = ctx.ancestorOrSelf<TactFunctionOrMethodDeclaration>() ?: return emptySet()
-
-        val result = mutableSetOf<String>()
-        function.processDeclarations({ element, _ ->
-            if (element is TactNamedElement && element.name != null) {
-                result.add(element.name!!)
-            }
-            true
-        }, ResolveState.initial(), null, ctx)
-
-        return result
-    }
-
     fun getDefaultValue(element: PsiElement, type: TactTypeEx?): String = when (type) {
         is TactPrimitiveTypeEx -> {
             when (type.name) {
                 TactPrimitiveTypes.BOOL    -> "false"
-                TactPrimitiveTypes.STRING  -> "''"
-                TactPrimitiveTypes.NULL    -> "nil"
-
-                TactPrimitiveTypes.INT,
-                TactPrimitiveTypes.UINT,
-                                           -> "0"
-
-                TactPrimitiveTypes.NEVER   -> "0"
+                TactPrimitiveTypes.STRING  -> "\"\""
+                TactPrimitiveTypes.NULL    -> "null"
+                TactPrimitiveTypes.INT     -> "0"
                 TactPrimitiveTypes.VOID    -> ""
-                TactPrimitiveTypes.BUILDER -> "null"
-                TactPrimitiveTypes.CELL    -> "null"
-                TactPrimitiveTypes.ADDRESS -> "null"
-                TactPrimitiveTypes.SLICE   -> "null"
+                TactPrimitiveTypes.BUILDER -> "beginCell()"
+                TactPrimitiveTypes.CELL    -> "emptyCell()"
+                TactPrimitiveTypes.ADDRESS -> "address()"
+                TactPrimitiveTypes.SLICE   -> "emptySlice()"
             }
         }
 
-        is TactStringTypeEx    -> "''"
-        is TactMapTypeEx       -> "{}"
-        is TactFunctionTypeEx  -> "fun ${type.signature.text} {}"
+        is TactStringTypeEx    -> "\"\""
+        is TactMapTypeEx       -> "emptyMap()"
+        is TactFunctionTypeEx  -> "null"
         is TactStructTypeEx    -> type.readableName(element) + "{}"
         is TactTraitTypeEx     -> type.readableName(element) + "{}"
-        is TactNoneTypeEx      -> "none"
-        is TactOptionTypeEx    -> "none"
+        is TactNullTypeEx      -> "null"
+        is TactOptionTypeEx    -> "null"
         is TactAnyTypeEx       -> "0"
         else                   -> "0"
     }

@@ -72,6 +72,7 @@
     BACKTICK             =  '`'
     ARROW                =  '->'
     INIT_OF              = 'initOf'
+    CODE_OF              = 'codeOf'
     TYPE_                = 'type'
     char                 = 'char'
     SHIFT_RIGHT          =  '>>'
@@ -140,7 +141,51 @@ private TopDeclaration ::=
   | ConstDeclaration
   | Statement // for single files without entry point
 
-private TopLevelDeclarationRecover ::= !('type' | inline | extends | message | primitive | contract | trait | enum | import | '[' | '!' | '?' | '&' | '@' | '(' | '*' | '+' | '-' | ';' | '<-' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | const | else | for | fun | pub | hex | identifier | if | int | oct | return | OPEN_QUOTE | char | struct | asm | true | false | null)
+private TopLevelDeclarationRecover ::= !('type' |
+    inline |
+    extends |
+    message |
+    primitive |
+    contract |
+    trait |
+    enum |
+    import |
+    '[' |
+    '!' |
+    '?' |
+    '&' |
+    '@' |
+    '(' |
+    '*' |
+    '+' |
+    '-' |
+    ';' |
+    '<-' |
+    '^' |
+    '{' |
+    '|' |
+    '|=' |
+    '||' |
+    '&&' |
+    '}' |
+    const |
+    else |
+    for |
+    fun |
+    pub |
+    hex |
+    identifier |
+    if |
+    int |
+    oct |
+    return |
+    OPEN_QUOTE |
+    char |
+    struct |
+    asm |
+    true |
+    false |
+    null)
 
 ////////// TOP LEVEL DECLARATIONS END //////////
 
@@ -168,8 +213,6 @@ Statement ::=
   | ForEachStatement
   | TryStatement
   | ReturnStatement
-  | BreakStatement
-  | ContinueStatement
   | SimpleStatement { methods=[processDeclarations] recoverWhile=StatementRecover }
 
 private StatementRecover ::= !('!' | '?' | '&' | '[' | '(' | '*' | '+' | '-' | ';' | '^' | '{' | '|' | '|=' | '||' | '&&' | '}' | type | let | while | until | do | repeat | foreach | const | else | for | fun | hex | identifier | if | int | oct | return | OPEN_QUOTE | char | struct | true | false | null | mutates | extends | virtual | override | inline | abstract)
@@ -198,12 +241,12 @@ AttributeKey ::= AttributeIdentifier | Literal {
   stubClass="org.ton.tact.lang.stubs.TactAttributeKeyStub"
 }
 
-private AttributeArgs ::= '(' ExpressionList? ')' {pin=1}
+private AttributeArgs ::= ArgumentList
 
-AttributeIdentifier ::= AttributeIdentifierPrefix? identifier {
+AttributeIdentifier ::= identifier {
   methods=[getReference]
 }
-AttributeIdentifierPrefix ::= (identifier) '.'
+
 // end of attributes
 
 // simple statements
@@ -215,19 +258,17 @@ SimpleStatement ::=
 
 private ExpressionStatement ::= Expression ';' {pin=1}
 
-private AssignStatement ::= ListExpression AssignmentStatement ';' { pin=2 }
+private AssignStatement ::= Expression AssignmentStatement ';' {pin=2}
 
 // let <var> <type-hint>? = <expr>;
-VarDeclaration ::= let VarDefinition TypeHint? '=' Expression ';' {
-  pin=1
-}
+VarDeclaration ::= let VarDefinition TypeHint? '=' Expression ';' {pin=1}
 
 TypeHint ::= ':' Type
 
 // = <list>
-left AssignmentStatement ::= AssignOp ExpressionList {
+left AssignmentStatement ::= AssignOp Expression {
   pin=1
-  methods=[getLeftExpressions getRightExpressions]
+  methods=[left="Expression[0]" right="Expression[1]"]
 }
 AssignOp ::= '=' | '+=' | '-=' | '|=' | '^=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '>>>=' | '&=' | '&^='
 
@@ -235,12 +276,6 @@ AssignOp ::= '=' | '+=' | '-=' | '|=' | '^=' | '*=' | '/=' | '%=' | '<<=' | '>>=
 
 // return <expr>;
 ReturnStatement ::= return Expression? ';' {pin=1}
-
-// break;
-BreakStatement ::= break ';'
-
-// continue;
-ContinueStatement ::= continue ';'
 
 ////// DECLARATIONS //////
 WithClause ::= with TypeListNoPin {pin=1}
@@ -375,7 +410,7 @@ AsmFunctionDeclaration ::= AsmHeader FunctionAttribute* fun identifier Signature
   methods=[getTypeInner]
 }
 
-AsmShuffle ::= '(' identifier* ('->' int+)? ')'
+AsmShuffle ::= '(' ReferenceExpression* ('->' int+)? ')'
 
 AsmInstruction ::= identifier | Literal | 'b{' Literal '}'
 
@@ -406,7 +441,7 @@ Expression ::=
 // end of expression rule
 
 // <type> {...}
-LiteralValueExpression ::= <<braceRuleMarker>> Type <<prevIsNotFunType>> '{' ElementList? '}'
+LiteralValueExpression ::= <<braceRuleMarker>> Type '{' ElementList? '}'
 private CommaElementList ::= ElementInner (',' ElementInner?)*
 private ElementList ::= ElementInner (',' ElementInner?)*
 private ElementInner ::= Element | (!() Element)
@@ -444,23 +479,12 @@ TypeReferenceExpression ::= identifier {
 private TypeLit ::=
     MapType
   | TupleType
-  | OptionType
-  | FunctionType
   | BouncedType
 
 BouncedType ::= 'bounced' '<' Type '>'
 
 // (<type>, <type>, ...)
 TupleType ::= '(' TypeListNoPin? ')' {pin=3}
-
-// ?<type>
-OptionType ::= '?' Type {pin=1} // TODO
-// fun (...) -> <type>
-// fun (...) -> (<type1>, <type2>, ...)
-FunctionType ::= fun Signature {
-  pin=1
-  implements="org.ton.tact.lang.psi.TactSignatureOwner"
-}
 
 // signature
 // (...) -> ...
@@ -501,15 +525,6 @@ MapType ::= map '<' Type ',' Type '>' {
 
 ////// TYPES END //////
 
-ListExpression ::= ExpressionList {
-  implements=Expression
-  methods=[getType]
-}
-
-private ExpressionList ::= ExpressionWithRecover (',' (ExpressionWithRecover | &')'))* {pin=3}
-private ExpressionWithRecover ::= Expression !':' {recoverWhile=ExpressionListRecover}
-private ExpressionListRecover ::= !('!' | '?' | '->' | '!=' | '%' | '%=' | '&&' | '&' | '&=' | '&^' | '&^=' | '(' | ')' | '*' | '*=' | '+'  | '++' | '+=' | ',' | '-' | '--' | '-=' | '/' | '/=' | ':' | ';' | '<' | '<-' | '<<' | '<<=' | '<=' | '=' | '==' | '>' | '>=' | '>>' | '>>=' | '>>>=' | '[' | ']' | '^' | '^=' | '{' | '|' | '|=' | '||' | '}' | 'type' | const | else | for | fun |  hex | identifier | if | int | oct | return | OPEN_QUOTE | char | struct | true | false | null )
-
 VarDefinition ::= identifier {
   pin=2
   methods=[getTypeInner getName getReference getInitializer]
@@ -523,12 +538,13 @@ private DotPrimaryExpr ::=
     LiteralValueExpression
   | ReferenceExpression
   | InitOfExpr
+  | CodeOfExpr
   | ParenthesesExpr
   | Literal
 
 // just <ident> with reference
 ReferenceExpression ::= identifier { methods=[getReference getQualifier resolve getReadWriteAccess getIdentifierBounds] extends=Expression}
-left QualifiedReferenceExpression ::= '.' identifier <<checkNoColonIfMap>> {elementType=ReferenceExpression}
+left QualifiedReferenceExpression ::= '.' identifier {elementType=ReferenceExpression}
 
 private RightHandExprs ::= RightHandExpr*
 
@@ -585,13 +601,11 @@ CatchClause ::= catch '(' ReferenceExpression ')' Block {pin=1}
 // <expr>!!
 AssertNotNullExpression ::= '!!' {pin=1}
 
-InitOfExpr ::= 'initOf' ReferenceExpression '(' ExpressionList ')' {pin = 1}
+InitOfExpr ::= 'initOf' ReferenceExpression ArgumentList {pin=1}
+CodeOfExpr ::= 'codeOf' ReferenceExpression {pin=1}
 
 // ([<arg1>, <arg2>[...], ...])
-ArgumentList ::= '(' CommaElementList? '...'? ','? ')' {pin=1}
-
-external BeforeBlockExpressionInner ::= beforeBlockExpression;
-private BeforeBlockExpression ::= BeforeBlockExpressionInner | !() Expression;
+ArgumentList ::= '(' CommaElementList? ','? ')' {pin=1}
 
 // <expr> ? <expr> : <expr>
 TernaryExpr ::= Expression '?' Expression ':' Expression {
@@ -642,7 +656,7 @@ TernaryExpr ::= Expression '?' Expression ':' Expression {
 // Где все `else if` ветви доступны в массиве, а `else` не находится в самой глубине
 // дерева, а находится на одном уровне с `if` и `else if`.
 
-IfStatement ::= if Condition Block ElseIfBranch* ElseBranch? {
+IfStatement ::= if '(' Condition ')' Block ElseIfBranch* ElseBranch? {
   pin=1
   methods=[isGuard]
 }
@@ -656,7 +670,7 @@ IfStatementWithoutElse ::= if Condition Block {pin=1 elementType=IfStatement}
 // else { ... }
 ElseBranch ::= else Block {pin=1}
 
-private Condition ::= BeforeBlockExpression
+private Condition ::= Expression
 
 ////////// EXPRESSIONS END //////////
 
@@ -672,7 +686,6 @@ Literal ::=
   | true
   | false
   | StringLiteral
-  | char
   | null {
   methods=[isNumeric isBoolean intValue]
 }

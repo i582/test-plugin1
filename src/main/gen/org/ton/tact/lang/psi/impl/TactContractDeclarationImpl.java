@@ -47,7 +47,7 @@ public class TactContractDeclarationImpl extends TactNamedElementImpl<TactContra
   }
 
   @Override
-  @Nullable
+  @NotNull
   public PsiElement getIdentifier() {
     return TactPsiImplUtil.getIdentifier(this);
   }

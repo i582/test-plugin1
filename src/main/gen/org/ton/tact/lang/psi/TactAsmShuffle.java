@@ -7,6 +7,9 @@ import com.intellij.psi.PsiElement;
 
 public interface TactAsmShuffle extends TactCompositeElement {
 
+  @NotNull
+  List<TactReferenceExpression> getReferenceExpressionList();
+
   @Nullable
   PsiElement getArrow();
 

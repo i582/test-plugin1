@@ -3,7 +3,6 @@ package org.ton.tact.lang.psi.impl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.util.parentOfType
 import org.ton.tact.ide.codeInsight.TactCodeInsightUtil
 import org.ton.tact.lang.psi.*
@@ -69,14 +68,7 @@ object TactTypeInferer {
         if (expr is TactReferenceExpression) {
             val resolved = expr.reference.resolve()
             if (resolved is TactTypeOwner) {
-                val type = typeOrParameterType(resolved, context)
-
-                val smartcastType = inferTypeWithSmartcasts(resolved, type, expr)
-                if (smartcastType != null) {
-                    return smartcastType
-                }
-
-                return type
+                return typeOrParameterType(resolved, context)
             }
         }
 
@@ -88,21 +80,16 @@ object TactTypeInferer {
         if (expr is TactCallExpr) {
             val calledExpr = expr.expression
             val exprType = calledExpr?.getType(context) ?: return null
-            val unwrapped = exprType
-            if (unwrapped !is TactFunctionTypeEx) {
+            if (exprType !is TactFunctionTypeEx) {
                 return exprType
             }
-
-            val signature = unwrapped.signature
-            val owner = signature.parent as TactSignatureOwner
-
-            return processSignatureReturnType(signature, expr, owner)
+            return processSignatureReturnType(exprType.signature)
         }
 
         if (expr is TactDotExpression) {
             if (expr.assertNotNullExpression != null) {
                 val type = expr.expression.getType(context)
-                return unwrapOptionOrResultType(type)
+                return unwrapOptionType(type)
             }
         }
 
@@ -110,110 +97,20 @@ object TactTypeInferer {
             return TactBaseTypeEx.stateInitType(expr.project)
         }
 
-        // fn () -> type(fn())
-        if (expr is TactFunctionLiteral) {
-            return TactFunctionTypeEx.from(expr)
-        }
-
-        if (expr is TactTupleLiteral) {
-            val expressions = mutableListOf(expr.expression)
-            val expressionList = expr.listExpression?.expressionList ?: return null
-            expressions.addAll(expressionList)
-            val types = expressions.map { it.getType(context) ?: TactAnyTypeEx.INSTANCE }
-            return TactTupleTypeEx(types, expr)
-        }
-
-        if (expr is TactIfStatement) {
-            val ifBody = expr.block
-            val elseBody = expr.elseBranch?.block
-
-            val ifType = ifBody.getType(context)
-            val elseType = elseBody.getType(context)
-
-            if (ifType == null) return elseType
-            if (elseType == null) return ifType
-            if (ifType.toString() == elseType.toString()) return ifType
-
-            // TODO: union type of if and else types
-            return ifType
-        }
-
-        if (expr is TactListExpression) {
-            val types = expr.expressionList.map { it.getType(context) ?: TactAnyTypeEx.INSTANCE }
-            if (types.size == 1) {
-                return types.first()
-            }
-            return TactTupleTypeEx(types, expr)
+        if (expr is TactCodeOfExpr) {
+            return TactPrimitiveTypeEx.CELL
         }
 
         return null
     }
 
-    private fun processSignatureReturnType(
-        signature: TactSignature,
-        expr: TactCallExpr,
-        owner: TactSignatureOwner,
-    ): TactTypeEx {
+    private fun processSignatureReturnType(signature: TactSignature): TactTypeEx {
         val result = signature.result ?: return TactVoidTypeEx.INSTANCE
-        val resultType = result.type.toEx()
-
-        return resultType
-    }
-
-    private fun TactBlock?.getType(
-        context: ResolveState?,
-    ): TactTypeEx? {
-        val lastIfStatement = this?.statementList?.lastOrNull()
-        val lastIfExpressionList = lastIfStatement?.childrenOfType<TactListExpression>()?.lastOrNull()
-        return lastIfExpressionList?.getType(context)
+        return result.type.toEx()
     }
 
     private fun typeOrParameterType(typeOwner: TactTypeOwner, context: ResolveState?): TactTypeEx? {
         return typeOwner.getType(context)
-    }
-
-    private fun inferTypeWithSmartcasts(resolved: TactTypeOwner, type: TactTypeEx?, expr: TactReferenceExpression): TactTypeEx? {
-        if (resolved !is TactVarDefinition &&
-            resolved !is TactParamDefinition &&
-            resolved !is TactFieldDefinition
-        ) {
-            // if identifier is not and some var or field, we don't need to apply any smartcasts
-            return type
-        }
-
-        if (!needSmartcast(expr)) {
-            // fast path
-            // don't apply any smartcasts if we are on the left side of assignment
-            // For example:
-            // ```
-            // mut a := Foo{} as IFoo
-            // if a is Foo {
-            //    // ...
-            //    a = Bar{} // Bar implements IFoo as well
-            // }
-            // ```
-            // In this case, we don't want to apply smartcast to `a` in `a = Foo{}`, since
-            // then in type checker we will get error that `Bar` cannot be assigned to `Foo`.
-            return type
-        }
-
-        return type
-    }
-
-    private fun needSmartcast(expr: TactExpression): Boolean {
-        val parent = expr.parent
-        if (parent is TactAssignmentStatement) {
-            val left = parent.listExpression
-            if (left.isEquivalentTo(expr)) {
-                return false
-            }
-        }
-
-        if (parent is TactUnaryExpr && parent.mul != null) {
-            return needSmartcast(parent)
-        }
-
-        return true
     }
 
     fun TactVarDefinition.getVarType(context: ResolveState?): TactTypeEx? {
@@ -252,24 +149,11 @@ object TactTypeInferer {
         return null
     }
 
-    private fun unwrapOptionOrResultTypeIf(type: TactTypeEx?, condition: Boolean): TactTypeEx? {
-        if (!condition) return type
-        return unwrapOptionOrResultType(type)
-    }
-
-    private fun unwrapOptionOrResultType(type: TactTypeEx?): TactTypeEx? {
+    private fun unwrapOptionType(type: TactTypeEx?): TactTypeEx? {
         if (type is TactOptionTypeEx) {
             return type.inner
         }
         return type
-    }
-
-    private fun callerType(call: TactCallExpr): TactTypeEx? {
-        val callExpression = call.expression as? TactReferenceExpression ?: return null
-        val caller = callExpression.getQualifier() as? TactTypeOwner ?: return null
-        val type = caller.getType(null)
-
-        return unwrapOptionOrResultTypeIf(type, false)
     }
 
     fun getContextType(element: PsiElement): TactTypeEx? {
@@ -323,9 +207,7 @@ object TactTypeInferer {
 
         if (element.parent is TactAssignmentStatement) {
             val assign = element.parent as TactAssignmentStatement
-            // TODO: support multi assign
-            val assignExpression = assign.leftExpressions.firstOrNull() as? TactTypeOwner ?: return null
-            return assignExpression.getType(null)
+            return assign.right?.getType(null)
         }
 
         val callExpr = TactCodeInsightUtil.getCallExpr(element)

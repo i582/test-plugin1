@@ -102,15 +102,15 @@ class TactPrimitiveTypeEx(val name: TactPrimitiveTypes, anchor: PsiElement? = nu
         val BOOL = TactPrimitiveTypeEx(TactPrimitiveTypes.BOOL)
         val INT = TactPrimitiveTypeEx(TactPrimitiveTypes.INT)
         val STRING = TactPrimitiveTypeEx(TactPrimitiveTypes.STRING)
-        val UINT = TactPrimitiveTypeEx(TactPrimitiveTypes.UINT)
         val NULL = TactPrimitiveTypeEx(TactPrimitiveTypes.NULL)
+        val CELL = TactPrimitiveTypeEx(TactPrimitiveTypes.CELL)
 
         fun get(name: String): TactPrimitiveTypeEx? {
             return when (name) {
-                "bool" -> BOOL
-                "i32"  -> INT
-                "u32"  -> UINT
+                "Bool" -> BOOL
+                "Int"  -> INT
                 "null" -> NULL
+                "Cell" -> CELL
                 else   -> null
             }
         }

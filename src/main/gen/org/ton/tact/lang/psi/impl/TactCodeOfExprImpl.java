@@ -10,15 +10,15 @@ import org.ton.tact.lang.psi.TactPsiTreeUtil;
 import static org.ton.tact.lang.TactTypes.*;
 import org.ton.tact.lang.psi.*;
 
-public class TactBreakStatementImpl extends TactStatementImpl implements TactBreakStatement {
+public class TactCodeOfExprImpl extends TactExpressionImpl implements TactCodeOfExpr {
 
-  public TactBreakStatementImpl(@NotNull ASTNode node) {
+  public TactCodeOfExprImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   @Override
   public void accept(@NotNull TactVisitor visitor) {
-    visitor.visitBreakStatement(this);
+    visitor.visitCodeOfExpr(this);
   }
 
   @Override
@@ -28,15 +28,15 @@ public class TactBreakStatementImpl extends TactStatementImpl implements TactBre
   }
 
   @Override
-  @NotNull
-  public PsiElement getSemicolon() {
-    return notNullChild(findChildByType(SEMICOLON));
+  @Nullable
+  public TactReferenceExpression getReferenceExpression() {
+    return TactPsiTreeUtil.getChildOfType(this, TactReferenceExpression.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getBreak() {
-    return notNullChild(findChildByType(BREAK));
+  public PsiElement getCodeOf() {
+    return notNullChild(findChildByType(CODE_OF));
   }
 
 }

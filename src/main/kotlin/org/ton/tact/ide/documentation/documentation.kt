@@ -153,20 +153,7 @@ private fun TactAttributes.generateDoc(): String {
 }
 
 private fun TactAttribute.generateDoc(): String {
-    val firstChild = attributeExpression?.firstChild ?: return ""
-    if (firstChild !is TactPlainAttribute) return colorize(firstChild.text, asAttribute)
-
-    var textValue = if (firstChild.attributeKey.attributeIdentifier != null) {
-        colorize(firstChild.attributeKey.text, asAttribute)
-    } else {
-        firstChild.attributeKey.expression?.generateDoc() ?: ""
-    }
-    if (firstChild.lparen != null) {
-        val exprs = firstChild.expressionList.joinToString(", ") { it.generateDoc() }
-        textValue += "($exprs)"
-    }
-
-    return colorize("@", asAttribute) + textValue
+    return colorize("@", asAttribute) + (attributeExpression?.text ?: "")
 }
 
 fun TactExpression.generateDoc(): String {

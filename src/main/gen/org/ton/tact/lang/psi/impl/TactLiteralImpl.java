@@ -35,12 +35,6 @@ public class TactLiteralImpl extends TactExpressionImpl implements TactLiteral {
 
   @Override
   @Nullable
-  public PsiElement getChar() {
-    return findChildByType(CHAR);
-  }
-
-  @Override
-  @Nullable
   public PsiElement getFalse() {
     return findChildByType(FALSE);
   }

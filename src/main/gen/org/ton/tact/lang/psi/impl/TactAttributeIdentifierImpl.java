@@ -27,12 +27,6 @@ public class TactAttributeIdentifierImpl extends TactCompositeElementImpl implem
   }
 
   @Override
-  @Nullable
-  public TactAttributeIdentifierPrefix getAttributeIdentifierPrefix() {
-    return TactPsiTreeUtil.getChildOfType(this, TactAttributeIdentifierPrefix.class);
-  }
-
-  @Override
   @NotNull
   public PsiElement getIdentifier() {
     return notNullChild(findChildByType(IDENTIFIER));

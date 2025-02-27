@@ -21,8 +21,7 @@ open class TactCompositeElementImpl(node: ASTNode) : ASTWrapperPsiElement(node),
             this is TactIfStatement ||
             this is TactWhileStatement ||
             this is TactUntilStatement ||
-            this is TactForEachStatement ||
-            this is TactFunctionLiteral
+            this is TactForEachStatement
         ) {
             if (!processor.execute(this, state)) {
                 return false

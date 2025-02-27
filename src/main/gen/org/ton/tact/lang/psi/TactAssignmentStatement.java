@@ -14,12 +14,9 @@ public interface TactAssignmentStatement extends TactStatement {
   List<TactExpression> getExpressionList();
 
   @NotNull
-  TactListExpression getListExpression();
+  TactExpression getLeft();
 
-  @NotNull
-  List<TactExpression> getLeftExpressions();
-
-  @NotNull
-  List<TactExpression> getRightExpressions();
+  @Nullable
+  TactExpression getRight();
 
 }

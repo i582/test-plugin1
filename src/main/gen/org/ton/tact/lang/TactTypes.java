@@ -25,18 +25,16 @@ public interface TactTypes {
   IElementType ATTRIBUTES = TactElementTypeFactory.stubFactory("ATTRIBUTES");
   IElementType ATTRIBUTE_EXPRESSION = TactElementTypeFactory.stubFactory("ATTRIBUTE_EXPRESSION");
   IElementType ATTRIBUTE_IDENTIFIER = new TactCompositeElementType("ATTRIBUTE_IDENTIFIER");
-  IElementType ATTRIBUTE_IDENTIFIER_PREFIX = new TactCompositeElementType("ATTRIBUTE_IDENTIFIER_PREFIX");
   IElementType ATTRIBUTE_KEY = TactElementTypeFactory.stubFactory("ATTRIBUTE_KEY");
   IElementType BLOCK = TactElementTypeFactory.stubFactory("BLOCK");
   IElementType BOUNCED_TYPE = TactElementTypeFactory.stubFactory("BOUNCED_TYPE");
-  IElementType BREAK_STATEMENT = new TactCompositeElementType("BREAK_STATEMENT");
   IElementType CALL_EXPR = new TactCompositeElementType("CALL_EXPR");
   IElementType CATCH_CLAUSE = new TactCompositeElementType("CATCH_CLAUSE");
+  IElementType CODE_OF_EXPR = new TactCompositeElementType("CODE_OF_EXPR");
   IElementType CONDITIONAL_EXPR = new TactCompositeElementType("CONDITIONAL_EXPR");
   IElementType CONSTANT_MODIFIER = new TactCompositeElementType("CONSTANT_MODIFIER");
   IElementType CONST_DECLARATION = new TactCompositeElementType("CONST_DECLARATION");
   IElementType CONST_DEFINITION = TactElementTypeFactory.stubFactory("CONST_DEFINITION");
-  IElementType CONTINUE_STATEMENT = new TactCompositeElementType("CONTINUE_STATEMENT");
   IElementType CONTRACT_DECLARATION = TactElementTypeFactory.stubFactory("CONTRACT_DECLARATION");
   IElementType CONTRACT_INIT_DECLARATION = TactElementTypeFactory.stubFactory("CONTRACT_INIT_DECLARATION");
   IElementType CONTRACT_TYPE = TactElementTypeFactory.stubFactory("CONTRACT_TYPE");
@@ -53,13 +51,11 @@ public interface TactTypes {
   IElementType FOR_EACH_STATEMENT = new TactCompositeElementType("FOR_EACH_STATEMENT");
   IElementType FUNCTION_ATTRIBUTE = new TactCompositeElementType("FUNCTION_ATTRIBUTE");
   IElementType FUNCTION_DECLARATION = TactElementTypeFactory.stubFactory("FUNCTION_DECLARATION");
-  IElementType FUNCTION_TYPE = TactElementTypeFactory.stubFactory("FUNCTION_TYPE");
   IElementType IF_STATEMENT = new TactCompositeElementType("IF_STATEMENT");
   IElementType IMPORT_DECLARATION = TactElementTypeFactory.stubFactory("IMPORT_DECLARATION");
   IElementType IMPORT_LIST = new TactCompositeElementType("IMPORT_LIST");
   IElementType INIT_OF_EXPR = new TactCompositeElementType("INIT_OF_EXPR");
   IElementType KEY = new TactCompositeElementType("KEY");
-  IElementType LIST_EXPRESSION = new TactCompositeElementType("LIST_EXPRESSION");
   IElementType LITERAL = new TactCompositeElementType("LITERAL");
   IElementType LITERAL_VALUE_EXPRESSION = new TactCompositeElementType("LITERAL_VALUE_EXPRESSION");
   IElementType MAP_TYPE = TactElementTypeFactory.stubFactory("MAP_TYPE");
@@ -70,7 +66,6 @@ public interface TactTypes {
   IElementType MESSAGE_TYPE = TactElementTypeFactory.stubFactory("MESSAGE_TYPE");
   IElementType MUL_EXPR = new TactCompositeElementType("MUL_EXPR");
   IElementType NATIVE_FUNCTION_DECLARATION = TactElementTypeFactory.stubFactory("NATIVE_FUNCTION_DECLARATION");
-  IElementType OPTION_TYPE = TactElementTypeFactory.stubFactory("OPTION_TYPE");
   IElementType OR_EXPR = new TactCompositeElementType("OR_EXPR");
   IElementType PARAMETERS = TactElementTypeFactory.stubFactory("PARAMETERS");
   IElementType PARAM_DEFINITION = TactElementTypeFactory.stubFactory("PARAM_DEFINITION");
@@ -127,16 +122,15 @@ public interface TactTypes {
   IElementType BIT_OR_ASSIGN = new TactTokenType("|=");
   IElementType BIT_XOR = new TactTokenType("^");
   IElementType BIT_XOR_ASSIGN = new TactTokenType("^=");
-  IElementType BREAK = new TactTokenType("break");
   IElementType CATCH = new TactTokenType("catch");
   IElementType CHAR = new TactTokenType("char");
   IElementType CLOSING_QUOTE = new TactTokenType("CLOSING_QUOTE");
+  IElementType CODE_OF = new TactTokenType("codeOf");
   IElementType COLON = new TactTokenType(":");
   IElementType COMMA = new TactTokenType(",");
   IElementType COND_AND = new TactTokenType("&&");
   IElementType COND_OR = new TactTokenType("||");
   IElementType CONST = new TactTokenType("const");
-  IElementType CONTINUE = new TactTokenType("continue");
   IElementType CONTRACT = new TactTokenType("contract");
   IElementType DO = new TactTokenType("do");
   IElementType DOT = new TactTokenType(".");
@@ -263,9 +257,6 @@ public interface TactTypes {
       else if (type == ATTRIBUTE_IDENTIFIER) {
         return new TactAttributeIdentifierImpl(node);
       }
-      else if (type == ATTRIBUTE_IDENTIFIER_PREFIX) {
-        return new TactAttributeIdentifierPrefixImpl(node);
-      }
       else if (type == ATTRIBUTE_KEY) {
         return new TactAttributeKeyImpl(node);
       }
@@ -275,14 +266,14 @@ public interface TactTypes {
       else if (type == BOUNCED_TYPE) {
         return new TactBouncedTypeImpl(node);
       }
-      else if (type == BREAK_STATEMENT) {
-        return new TactBreakStatementImpl(node);
-      }
       else if (type == CALL_EXPR) {
         return new TactCallExprImpl(node);
       }
       else if (type == CATCH_CLAUSE) {
         return new TactCatchClauseImpl(node);
+      }
+      else if (type == CODE_OF_EXPR) {
+        return new TactCodeOfExprImpl(node);
       }
       else if (type == CONDITIONAL_EXPR) {
         return new TactConditionalExprImpl(node);
@@ -295,9 +286,6 @@ public interface TactTypes {
       }
       else if (type == CONST_DEFINITION) {
         return new TactConstDefinitionImpl(node);
-      }
-      else if (type == CONTINUE_STATEMENT) {
-        return new TactContinueStatementImpl(node);
       }
       else if (type == CONTRACT_DECLARATION) {
         return new TactContractDeclarationImpl(node);
@@ -344,9 +332,6 @@ public interface TactTypes {
       else if (type == FUNCTION_DECLARATION) {
         return new TactFunctionDeclarationImpl(node);
       }
-      else if (type == FUNCTION_TYPE) {
-        return new TactFunctionTypeImpl(node);
-      }
       else if (type == IF_STATEMENT) {
         return new TactIfStatementImpl(node);
       }
@@ -361,9 +346,6 @@ public interface TactTypes {
       }
       else if (type == KEY) {
         return new TactKeyImpl(node);
-      }
-      else if (type == LIST_EXPRESSION) {
-        return new TactListExpressionImpl(node);
       }
       else if (type == LITERAL) {
         return new TactLiteralImpl(node);
@@ -394,9 +376,6 @@ public interface TactTypes {
       }
       else if (type == NATIVE_FUNCTION_DECLARATION) {
         return new TactNativeFunctionDeclarationImpl(node);
-      }
-      else if (type == OPTION_TYPE) {
-        return new TactOptionTypeImpl(node);
       }
       else if (type == OR_EXPR) {
         return new TactOrExprImpl(node);

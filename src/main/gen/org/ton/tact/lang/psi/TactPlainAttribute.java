@@ -9,16 +9,10 @@ import org.ton.tact.lang.stubs.TactPlainAttributeStub;
 
 public interface TactPlainAttribute extends TactCompositeElement, StubBasedPsiElement<TactPlainAttributeStub> {
 
+  @Nullable
+  TactArgumentList getArgumentList();
+
   @NotNull
   TactAttributeKey getAttributeKey();
-
-  @NotNull
-  List<TactExpression> getExpressionList();
-
-  @Nullable
-  PsiElement getLparen();
-
-  @Nullable
-  PsiElement getRparen();
 
 }

@@ -27,6 +27,12 @@ public class TactAsmShuffleImpl extends TactCompositeElementImpl implements Tact
   }
 
   @Override
+  @NotNull
+  public List<TactReferenceExpression> getReferenceExpressionList() {
+    return TactPsiTreeUtil.getChildrenOfTypeAsList(this, TactReferenceExpression.class);
+  }
+
+  @Override
   @Nullable
   public PsiElement getArrow() {
     return findChildByType(ARROW);

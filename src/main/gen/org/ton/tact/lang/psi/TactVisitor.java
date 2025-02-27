@@ -60,10 +60,6 @@ public class TactVisitor extends PsiElementVisitor {
     visitCompositeElement(o);
   }
 
-  public void visitAttributeIdentifierPrefix(@NotNull TactAttributeIdentifierPrefix o) {
-    visitCompositeElement(o);
-  }
-
   public void visitAttributeKey(@NotNull TactAttributeKey o) {
     visitCompositeElement(o);
   }
@@ -84,16 +80,16 @@ public class TactVisitor extends PsiElementVisitor {
     visitType(o);
   }
 
-  public void visitBreakStatement(@NotNull TactBreakStatement o) {
-    visitStatement(o);
-  }
-
   public void visitCallExpr(@NotNull TactCallExpr o) {
     visitExpression(o);
   }
 
   public void visitCatchClause(@NotNull TactCatchClause o) {
     visitCompositeElement(o);
+  }
+
+  public void visitCodeOfExpr(@NotNull TactCodeOfExpr o) {
+    visitExpression(o);
   }
 
   public void visitConditionalExpr(@NotNull TactConditionalExpr o) {
@@ -110,10 +106,6 @@ public class TactVisitor extends PsiElementVisitor {
 
   public void visitConstantModifier(@NotNull TactConstantModifier o) {
     visitCompositeElement(o);
-  }
-
-  public void visitContinueStatement(@NotNull TactContinueStatement o) {
-    visitStatement(o);
   }
 
   public void visitContractDeclaration(@NotNull TactContractDeclaration o) {
@@ -185,11 +177,6 @@ public class TactVisitor extends PsiElementVisitor {
     // visitScopeHolder(o);
   }
 
-  public void visitFunctionType(@NotNull TactFunctionType o) {
-    visitType(o);
-    // visitSignatureOwner(o);
-  }
-
   public void visitIfStatement(@NotNull TactIfStatement o) {
     visitStatement(o);
   }
@@ -208,10 +195,6 @@ public class TactVisitor extends PsiElementVisitor {
 
   public void visitKey(@NotNull TactKey o) {
     visitCompositeElement(o);
-  }
-
-  public void visitListExpression(@NotNull TactListExpression o) {
-    visitExpression(o);
   }
 
   public void visitLiteral(@NotNull TactLiteral o) {
@@ -255,10 +238,6 @@ public class TactVisitor extends PsiElementVisitor {
   public void visitNativeFunctionDeclaration(@NotNull TactNativeFunctionDeclaration o) {
     visitNamedElement(o);
     // visitSignatureOwner(o);
-  }
-
-  public void visitOptionType(@NotNull TactOptionType o) {
-    visitType(o);
   }
 
   public void visitOrExpr(@NotNull TactOrExpr o) {

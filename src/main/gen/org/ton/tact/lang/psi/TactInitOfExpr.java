@@ -7,16 +7,13 @@ import com.intellij.psi.PsiElement;
 
 public interface TactInitOfExpr extends TactExpression {
 
-  @NotNull
-  List<TactExpression> getExpressionList();
+  @Nullable
+  TactArgumentList getArgumentList();
+
+  @Nullable
+  TactReferenceExpression getReferenceExpression();
 
   @NotNull
   PsiElement getInitOf();
-
-  @Nullable
-  PsiElement getLparen();
-
-  @Nullable
-  PsiElement getRparen();
 
 }

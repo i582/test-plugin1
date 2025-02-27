@@ -16,6 +16,12 @@ public interface TactIfStatement extends TactStatement {
   @Nullable
   TactExpression getExpression();
 
+  @Nullable
+  PsiElement getLparen();
+
+  @Nullable
+  PsiElement getRparen();
+
   @NotNull
   PsiElement getIf();
 

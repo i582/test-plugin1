@@ -33,27 +33,15 @@ public class TactPlainAttributeImpl extends TactStubbedElementImpl<TactPlainAttr
   }
 
   @Override
+  @Nullable
+  public TactArgumentList getArgumentList() {
+    return TactPsiTreeUtil.getChildOfType(this, TactArgumentList.class);
+  }
+
+  @Override
   @NotNull
   public TactAttributeKey getAttributeKey() {
     return notNullChild(TactPsiTreeUtil.getStubChildOfType(this, TactAttributeKey.class));
-  }
-
-  @Override
-  @NotNull
-  public List<TactExpression> getExpressionList() {
-    return TactPsiTreeUtil.getChildrenOfTypeAsList(this, TactExpression.class);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getLparen() {
-    return findChildByType(LPAREN);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getRparen() {
-    return findChildByType(RPAREN);
   }
 
 }
