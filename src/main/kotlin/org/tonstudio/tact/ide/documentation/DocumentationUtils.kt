@@ -16,8 +16,6 @@ object DocumentationUtils {
     val asOperator = loadKey(TactColor.OPERATOR.textAttributesKey)
     val asKeyword = loadKey(TactColor.KEYWORD.textAttributesKey)
     val asIdentifier = loadKey(DefaultLanguageHighlighterColors.IDENTIFIER)
-    val asModule = loadKey(TactColor.MODULE.textAttributesKey)
-    val asDeclaration = loadKey(TactColor.FUNCTION.textAttributesKey)
     val asBuiltin = loadKey(TactColor.BUILTIN_TYPE.textAttributesKey)
     val asType = loadKey(TactColor.BUILTIN_TYPE.textAttributesKey)
     val asParameter = loadKey(TactColor.PARAMETER.textAttributesKey)

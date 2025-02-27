@@ -10,28 +10,21 @@ enum class TactColor(readableName: @NlsContexts.AttributeDescriptor String, defa
     KEYWORD("Keywords//Keyword", Default.KEYWORD),
 
     // Declarations
-    FUNCTION("Functions//Function", Default.FUNCTION_DECLARATION),
     PUBLIC_FUNCTION("Functions//Public function", Default.FUNCTION_DECLARATION),
     PUBLIC_NATIVE_FUNCTION("Functions//Public native function", Default.FUNCTION_DECLARATION),
     PUBLIC_ASM_FUNCTION("Functions//Public asm function", Default.FUNCTION_DECLARATION),
-    STRUCT("Types//Struct", Default.CLASS_NAME),
     PUBLIC_STRUCT("Types//Public struct", Default.CLASS_NAME),
     PUBLIC_TRAIT("Types//Public trait", Default.CLASS_NAME),
     PUBLIC_MESSAGE("Types//Public message", Default.CLASS_NAME),
     PRIMITIVE("Types//Primitive", Default.CLASS_NAME),
-    MODULE("Declarations//Module", Default.IDENTIFIER),
 
-    FIELD("Fields//Field", Default.INSTANCE_FIELD),
     PUBLIC_FIELD("Fields//Public field", Default.INSTANCE_FIELD),
 
-    CONSTANT("Constants//Constant", Default.CONSTANT),
     PUBLIC_CONSTANT("Constants//Public constant", Default.CONSTANT),
 
     // Variable like
     VARIABLE("Variables//Variable", Default.LOCAL_VARIABLE),
-    MUTABLE_VARIABLE("Variables//Mutable variable", Default.REASSIGNED_LOCAL_VARIABLE),
     PARAMETER("Variables//Parameter", Default.PARAMETER),
-    MUTABLE_PARAMETER("Variables//Mutable parameter", Default.PARAMETER),
 
     // Types
     BUILTIN_TYPE("Types//Builtin type", Default.KEYWORD),
@@ -55,8 +48,7 @@ enum class TactColor(readableName: @NlsContexts.AttributeDescriptor String, defa
     DOT("Braces and Operators//Dot", Default.DOT),
     COMMA("Braces and Operators//Comma", Default.COMMA),
     PARENTHESES("Braces and Operators//Parentheses", Default.PARENTHESES),
-    PROPAGATION_OPERATOR("Braces and Operators//? and ! operators", Default.KEYWORD),
-    OVERLOADED_OPERATOR("Braces and Operators//Overloaded operator", Default.OPERATION_SIGN),
+    NOT_NULL_OPERATOR("Braces and Operators//!! operators", Default.KEYWORD),
 
     // Attributes
     ATTRIBUTE("Attributes//Attribute", Default.METADATA),

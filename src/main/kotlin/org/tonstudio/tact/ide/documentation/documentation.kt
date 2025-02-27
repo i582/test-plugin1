@@ -20,7 +20,6 @@ import io.ktor.util.*
 import org.tonstudio.tact.ide.documentation.DocumentationUtils.asBuiltin
 import org.tonstudio.tact.ide.documentation.DocumentationUtils.asFunction
 import org.tonstudio.tact.ide.documentation.DocumentationUtils.asMessage
-import org.tonstudio.tact.ide.documentation.DocumentationUtils.asModule
 import org.tonstudio.tact.ide.documentation.DocumentationUtils.asNativeFunction
 import org.tonstudio.tact.ide.documentation.DocumentationUtils.asNumber
 import org.tonstudio.tact.ide.documentation.DocumentationUtils.asOperator
@@ -102,6 +101,7 @@ private fun TactParameters.generateDoc(): String {
         val param = params.first()
         return buildString {
             colorize("(", asParen)
+            append("    ")
             append(param.generateDocForMethod())
             colorize(")", asParen)
         }
@@ -286,6 +286,6 @@ private fun generateFqnTypeDoc(fqn: String, color: TextAttributes): String {
     }
 
     return parts.subList(0, parts.size - 1).joinToString(".") {
-        colorize(it, asModule)
+        it
     } + "." + colorize(parts.last(), color)
 }

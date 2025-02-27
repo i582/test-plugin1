@@ -18,26 +18,25 @@ class TactSyntaxHighlighter : SyntaxHighlighterBase() {
 
     override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> =
         pack(map(tokenType)?.textAttributesKey)
+}
 
-    companion object {
-        fun map(tokenType: IElementType): TactColor? = when (tokenType) {
-            DOC_COMMENT                          -> TactColor.LINE_COMMENT
+fun map(tokenType: IElementType): TactColor? = when (tokenType) {
+    DOC_COMMENT                -> TactColor.LINE_COMMENT
 
-            LPAREN, RPAREN                       -> TactColor.PARENTHESES
-            LBRACE, RBRACE                       -> TactColor.BRACES
-            LBRACK, RBRACK                       -> TactColor.BRACKETS
+    LPAREN, RPAREN             -> TactColor.PARENTHESES
+    LBRACE, RBRACE             -> TactColor.BRACES
+    LBRACK, RBRACK             -> TactColor.BRACKETS
+    ASSERT_NOT_NULL_EXPRESSION -> TactColor.NOT_NULL_OPERATOR
 
-            DOT                                  -> TactColor.DOT
-            COMMA                                -> TactColor.COMMA
+    DOT                        -> TactColor.DOT
+    COMMA                      -> TactColor.COMMA
 
-            in KEYWORDS                          -> TactColor.KEYWORD
-            in BOOL_LITERALS                     -> TactColor.KEYWORD
-            in STRING_LITERALS                   -> TactColor.STRING
-            in NUMBERS                           -> TactColor.NUMBER
-            in OPERATORS                         -> TactColor.OPERATOR
-            in COMMENTS                          -> TactColor.LINE_COMMENT
+    in KEYWORDS                -> TactColor.KEYWORD
+    in BOOL_LITERALS           -> TactColor.KEYWORD
+    in STRING_LITERALS         -> TactColor.STRING
+    in NUMBERS                 -> TactColor.NUMBER
+    in OPERATORS               -> TactColor.OPERATOR
+    in COMMENTS                -> TactColor.LINE_COMMENT
 
-            else                                 -> null
-        }
-    }
+    else                       -> null
 }
