@@ -42,15 +42,10 @@ enum class TactColor(readableName: @NlsContexts.AttributeDescriptor String, defa
 
     // Literals
     NUMBER("Literals//Number", Default.NUMBER),
-    CHAR("Literals//Character", Default.STRING),
 
     // Strings
     STRING("Literals//Strings//String literals", Default.STRING),
-    RAW_STRING("Literals//Strings//Raw string literals", Default.STRING),
-    C_STRING("Literals//Strings//C string literals", Default.STRING),
     VALID_STRING_ESCAPE("Literals//Strings//Valid string escape", Default.VALID_STRING_ESCAPE),
-    // String interpolation
-    STRING_INTERPOLATION("Literals//Strings//String interpolation", Default.VALID_STRING_ESCAPE),
     // Literals END
 
     // Braces and operators
@@ -65,9 +60,6 @@ enum class TactColor(readableName: @NlsContexts.AttributeDescriptor String, defa
 
     // Attributes
     ATTRIBUTE("Attributes//Attribute", Default.METADATA),
-
-    // Unsafe
-    UNSAFE_CODE("Unsafe//Unsafe code"),
 
     // Docs
     DOC_COMMENT("Doc//Comment", Default.DOC_COMMENT),

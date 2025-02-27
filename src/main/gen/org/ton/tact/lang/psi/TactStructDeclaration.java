@@ -26,7 +26,4 @@ public interface TactStructDeclaration extends TactNamedElement, TactAttributeOw
   @NotNull
   TactTypeEx getTypeInner(@Nullable ResolveState context);
 
-  @Nullable
-  PsiElement addField(@NotNull String name, @NotNull String type, boolean mutable);
-
 }

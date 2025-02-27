@@ -64,10 +64,4 @@ public class TactStructDeclarationImpl extends TactNamedElementImpl<TactStructDe
     return TactPsiImplUtil.getTypeInner(this, context);
   }
 
-  @Override
-  @Nullable
-  public PsiElement addField(@NotNull String name, @NotNull String type, boolean mutable) {
-    return TactPsiImplUtil.addField(this, name, type, mutable);
-  }
-
 }

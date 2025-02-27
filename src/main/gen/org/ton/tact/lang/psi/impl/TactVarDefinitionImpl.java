@@ -59,10 +59,4 @@ public class TactVarDefinitionImpl extends TactNamedElementImpl<TactVarDefinitio
     return TactPsiImplUtil.getReference(this);
   }
 
-  @Override
-  @Nullable
-  public TactExpression getInitializer() {
-    return TactPsiImplUtil.getInitializer(this);
-  }
-
 }

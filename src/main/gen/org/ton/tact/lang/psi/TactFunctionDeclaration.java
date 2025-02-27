@@ -35,6 +35,4 @@ public interface TactFunctionDeclaration extends TactSignatureOwner, TactFunctio
   @Nullable
   TactTypeEx getTypeInner(@Nullable ResolveState context);
 
-  boolean isDefinition();
-
 }

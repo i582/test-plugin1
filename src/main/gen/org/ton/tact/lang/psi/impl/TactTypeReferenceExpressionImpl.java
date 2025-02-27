@@ -10,7 +10,6 @@ import org.ton.tact.lang.psi.TactPsiTreeUtil;
 import static org.ton.tact.lang.TactTypes.*;
 import org.ton.tact.lang.stubs.TactTypeReferenceExpressionStub;
 import org.ton.tact.lang.psi.*;
-import kotlin.Pair;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class TactTypeReferenceExpressionImpl extends TactStubbedElementImpl<TactTypeReferenceExpressionStub> implements TactTypeReferenceExpression {
@@ -40,12 +39,6 @@ public class TactTypeReferenceExpressionImpl extends TactStubbedElementImpl<Tact
   }
 
   @Override
-  @NotNull
-  public TactReference getReference() {
-    return TactPsiImplUtil.getReference(this);
-  }
-
-  @Override
   @Nullable
   public TactCompositeElement getQualifier() {
     return TactPsiImplUtil.getQualifier(this);
@@ -55,12 +48,6 @@ public class TactTypeReferenceExpressionImpl extends TactStubbedElementImpl<Tact
   @Nullable
   public PsiElement resolve() {
     return TactPsiImplUtil.resolve(this);
-  }
-
-  @Override
-  @NotNull
-  public Pair<Integer, Integer> getIdentifierBounds() {
-    return TactPsiImplUtil.getIdentifierBounds(this);
   }
 
 }

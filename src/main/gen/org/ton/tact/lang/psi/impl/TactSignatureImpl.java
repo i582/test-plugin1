@@ -10,7 +10,6 @@ import org.ton.tact.lang.psi.TactPsiTreeUtil;
 import static org.ton.tact.lang.TactTypes.*;
 import org.ton.tact.lang.stubs.TactSignatureStub;
 import org.ton.tact.lang.psi.*;
-import kotlin.Pair;
 import com.intellij.psi.stubs.IStubElementType;
 
 public class TactSignatureImpl extends TactStubbedElementImpl<TactSignatureStub> implements TactSignature {
@@ -43,12 +42,6 @@ public class TactSignatureImpl extends TactStubbedElementImpl<TactSignatureStub>
   @Nullable
   public TactResult getResult() {
     return TactPsiTreeUtil.getStubChildOfType(this, TactResult.class);
-  }
-
-  @Override
-  @NotNull
-  public Pair<Integer, Integer> resultCount() {
-    return TactPsiImplUtil.resultCount(this);
   }
 
 }

@@ -24,7 +24,4 @@ public interface TactType extends TactCompositeElement, StubBasedPsiElement<Tact
   @NotNull
   TactType resolveType();
 
-  @NotNull
-  String getModuleName();
-
 }

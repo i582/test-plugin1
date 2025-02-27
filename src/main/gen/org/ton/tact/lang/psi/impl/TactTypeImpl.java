@@ -62,10 +62,4 @@ public class TactTypeImpl extends TactStubbedElementImpl<TactTypeStub> implement
     return TactPsiImplUtil.resolveType(this);
   }
 
-  @Override
-  @NotNull
-  public String getModuleName() {
-    return TactPsiImplUtil.getModuleName(this);
-  }
-
 }

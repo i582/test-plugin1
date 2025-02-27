@@ -4,7 +4,6 @@ package org.ton.tact.lang.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import kotlin.Pair;
 
 public interface TactCallExpr extends TactExpression {
 
@@ -18,7 +17,7 @@ public interface TactCallExpr extends TactExpression {
   TactExpression getExpression();
 
   @NotNull
-  List<TactExpression> getParameters();
+  List<TactExpression> getArguments();
 
   @Nullable
   PsiElement getIdentifier();
@@ -30,8 +29,5 @@ public interface TactCallExpr extends TactExpression {
   PsiElement resolve();
 
   int paramIndexOf(@NotNull PsiElement pos);
-
-  @Nullable
-  Pair<TactSignature, TactSignatureOwner> resolveSignature();
 
 }

@@ -6,8 +6,6 @@ import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import org.ton.tact.lang.stubs.TactResultStub;
-import com.intellij.psi.ResolveState;
-import org.ton.tact.lang.psi.types.TactTypeEx;
 
 public interface TactResult extends TactTypeOwner, StubBasedPsiElement<TactResultStub> {
 
@@ -16,10 +14,5 @@ public interface TactResult extends TactTypeOwner, StubBasedPsiElement<TactResul
 
   @Nullable
   PsiElement getColon();
-
-  boolean isVoid();
-
-  @NotNull
-  TactTypeEx getType(@Nullable ResolveState context);
 
 }

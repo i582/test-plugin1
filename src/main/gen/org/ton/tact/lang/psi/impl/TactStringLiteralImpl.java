@@ -69,9 +69,4 @@ public class TactStringLiteralImpl extends TactExpressionImpl implements TactStr
     return TactPsiImplUtil.getContents(this);
   }
 
-  @Override
-  public boolean isC() {
-    return TactPsiImplUtil.isC(this);
-  }
-
 }

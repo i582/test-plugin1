@@ -12,7 +12,6 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.tree.LeafElement
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.*
-import com.jetbrains.rd.util.forEachReversed
 import org.ton.tact.lang.TactTypes.*
 import org.ton.tact.lang.psi.*
 import org.ton.tact.lang.psi.impl.TactReferenceBase.Companion.LOCAL_RESOLVE
@@ -34,11 +33,6 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun isDefinition(o: TactFunctionDeclaration): Boolean {
-        return o.getBlock() == null
-    }
-
-    @JvmStatic
     fun scope(o: TactFunctionDeclaration): TactScope {
         return TactScopeImpl(o)
     }
@@ -54,20 +48,6 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun addField(o: TactStructDeclaration, name: String, type: String, mutable: Boolean): PsiElement? {
-        val fieldDeclaration = TactElementFactory.createFieldDeclaration(o.project, name, type)
-        val lastField = o.structType.fieldList.lastOrNull()
-        if (lastField != null) {
-            val nl = o.structType.addAfter(TactElementFactory.createNewLine(o.project), lastField)
-            val decl = o.structType.addAfter(fieldDeclaration, nl)
-            o.structType.addBefore(TactElementFactory.createNewLine(o.project), decl)
-            return decl
-        }
-
-        return null
-    }
-
-    @JvmStatic
     fun getName(o: TactMessageDeclaration): String {
         val stub = o.stub
         if (stub != null) {
@@ -75,20 +55,6 @@ object TactPsiImplUtil {
         }
 
         return o.getIdentifier()?.text ?: ""
-    }
-
-    @JvmStatic
-    fun addField(o: TactMessageDeclaration, name: String, type: String, mutable: Boolean): PsiElement? {
-        val fieldDeclaration = TactElementFactory.createFieldDeclaration(o.project, name, type)
-        val lastField = o.messageType.fieldDeclarationList.lastOrNull()
-        if (lastField != null) {
-            val nl = o.messageType.addAfter(TactElementFactory.createNewLine(o.project), lastField)
-            val decl = o.messageType.addAfter(fieldDeclaration, nl)
-            o.messageType.addBefore(TactElementFactory.createNewLine(o.project), decl)
-            return decl
-        }
-
-        return null
     }
 
     @JvmStatic
@@ -118,7 +84,7 @@ object TactPsiImplUtil {
             return stub.name ?: ""
         }
 
-        return o.getIdentifier()?.text ?: ""
+        return o.getIdentifier().text ?: ""
     }
 
     @JvmStatic
@@ -149,26 +115,6 @@ object TactPsiImplUtil {
         }
 
         return o.getIdentifier().text ?: ""
-    }
-
-    @JvmStatic
-    fun getExpressionText(o: TactConstDefinition): String {
-        val stub = o.stub
-        if (stub != null) {
-            return stub.value
-        }
-
-        return o.expression?.text ?: ""
-    }
-
-    @JvmStatic
-    fun getExpressionType(o: TactConstDefinition): String {
-        val stub = o.stub
-        if (stub != null) {
-            return stub.type
-        }
-
-        return o.expression?.getType(null)?.qualifiedName() ?: ""
     }
 
     @JvmStatic
@@ -272,9 +218,7 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun isPublic(o: TactFieldDefinition): Boolean {
-        return true // TODO: for now
-    }
+    fun isPublic(o: TactFieldDefinition): Boolean = true
 
     @JvmStatic
     fun getOwner(o: TactFieldDefinition): TactNamedElement {
@@ -298,16 +242,6 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun getModuleName(type: TactType): String {
-        var realType = type
-        if (!isConcreteType(type)) {
-            realType = resolveType(type)
-        }
-
-        return (realType.containingFile as? TactFile)?.getModuleQualifiedName() ?: ""
-    }
-
-    @JvmStatic
     fun resolveType(type: TactType): TactType {
         if (isConcreteType(type)) {
             return type
@@ -317,29 +251,17 @@ object TactPsiImplUtil {
         return elementToType(resolved) ?: type
     }
 
-    private fun elementToType(resolved: PsiElement): TactType? {
-        if (resolved is TactStructDeclaration) {
-            return resolved.structType
-        }
-
-        if (resolved is TactMessageDeclaration) {
-            return resolved.messageType
-        }
-
-        if (resolved is TactContractDeclaration) {
-            return resolved.contractType
-        }
-
-        if (resolved is TactTraitDeclaration) {
-            return resolved.traitType
-        }
-
-        return null
+    private fun elementToType(resolved: PsiElement): TactType? = when (resolved) {
+        is TactStructDeclaration   -> resolved.structType
+        is TactMessageDeclaration  -> resolved.messageType
+        is TactContractDeclaration -> resolved.contractType
+        is TactTraitDeclaration    -> resolved.traitType
+        else                       -> null
     }
 
     @JvmStatic
     fun resolve(o: TactTypeReferenceExpression): PsiElement? {
-        return o.reference.resolve()
+        return o.reference?.resolve()
     }
 
     @JvmStatic
@@ -359,21 +281,13 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun resolve(o: TactReferenceExpression): PsiElement? {
-        return o.reference.resolve()
-    }
-
-    @JvmStatic
     fun getReadWriteAccess(o: TactReferenceExpression): Access {
         val expression = getConsiderableExpression(o)
         val parent = expression.parent
-
         if (parent is TactAssignmentStatement) {
             // += or =
             return if (parent.assignOp.assign == null) Access.ReadWrite else Access.Write
         }
-
-        // TODO
         return Access.Read
     }
 
@@ -395,38 +309,6 @@ object TactPsiImplUtil {
         }
     }
 
-    @JvmStatic
-    fun getReference(o: TactTypeReferenceExpression): TactReference {
-        return TactReference(o, forTypes = true)
-    }
-
-    @JvmStatic
-    fun getIdentifierBounds(o: TactFieldName): Pair<Int, Int> {
-        val identifier = o.getIdentifier()
-        return Pair(identifier.startOffsetInParent, identifier.textLength)
-    }
-
-    @JvmStatic
-    fun getIdentifierBounds(o: TactReferenceExpression): Pair<Int, Int> {
-        val identifier = o.getIdentifier()
-        return Pair(identifier.startOffsetInParent, identifier.textLength)
-    }
-
-    @JvmStatic
-    fun getIdentifierBounds(o: TactTypeReferenceExpression): Pair<Int, Int> {
-        val stub = o.stub
-        if (stub != null) {
-            return Pair(stub.startOffsetInParent, stub.textLength)
-        }
-        val identifier = o.getIdentifier()
-        return Pair(identifier.startOffsetInParent, identifier.textLength)
-    }
-
-    @JvmStatic
-    fun getReference(o: TactAttributeIdentifier): TactAttributeReference {
-        return TactAttributeReference(o)
-    }
-
     fun prevDot(e: PsiElement?): Boolean {
         val prev = if (e == null) null else PsiTreeUtil.prevVisibleLeaf(e)
         return prev is LeafElement && (prev as LeafElement).elementType === DOT
@@ -443,16 +325,6 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun getName(o: TactParamDefinition): String? {
-        val stub = o.stub
-        if (stub != null) {
-            return stub.name ?: ""
-        }
-
-        return o.getIdentifier().text
-    }
-
-    @JvmStatic
     fun isPublic(o: TactParamDefinition): Boolean = true
 
     class TactLiteralFileReferenceSet(
@@ -465,16 +337,13 @@ object TactPsiImplUtil {
     @JvmStatic
     fun getReferences(o: TactStringLiteral): Array<out PsiReference> {
         if (o.textLength < 2) return PsiReference.EMPTY_ARRAY
-
         val fs = o.containingFile.originalFile.virtualFile.fileSystem
         val literalValue = o.contents
         return TactLiteralFileReferenceSet(literalValue, o, 1, fs.isCaseSensitive).allReferences
     }
 
     @JvmStatic
-    fun isValidHost(o: TactStringLiteral): Boolean {
-        return true
-    }
+    fun isValidHost(o: TactStringLiteral): Boolean = true
 
     @JvmStatic
     fun updateText(o: TactStringLiteral, text: String): TactStringLiteral {
@@ -497,40 +366,7 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun isC(o: TactStringLiteral): Boolean {
-        return o.text.startsWith("c")
-    }
-
-    @JvmStatic
-    fun resultCount(o: TactSignature): Pair<Int, Int> {
-        return when (val type = o.result?.type) {
-            is TactTupleType  -> {
-                val list = type.typeListNoPin
-                if (list != null) list.typeList.size to list.typeList.size
-                else 0 to 0
-            }
-
-            null              -> 0 to 0
-            else              -> 1 to 1
-        }
-    }
-
-    @JvmStatic
-    fun isVoid(o: TactResult): Boolean {
-        val type = o.type
-        if (type is TactTupleType) {
-            return type.typeListNoPin?.typeList?.isEmpty() ?: true
-        }
-        return false
-    }
-
-    @JvmStatic
-    fun getType(o: TactResult, context: ResolveState?): TactTypeEx {
-        return o.type.toEx()
-    }
-
-    @JvmStatic
-    fun getParameters(o: TactCallExpr): List<TactExpression> {
+    fun getArguments(o: TactCallExpr): List<TactExpression> {
         return o.argumentList.elementList.mapNotNull { it?.value?.expression }
     }
 
@@ -568,20 +404,6 @@ object TactPsiImplUtil {
         val element = pos.parentOfType<TactElement>()
         val args = o.argumentList.elementList
         return args.indexOf(element)
-    }
-
-    @JvmStatic
-    fun resolveSignature(o: TactCallExpr): Pair<TactSignature, TactSignatureOwner>? {
-        val ty = o.expression?.getType(null)
-        if (ty is TactFunctionTypeEx) {
-            val owner = ty.signature.parentOfType<TactSignatureOwner>() ?: return null
-            return ty.signature to owner
-        }
-
-        val resolved = o.resolve() ?: return null
-        if (resolved !is TactSignatureOwner) return null
-        val signature = resolved.getSignature() ?: return null
-        return signature to resolved
     }
 
     private fun getNotNullElement(vararg elements: PsiElement?): PsiElement? {
@@ -706,16 +528,6 @@ object TactPsiImplUtil {
     }
 
     @JvmStatic
-    fun getInitializer(o: TactVarDefinition): TactExpression? {
-        val parent = o.parent
-        if (parent is TactVarDeclaration) {
-            return parent.expression
-        }
-
-        return null
-    }
-
-    @JvmStatic
     fun getName(o: TactVarDefinition): String {
         return o.getIdentifier().text
     }
@@ -774,5 +586,4 @@ object TactPsiImplUtil {
         }
         return true
     }
-
 }

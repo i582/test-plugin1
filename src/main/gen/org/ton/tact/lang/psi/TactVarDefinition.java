@@ -24,7 +24,4 @@ public interface TactVarDefinition extends TactNamedElement, StubBasedPsiElement
   @NotNull
   PsiReference getReference();
 
-  @Nullable
-  TactExpression getInitializer();
-
 }

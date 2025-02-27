@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElementVisitor;
 import org.ton.tact.lang.psi.TactPsiTreeUtil;
 import static org.ton.tact.lang.TactTypes.*;
 import org.ton.tact.lang.psi.*;
-import kotlin.Pair;
 
 public class TactCallExprImpl extends TactExpressionImpl implements TactCallExpr {
 
@@ -48,8 +47,8 @@ public class TactCallExprImpl extends TactExpressionImpl implements TactCallExpr
 
   @Override
   @NotNull
-  public List<TactExpression> getParameters() {
-    return TactPsiImplUtil.getParameters(this);
+  public List<TactExpression> getArguments() {
+    return TactPsiImplUtil.getArguments(this);
   }
 
   @Override
@@ -73,12 +72,6 @@ public class TactCallExprImpl extends TactExpressionImpl implements TactCallExpr
   @Override
   public int paramIndexOf(@NotNull PsiElement pos) {
     return TactPsiImplUtil.paramIndexOf(this, pos);
-  }
-
-  @Override
-  @Nullable
-  public Pair<TactSignature, TactSignatureOwner> resolveSignature() {
-    return TactPsiImplUtil.resolveSignature(this);
   }
 
 }

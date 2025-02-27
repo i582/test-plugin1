@@ -32,10 +32,4 @@ public class TactAttributeIdentifierImpl extends TactCompositeElementImpl implem
     return notNullChild(findChildByType(IDENTIFIER));
   }
 
-  @Override
-  @NotNull
-  public TactAttributeReference getReference() {
-    return TactPsiImplUtil.getReference(this);
-  }
-
 }

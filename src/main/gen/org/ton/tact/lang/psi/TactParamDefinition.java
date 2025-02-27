@@ -18,7 +18,4 @@ public interface TactParamDefinition extends TactNamedElement, StubBasedPsiEleme
   @NotNull
   PsiElement getIdentifier();
 
-  @Nullable
-  String getName();
-
 }

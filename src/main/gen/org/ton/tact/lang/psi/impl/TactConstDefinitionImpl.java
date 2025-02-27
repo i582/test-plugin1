@@ -70,16 +70,4 @@ public class TactConstDefinitionImpl extends TactNamedElementImpl<TactConstDefin
     return TactPsiImplUtil.getName(this);
   }
 
-  @Override
-  @NotNull
-  public String getExpressionText() {
-    return TactPsiImplUtil.getExpressionText(this);
-  }
-
-  @Override
-  @NotNull
-  public String getExpressionType() {
-    return TactPsiImplUtil.getExpressionType(this);
-  }
-
 }

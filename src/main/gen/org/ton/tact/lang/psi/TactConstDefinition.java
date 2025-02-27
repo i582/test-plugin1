@@ -29,10 +29,4 @@ public interface TactConstDefinition extends TactNamedElement, StubBasedPsiEleme
   @NotNull
   String getName();
 
-  @NotNull
-  String getExpressionText();
-
-  @NotNull
-  String getExpressionType();
-
 }

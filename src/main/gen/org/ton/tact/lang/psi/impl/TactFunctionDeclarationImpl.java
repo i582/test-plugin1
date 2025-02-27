@@ -82,9 +82,4 @@ public class TactFunctionDeclarationImpl extends TactFunctionDeclarationWithScop
     return TactPsiImplUtil.getTypeInner(this, context);
   }
 
-  @Override
-  public boolean isDefinition() {
-    return TactPsiImplUtil.isDefinition(this);
-  }
-
 }

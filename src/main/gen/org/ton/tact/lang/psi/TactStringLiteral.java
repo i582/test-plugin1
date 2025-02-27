@@ -33,6 +33,4 @@ public interface TactStringLiteral extends TactExpression, PsiLanguageInjectionH
   @NotNull
   String getContents();
 
-  boolean isC();
-
 }

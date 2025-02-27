@@ -50,10 +50,4 @@ public class TactParamDefinitionImpl extends TactNamedElementImpl<TactParamDefin
     return notNullChild(findChildByType(IDENTIFIER));
   }
 
-  @Override
-  @Nullable
-  public String getName() {
-    return TactPsiImplUtil.getName(this);
-  }
-
 }

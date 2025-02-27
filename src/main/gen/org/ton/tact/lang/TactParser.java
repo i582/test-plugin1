@@ -1289,23 +1289,22 @@ public class TactParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // <<braceRuleMarker>> Type '{' ElementList? '}'
+  // Type '{' ElementList? '}'
   public static boolean LiteralValueExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "LiteralValueExpression")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, LITERAL_VALUE_EXPRESSION, "<literal value expression>");
-    r = braceRuleMarker(b, l + 1);
-    r = r && Type(b, l + 1);
+    r = Type(b, l + 1);
     r = r && consumeToken(b, LBRACE);
-    r = r && LiteralValueExpression_3(b, l + 1);
+    r = r && LiteralValueExpression_2(b, l + 1);
     r = r && consumeToken(b, RBRACE);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
   // ElementList?
-  private static boolean LiteralValueExpression_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "LiteralValueExpression_3")) return false;
+  private static boolean LiteralValueExpression_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "LiteralValueExpression_2")) return false;
     ElementList(b, l + 1);
     return true;
   }

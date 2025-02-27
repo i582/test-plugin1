@@ -10,7 +10,6 @@ import org.ton.tact.lang.psi.TactPsiTreeUtil;
 import static org.ton.tact.lang.TactTypes.*;
 import org.ton.tact.lang.psi.*;
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access;
-import kotlin.Pair;
 
 public class TactReferenceExpressionImpl extends TactExpressionImpl implements TactReferenceExpression {
 
@@ -48,21 +47,9 @@ public class TactReferenceExpressionImpl extends TactExpressionImpl implements T
   }
 
   @Override
-  @Nullable
-  public PsiElement resolve() {
-    return TactPsiImplUtil.resolve(this);
-  }
-
-  @Override
   @NotNull
   public Access getReadWriteAccess() {
     return TactPsiImplUtil.getReadWriteAccess(this);
-  }
-
-  @Override
-  @NotNull
-  public Pair<Integer, Integer> getIdentifierBounds() {
-    return TactPsiImplUtil.getIdentifierBounds(this);
   }
 
 }

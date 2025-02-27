@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElementVisitor;
 import org.ton.tact.lang.psi.TactPsiTreeUtil;
 import static org.ton.tact.lang.TactTypes.*;
 import org.ton.tact.lang.psi.*;
-import kotlin.Pair;
 
 public class TactFieldNameImpl extends TactCompositeElementImpl implements TactFieldName {
 
@@ -49,12 +48,6 @@ public class TactFieldNameImpl extends TactCompositeElementImpl implements TactF
   @Nullable
   public PsiElement resolve() {
     return TactPsiImplUtil.resolve(this);
-  }
-
-  @Override
-  @NotNull
-  public Pair<Integer, Integer> getIdentifierBounds() {
-    return TactPsiImplUtil.getIdentifierBounds(this);
   }
 
 }

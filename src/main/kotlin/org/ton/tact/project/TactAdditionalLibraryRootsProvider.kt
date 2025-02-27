@@ -35,21 +35,16 @@ class TactAdditionalLibraryRootsProvider : AdditionalLibraryRootsProvider() {
         override fun hashCode() = sourceRoot.hashCode()
     }
 
-    class StandardLibrary(project: Project, toolchain: TactToolchain) :
+    class StandardLibrary(toolchain: TactToolchain) :
         LibraryBase(toolchain.name(), toolchain.stdlibDir())
 
-    class StandardModules(sourceRoot: VirtualFile) : LibraryBase("Tact Modules", sourceRoot, AllIcons.Nodes.PpLib)
     class Stubs(sourceRoot: VirtualFile) : LibraryBase("Tact Stubs", sourceRoot, AllIcons.Nodes.PpLibFolder)
 
     override fun getAdditionalProjectLibraries(project: Project): Collection<SyntheticLibrary> {
         val result = mutableListOf<SyntheticLibrary>()
 
         val toolchain = project.toolchainSettings.toolchain()
-        result.add(StandardLibrary(project, toolchain))
-        val modulesRoot = TactConfiguration.getInstance(project).localModulesLocation
-        if (modulesRoot != null) {
-            result.add(StandardModules(modulesRoot))
-        }
+        result.add(StandardLibrary(toolchain))
         val stubs = getStubs(project)
         if (stubs != null) {
             result.add(stubs)
